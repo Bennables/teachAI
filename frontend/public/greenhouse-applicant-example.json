@@ -1,0 +1,9 @@
+{
+  "application_url": "https://boards.greenhouse.io/example/jobs/123456",
+  "first_name": "Alex",
+  "last_name": "Applicant",
+  "email": "alex@example.com",
+  "phone": "+1 555 123 4567",
+  "address": "123 Main St, City, ST 12345",
+  "submit": false
+}

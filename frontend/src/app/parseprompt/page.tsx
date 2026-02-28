@@ -31,6 +31,7 @@ export default function ParsePromptPage() {
   }
 
   return (
+    
     <main className="min-h-screen bg-gray-50 px-6 py-16">
       <div className="mx-auto max-w-2xl rounded-lg border bg-white p-8 shadow-sm">
         <div className="mb-6 flex items-center gap-4">
@@ -51,7 +52,7 @@ export default function ParsePromptPage() {
             <label htmlFor="prompt-text" className="block text-sm font-medium text-gray-700">
               Raw text
             </label>
-            <VoiceInput onTranscript={onTranscript} disabled={loading} />
+            
           </div>
           <textarea
             id="prompt-text"

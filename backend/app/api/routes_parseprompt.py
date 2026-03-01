@@ -1,5 +1,6 @@
 import json
 import os
+from typing import Optional
 
 from fastapi import APIRouter, HTTPException, Response, status
 from pydantic import BaseModel
@@ -7,7 +8,7 @@ from pydantic import BaseModel
 router = APIRouter(prefix="/api", tags=["parseprompt"])
 
 # Temporary in-memory storage for the latest prompt text.
-stored_prompt_text: str | None = None
+stored_prompt_text: Optional[str] = None
 
 _BOOKING_EXTRACT_PROMPT = """Extract booking/reservation details from the following text.
 Return ONLY a single JSON object with exactly these keys (use empty string if not found):

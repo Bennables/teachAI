@@ -18,12 +18,19 @@ def _utc_now_iso() -> str:
 
 def _load_uci_fallback_workflow() -> WorkflowTemplate:
     default_payload = {
-        "name": "UCI Library Room Booking (Gateway)",
+        "name": "UCI Library Room Booking",
         "description": "Fallback workflow for booking a UCI library room.",
-        "start_url": "https://spaces.lib.uci.edu/booking/Gateway",
+        "start_url": "https://spaces.lib.uci.edu/spaces",
         "category": "booking",
-        "tags": ["uci", "library", "gateway", "booking"],
+        "tags": ["uci", "library", "booking"],
         "parameters": [
+            {
+                "key": "library",
+                "description": "Library location dropdown value.",
+                "example": "Gateway Study Center",
+                "required": True,
+                "input_type": "text",
+            },
             {
                 "key": "booking_date",
                 "description": "Booking date in MM/DD/YYYY format",

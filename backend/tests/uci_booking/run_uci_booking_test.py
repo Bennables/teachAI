@@ -5,7 +5,7 @@ Usage examples:
   python tests/uci_booking/run_uci_booking_test.py
   python tests/uci_booking/run_uci_booking_test.py --params tests/uci_booking/params.example.json
   python tests/uci_booking/run_uci_booking_test.py \
-    --date 03/05/2026 --room 1216 --full-name "Alex Anteater" --email alex@uci.edu
+    --library "Gateway Study Center" --date 03/05/2026 --room 1216 --full-name "Alex Anteater" --email alex@uci.edu
 """
 
 from __future__ import annotations
@@ -45,6 +45,8 @@ def load_params(path: Path) -> dict[str, Any]:
 
 def merge_cli_overrides(params: dict[str, Any], args: argparse.Namespace) -> dict[str, Any]:
     merged = dict(params)
+    if args.library:
+        merged["library"] = args.library
     if args.date:
         merged["booking_date"] = args.date
     if args.room:
@@ -99,6 +101,9 @@ def compute_end_time_label(start_time_label: str, duration_minutes: int) -> str:
 
 
 def validate_and_augment_params(params: dict[str, Any]) -> dict[str, Any]:
+    if not str(params.get("library", "")).strip():
+        raise ValueError("Missing required parameter: library")
+
     raw_booking_date = params.get("booking_date")
     if not raw_booking_date:
         raise ValueError("Missing required parameter: booking_date")
@@ -160,6 +165,7 @@ def build_parser() -> argparse.ArgumentParser:
         default=DEFAULT_PARAMS,
         help="Path to params JSON",
     )
+    parser.add_argument("--library", type=str, help="library/location override")
     parser.add_argument("--date", type=str, help="booking_date override (MM/DD/YYYY)")
     parser.add_argument("--room", type=str, help="room_keyword override")
     parser.add_argument("--time", type=str, help="booking_time override (e.g. 2:00pm)")
@@ -220,6 +226,7 @@ def main() -> int:
 
     print(f"Run ID: {run_id}")
     print(f"Workflow: {workflow.name}")
+    print(f"Library: {params['library']}")
     print(
         f"Booking window: {params['booking_time']} -> {params['booking_end_time']} "
         f"({params['duration_minutes']} minutes)"

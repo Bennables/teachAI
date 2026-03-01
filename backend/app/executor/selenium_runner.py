@@ -233,13 +233,26 @@ class WorkflowRunner:
             )
             if element.tag_name.lower() == "select":
                 select = Select(element)
+                if self._looks_like_end_time_step(step):
+                    select = self._resolve_end_time_select(select, requested_value=step.value)
+                selected = False
                 try:
                     select.select_by_visible_text(step.value)
+                    selected = True
                 except NoSuchElementException:
                     try:
                         select.select_by_value(step.value)
+                        selected = True
                     except NoSuchElementException:
-                        self._select_option_fuzzy(select, step.value)
+                        selected = self._select_option_fuzzy(select, step.value)
+                if not selected:
+                    message = self._build_select_unavailable_message(step, select, step.value)
+                    add_log(
+                        self.run_id,
+                        level="warn",
+                        message=message,
+                    )
+                    raise RuntimeError(message)
             else:
                 element.click()
                 element.send_keys(step.value)
@@ -430,7 +443,23 @@ class WorkflowRunner:
         except TimeoutException:
             target_date = self._extract_date_from_selector(css_selector)
             if target_date is not None:
-                self._advance_schedule_to_target_date(target_date)
+                add_log(
+                    self.run_id,
+                    level="info",
+                    message=(
+                        "Start slot not visible on current date range. "
+                        f"Navigating schedule to {target_date.isoformat()}."
+                    ),
+                )
+                navigated = self._advance_schedule_to_target_date(target_date)
+                add_log(
+                    self.run_id,
+                    level="info" if navigated else "warn",
+                    message=(
+                        f"Schedule navigation to {target_date.isoformat()} "
+                        + ("succeeded." if navigated else "did not find target date.")
+                    ),
+                )
 
             retry_wait = WebDriverWait(self.driver, min(6, max(3, settings.selenium_timeout)))
             return retry_wait.until(
@@ -842,17 +871,122 @@ class WorkflowRunner:
     def _normalize_text(value: str) -> str:
         return re.sub(r"\s+", " ", (value or "")).strip().lower()
 
-    def _select_option_fuzzy(self, select: Select, target_value: str) -> None:
+    def _select_option_fuzzy(self, select: Select, target_value: str) -> bool:
         normalized_target = self._normalize_text(target_value)
         for option in select.options:
             option_text = self._normalize_text(option.text)
             option_value = self._normalize_text(option.get_attribute("value") or "")
             if normalized_target in option_text or normalized_target in option_value:
                 option.click()
-                return
-        raise NoSuchElementException(
-            f"No matching select option for value '{target_value}'."
+                return True
+        return False
+
+    @staticmethod
+    def _looks_like_end_time_step(step: Step) -> bool:
+        description = (getattr(step, "description", "") or "").lower()
+        semantic = (getattr(step, "target_semantic", "") or "").lower()
+        css_hint = (getattr(step, "css_selector_hint", "") or "").lower()
+        return (
+            "end time" in description
+            or "end time" in semantic
+            or "name*='end'" in css_hint
+            or "id*='end'" in css_hint
         )
+
+    def _visible_select_options(
+        self, select: Select, time_only: bool = False, limit: int = 12
+    ) -> list[str]:
+        options: list[str] = []
+        for option in select.options:
+            text = " ".join((option.text or "").split()).strip()
+            if not text:
+                text = (option.get_attribute("value") or "").strip()
+            if not text:
+                continue
+            lowered = text.lower()
+            if lowered in {"select", "select...", "--select--"}:
+                continue
+            if time_only and not self._looks_like_time_text(text):
+                continue
+            if text not in options:
+                options.append(text)
+            if len(options) >= limit:
+                break
+        return options
+
+    @staticmethod
+    def _looks_like_time_text(value: str) -> bool:
+        normalized = (value or "").strip().lower()
+        return bool(re.search(r"\b\d{1,2}:\d{2}\s*(am|pm)\b", normalized))
+
+    def _build_select_unavailable_message(
+        self, step: Step, select: Select, requested_value: str
+    ) -> str:
+        if self._looks_like_end_time_step(step):
+            available = self._visible_select_options(select, time_only=True)
+        else:
+            available = self._visible_select_options(select, time_only=False)
+        base = (
+            f"Could not select '{requested_value}' for step '{step.description}'."
+        )
+        if self._looks_like_end_time_step(step):
+            base = (
+                f"Requested time slot is unavailable: end time '{requested_value}' "
+                "is not offered for the selected room/date/start-time."
+            )
+            if not available:
+                return (
+                    "Could not find a valid end-time dropdown for the selected booking "
+                    "slot. The start slot may not have been applied yet."
+                )
+        if available:
+            return base + " Available options: " + ", ".join(available) + "."
+        return base + " No selectable options were available in the dropdown."
+
+    def _resolve_end_time_select(self, select: Select, requested_value: str) -> Select:
+        if self.driver is None:
+            return select
+
+        if self._looks_like_time_dropdown(select):
+            return select
+
+        requested_hint = self._normalize_text(requested_value)
+        best: Optional[tuple[int, Select]] = None
+        for element in self.driver.find_elements(By.CSS_SELECTOR, "select"):
+            try:
+                if not element.is_displayed():
+                    continue
+            except Exception:  # noqa: BLE001
+                continue
+            candidate = Select(element)
+            score = self._time_dropdown_score(candidate, requested_hint)
+            if score <= 0:
+                continue
+            if best is None or score > best[0]:
+                best = (score, candidate)
+
+        if best is not None:
+            return best[1]
+        return select
+
+    def _time_dropdown_score(self, select: Select, requested_hint: str) -> int:
+        score = 0
+        options = self._visible_select_options(select, time_only=False, limit=30)
+        time_options = [text for text in options if self._looks_like_time_text(text)]
+        if time_options:
+            score += min(10, len(time_options))
+        if requested_hint:
+            for text in options:
+                normalized = self._normalize_text(text)
+                if requested_hint in normalized:
+                    score += 5
+                    break
+        return score
+
+    def _looks_like_time_dropdown(self, select: Select) -> bool:
+        options = self._visible_select_options(select, time_only=False, limit=20)
+        time_like = [text for text in options if self._looks_like_time_text(text)]
+        return len(time_like) >= 2
 
     @staticmethod
     def _is_likely_date_step(step: Step) -> bool:
@@ -1216,7 +1350,8 @@ class WorkflowRunner:
         if "room_page_url" not in params and "room_keyword" in params:
             room_keyword = str(params.get("room_keyword", "")).strip()
             if room_keyword:
-                discovered = self._discover_room_page_url(room_keyword)
+                library = str(params.get("library", "")).strip() or None
+                discovered = self._discover_room_page_url(room_keyword, library=library)
                 if discovered:
                     params["room_page_url"] = discovered
 
@@ -1240,13 +1375,14 @@ class WorkflowRunner:
                 params["full_name_first"] = parts[0]
                 params["full_name_last"] = parts[1] if len(parts) > 1 else "."
 
-    def _discover_room_page_url(self, room_keyword: str) -> Optional[str]:
+    def _discover_room_page_url(self, room_keyword: str, library: Optional[str] = None) -> Optional[str]:
         if self.driver is None:
             return None
 
         hint = self._normalize_text(room_keyword)
         if not hint:
             return None
+        library_hint = self._normalize_text(library or "")
 
         anchors = self.driver.find_elements(
             By.CSS_SELECTOR, "a[href*='/space/'], a[href*='/booking/Gateway/']"
@@ -1257,6 +1393,12 @@ class WorkflowRunner:
         best_href: Optional[str] = None
         best_score = -1
         for anchor in anchors:
+            try:
+                if not anchor.is_displayed():
+                    continue
+            except Exception:  # noqa: BLE001
+                continue
+
             href = (anchor.get_attribute("href") or "").strip()
             if not href:
                 continue
@@ -1270,14 +1412,31 @@ class WorkflowRunner:
             )
             normalized_text = self._normalize_text(aggregate_text)
             normalized_href = self._normalize_text(href)
+            context_text = normalized_text
+            try:
+                parent_context = anchor.find_element(By.XPATH, "ancestor::*[self::tr or self::li or self::div][1]")
+                context_text = self._normalize_text(
+                    " ".join(
+                        [
+                            aggregate_text,
+                            parent_context.text or "",
+                        ]
+                    )
+                )
+            except Exception:  # noqa: BLE001
+                pass
 
             score = 0
             if hint in normalized_text:
                 score += 5
+            if hint in context_text:
+                score += 3
             if hint in normalized_href:
                 score += 2
             if "/space/" in href:
                 score += 1
+            if library_hint and library_hint in context_text:
+                score += 4
 
             if score > best_score:
                 best_score = score

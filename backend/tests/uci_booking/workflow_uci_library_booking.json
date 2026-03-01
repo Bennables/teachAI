@@ -1,10 +1,17 @@
 {
-  "name": "UCI Library Room Booking (Gateway)",
-  "description": "Best-effort automated booking flow for UCI Library Gateway rooms using LibCal/Springshare UI patterns.",
-  "start_url": "https://spaces.lib.uci.edu/booking/Gateway",
+  "name": "UCI Library Room Booking",
+  "description": "Best-effort automated booking flow for UCI Libraries rooms using LibCal/Springshare UI patterns.",
+  "start_url": "https://spaces.lib.uci.edu/spaces",
   "category": "booking",
-  "tags": ["uci", "library", "gateway", "booking"],
+  "tags": ["uci", "library", "booking"],
   "parameters": [
+    {
+      "key": "library",
+      "description": "Library location dropdown value (for example: Gateway Study Center, Science Library, Langson Library).",
+      "example": "Gateway Study Center",
+      "required": true,
+      "input_type": "text"
+    },
     {
       "key": "booking_date",
       "description": "Booking date in MM/DD/YYYY format",
@@ -67,8 +74,8 @@
   "steps": [
     {
       "type": "GOTO",
-      "description": "Open UCI Library Gateway booking page",
-      "url": "https://spaces.lib.uci.edu/booking/Gateway"
+      "description": "Open UCI Libraries spaces page",
+      "url": "https://spaces.lib.uci.edu/spaces"
     },
     {
       "type": "WAIT",
@@ -81,14 +88,26 @@
       "seconds": 0.4
     },
     {
+      "type": "SELECT",
+      "description": "Select library from Location dropdown",
+      "target_semantic": "Location",
+      "css_selector_hint": "select[name*='location'], select[id*='location'], select[name*='lid'], select[id*='lid'], select[aria-label*='Location']",
+      "value": "{{library}}"
+    },
+    {
+      "type": "WAIT",
+      "description": "Wait for room list to refresh for selected library",
+      "seconds": 1.0
+    },
+    {
       "type": "GOTO",
       "description": "Open room details page directly",
       "url": "{{room_page_url}}"
     },
     {
       "type": "WAIT",
-      "description": "Wait for room availability slots on room page",
-      "until_selector": "a.s-lc-eq-avail"
+      "description": "Wait for room page booking grid to load",
+      "until_text_visible": "First select a start time from the grid below"
     },
     {
       "type": "CLICK",

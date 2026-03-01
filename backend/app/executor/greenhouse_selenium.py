@@ -9,19 +9,12 @@ from typing import Any, Optional, Union
 from urllib.parse import urljoin
 
 from selenium import webdriver
-from selenium.common.exceptions import (
-    ElementNotInteractableException,
-    InvalidElementStateException,
-    NoSuchElementException,
-    TimeoutException,
-)
-from selenium.webdriver.chrome.service import Service
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
-from webdriver_manager.chrome import ChromeDriverManager
 
 from app.core.config import settings
 from app.core.storage import add_log, get_run, save_run, update_run
@@ -158,15 +151,8 @@ class WorkflowRunner:
         options.add_experimental_option("excludeSwitches", ["enable-automation"])
         options.add_experimental_option("useAutomationExtension", False)
 
-        # Prefer Selenium Manager (bundled with Selenium 4+) to avoid
-        # webdriver-manager path selection issues on newer chromedriver zips.
-        try:
-            self.driver = webdriver.Chrome(options=options)
-        except Exception:
-            installed_path = ChromeDriverManager().install()
-            resolved_path = self._resolve_chromedriver_path(installed_path)
-            service = Service(executable_path=resolved_path)
-            self.driver = webdriver.Chrome(service=service, options=options)
+        # Use Selenium's built-in driver management (avoids webdriver_manager path bugs)
+        self.driver = webdriver.Chrome(options=options)
         self.driver.implicitly_wait(3)
 
     def _execute_step(self, step: Step) -> str:

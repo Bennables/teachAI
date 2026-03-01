@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.routes_greenhouse import router as greenhouse_router
 from app.api.routes_parseprompt import router as parseprompt_router
 
 # Load .env from backend directory so OPENAI_API_KEY etc. are set
@@ -33,3 +34,4 @@ def health() -> dict[str, str]:
 app.include_router(workflows_router)
 app.include_router(runs_router)
 app.include_router(parseprompt_router)
+app.include_router(greenhouse_router)

@@ -16,7 +16,7 @@ class ParameterSpec(BaseModel):
     description: str | None = None
     example: str | None = None
     required: bool = True
-    input_type: Literal["text", "number", "date", "time", "email", "password"] = "text"
+    input_type: Literal["text", "number", "date", "time", "email", "password", "select"] = "text"
 
 
 class BaseStep(BaseModel):

@@ -874,7 +874,7 @@ def _ask_grok_for_select_answers(
 
         client = OpenAI(api_key=settings.grok_api_key, base_url="https://api.x.ai/v1")
         response = client.chat.completions.create(
-            model="grok-beta",
+            model="grok-3-fast",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=600,
             temperature=0.1,

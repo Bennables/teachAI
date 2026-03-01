@@ -874,7 +874,7 @@ def _ask_grok_for_select_answers(
 
         client = OpenAI(api_key=settings.grok_api_key, base_url="https://api.x.ai/v1")
         response = client.chat.completions.create(
-            model="grok-beta",
+            model="grok-3-fast",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=600,
             temperature=0.1,
@@ -1066,6 +1066,7 @@ def apply_to_greenhouse(
     phone: str,
     resume_path: str,
     address: Optional[str] = None,
+    profile: Optional[str] = None,
     headless: Optional[bool] = None,
     timeout: int = 15,
     submit: bool = False,
@@ -1073,6 +1074,8 @@ def apply_to_greenhouse(
 ) -> dict[str, str | bool]:
     """
     Open a Greenhouse job application page and fill standard fields.
+    profile is a short blurb summarising the applicant's highlights, passed to
+    Grok so it can answer open-ended questions (cover letter, summary, etc.).
 
     Returns:
         Dict with "success", "message", and optional "submit_clicked".
@@ -1150,15 +1153,17 @@ def apply_to_greenhouse(
         # AI-powered field detection: send screenshot + field list to Grok to fill
         # anything that wasn't covered by the standard rule-based logic above.
         already_filled_ids = {"first_name", "last_name", "email", "phone", "address", "country", "resume"}
+        _applicant_info = {
+            "first_name": first_name,
+            "last_name": last_name,
+            "email": email,
+            "phone": phone,
+            "address": address or "",
+            "profile": profile or "",
+        }
         grok_answers = _ask_grok_for_fields(
             driver,
-            applicant_info={
-                "first_name": first_name,
-                "last_name": last_name,
-                "email": email,
-                "phone": phone,
-                "address": address or "",
-            },
+            applicant_info=_applicant_info,
             already_filled_ids=already_filled_ids,
         )
         if grok_answers:
@@ -1170,13 +1175,7 @@ def apply_to_greenhouse(
         # Ensure every select/combobox has a value — ask AI to pick from real options
         ensured = _ensure_selects_filled(
             driver,
-            applicant_info={
-                "first_name": first_name,
-                "last_name": last_name,
-                "email": email,
-                "phone": phone,
-                "address": address or "",
-            },
+            applicant_info=_applicant_info,
         )
         if ensured:
             filled.append(f"ensured_selects({ensured})")
@@ -1256,13 +1255,7 @@ def apply_to_greenhouse(
                     # Ask Grok again about the remaining unfilled fields after submit errors
                     post_submit_grok = _ask_grok_for_fields(
                         driver,
-                        applicant_info={
-                            "first_name": first_name,
-                            "last_name": last_name,
-                            "email": email,
-                            "phone": phone,
-                            "address": address or "",
-                        },
+                        applicant_info=_applicant_info,
                         already_filled_ids=already_filled_ids,
                     )
                     merged_extra = {**post_submit_grok, **(extra_answers or {})}

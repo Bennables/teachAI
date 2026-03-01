@@ -157,13 +157,21 @@ export default function HomePage() {
             <p className="text-xs uppercase tracking-[0.3em] text-cyan-300/80">TeachOnce</p>
             <h1 className="mt-2 text-3xl font-semibold text-slate-100">Workflow Hub</h1>
           </div>
-          <button
-            onClick={() => setModalOpen(true)}
-            className="cyber-button inline-flex h-11 min-w-11 items-center justify-center rounded-lg px-4"
-          >
-            <span className="text-2xl leading-none">+</span>
-            <span className="ml-2 text-sm font-medium">Add Workflow</span>
-          </button>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/greenhouse"
+              className="inline-flex h-11 items-center rounded-lg border border-cyan-400/30 bg-slate-900/70 px-4 text-sm font-medium text-cyan-200 transition hover:border-cyan-400/60 hover:bg-slate-900"
+            >
+              Greenhouse Apply
+            </Link>
+            <button
+              onClick={() => setModalOpen(true)}
+              className="cyber-button inline-flex h-11 min-w-11 items-center justify-center rounded-lg px-4"
+            >
+              <span className="text-2xl leading-none">+</span>
+              <span className="ml-2 text-sm font-medium">Add Workflow</span>
+            </button>
+          </div>
         </header>
         {notice ? (
           <p className="mb-4 rounded-md border border-amber-300/40 bg-amber-300/10 px-3 py-2 text-sm text-amber-100">

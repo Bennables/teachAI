@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo } from "react";
+import { FormEvent, useMemo, useRef, useEffect } from "react";
 import { postDistillVideo } from "@/lib/api";
 import { useCallback, useState } from "react";
 import Link from "next/link";
@@ -26,6 +26,10 @@ export default function HomePage() {
   const [workflowName, setWorkflowName] = useState("");
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [distilling, setDistilling] = useState(false);
+  const [progressStep, setProgressStep] = useState("");
+  const [progressPct, setProgressPct] = useState(0);
+  const [distillLog, setDistillLog] = useState("");
+  const logRef = useRef<HTMLPreElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [useCaseNotes, setUseCaseNotes] = useState("");
@@ -33,6 +37,12 @@ export default function HomePage() {
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
+
+  useEffect(() => {
+    if (logRef.current) {
+      logRef.current.scrollTop = logRef.current.scrollHeight;
+    }
+  }, [distillLog]);
 
   const onTranscript = useCallback((newText: string) => {
     setText((prev) => (prev + newText).trimStart());
@@ -67,6 +77,9 @@ export default function HomePage() {
     if (!workflowName.trim() || !videoFile) return;
 
     setDistilling(true);
+    setProgressStep("Uploading video…");
+    setProgressPct(0);
+    setDistillLog("");
     setError(null);
     setNotice(null);
 
@@ -74,7 +87,17 @@ export default function HomePage() {
       const hint = useCaseNotes.trim()
         ? `${workflowName.trim()}. ${useCaseNotes.trim()}`
         : workflowName.trim();
-      const response = await postDistillVideo(videoFile, hint);
+      const response = await postDistillVideo(
+        videoFile,
+        hint,
+        (step, pct) => {
+          setProgressStep(step);
+          setProgressPct(pct);
+        },
+        (text) => {
+          setDistillLog((prev) => prev + text);
+        }
+      );
       const newWorkflow: WorkflowCard = {
         id: response.workflow_id,
         name: response.workflow.name || workflowName.trim(),
@@ -125,13 +148,21 @@ export default function HomePage() {
             <p className="text-xs uppercase tracking-[0.3em] text-cyan-300/80">TeachOnce</p>
             <h1 className="mt-2 text-3xl font-semibold text-slate-100">Workflow Hub</h1>
           </div>
-          <button
-            onClick={() => setModalOpen(true)}
-            className="cyber-button inline-flex h-11 min-w-11 items-center justify-center rounded-lg px-4"
-          >
-            <span className="text-2xl leading-none">+</span>
-            <span className="ml-2 text-sm font-medium">Add Workflow</span>
-          </button>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/greenhouse-run"
+              className="rounded-lg border border-cyan-300/40 bg-cyan-400/10 px-4 py-2 text-sm font-medium text-cyan-100 hover:bg-cyan-400/20"
+            >
+              Run Greenhouse
+            </Link>
+            <button
+              onClick={() => setModalOpen(true)}
+              className="cyber-button inline-flex h-11 min-w-11 items-center justify-center rounded-lg px-4"
+            >
+              <span className="text-2xl leading-none">+</span>
+              <span className="ml-2 text-sm font-medium">Add Workflow</span>
+            </button>
+          </div>
         </header>
         {notice ? (
           <p className="mb-4 rounded-md border border-amber-300/40 bg-amber-300/10 px-3 py-2 text-sm text-amber-100">
@@ -248,7 +279,32 @@ export default function HomePage() {
               />
             </div>
 
-            {error ? <p className="mb-4 text-sm text-rose-300">{error}</p> : null}
+            {distilling || distillLog ? (
+              <div className="mt-5 space-y-3">
+                {distilling ? (
+                  <>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-slate-400">{progressStep || "Starting…"}</span>
+                      <span className="tabular-nums text-cyan-300/80">{progressPct}%</span>
+                    </div>
+                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-800">
+                      <div
+                        className="h-full rounded-full bg-gradient-to-r from-violet-500 to-cyan-400 transition-all duration-500"
+                        style={{ width: `${progressPct}%` }}
+                      />
+                    </div>
+                  </>
+                ) : null}
+                <pre
+                  ref={logRef}
+                  className="max-h-48 w-full overflow-y-auto rounded-lg border border-cyan-300/20 bg-slate-900/80 p-3 font-mono text-xs leading-relaxed text-cyan-100/90 whitespace-pre-wrap break-words"
+                >
+                  {distillLog || "Waiting for model output…"}
+                </pre>
+              </div>
+            ) : null}
+
+            {error ? <p className="mb-4 mt-3 text-sm text-rose-300">{error}</p> : null}
 
             <div className="mt-6 flex justify-end gap-3">
               <button

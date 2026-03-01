@@ -80,16 +80,114 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
 
 export async function postDistillVideo(
   file: File,
-  workflowHint?: string
+  workflowHint?: string,
+  onProgress?: (step: string, pct: number) => void,
+  onOutput?: (text: string) => void
+): Promise<DistillVideoResponse> {
+  // Step 1: upload the file and get a job ID back immediately.
+  const formData = new FormData();
+  formData.append("file", file);
+  if (workflowHint) {
+    formData.append("workflow_hint", workflowHint);
+  }
+  const { job_id } = await apiFetch<{ job_id: string }>(
+    "/api/workflows/distill-video",
+    { method: "POST", body: formData }
+  );
+
+  // Step 2: open the SSE stream and forward events to the caller.
+  return new Promise<DistillVideoResponse>((resolve, reject) => {
+    const es = new EventSource(
+      `${API_BASE_URL}/api/workflows/distill-video/${job_id}/stream`
+    );
+
+    es.onmessage = (event) => {
+      let data: Record<string, unknown>;
+      try {
+        data = JSON.parse(event.data as string) as Record<string, unknown>;
+      } catch {
+        return;
+      }
+
+      if (data.type === "progress") {
+        onProgress?.(data.step as string, data.pct as number);
+      } else if (data.type === "text") {
+        onOutput?.(data.content as string);
+      } else if (data.type === "done") {
+        es.close();
+        resolve({
+          workflow_id: data.workflow_id as string,
+          workflow: data.workflow as DistillVideoResponse["workflow"],
+        });
+      } else if (data.type === "error") {
+        es.close();
+        reject(new Error((data.message as string) ?? "Extraction failed."));
+      }
+    };
+
+    es.onerror = () => {
+      es.close();
+      reject(new Error("Lost connection to the progress stream."));
+    };
+  });
+}
+
+export async function postDistillVideoWithProgress(
+  file: File,
+  workflowHint: string | undefined,
+  onUploadProgress: (percent: number) => void
 ): Promise<DistillVideoResponse> {
   const formData = new FormData();
   formData.append("file", file);
   if (workflowHint) {
     formData.append("workflow_hint", workflowHint);
   }
-  return apiFetch<DistillVideoResponse>("/api/workflows/distill-video", {
-    method: "POST",
-    body: formData
+
+  return new Promise<DistillVideoResponse>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", `${API_BASE_URL}/api/workflows/distill-video`);
+
+    xhr.upload.onprogress = (event: ProgressEvent<EventTarget>) => {
+      if (!event.lengthComputable) return;
+      const percent = (event.loaded / event.total) * 100;
+      onUploadProgress(Math.min(100, Math.max(0, percent)));
+    };
+
+    xhr.onerror = () => {
+      reject(new Error("Upload failed due to a network error."));
+    };
+
+    xhr.onload = () => {
+      let data: Record<string, unknown> = {};
+      try {
+        data = (JSON.parse(xhr.responseText) as Record<string, unknown>) ?? {};
+      } catch {
+        data = {};
+      }
+
+      if (xhr.status >= 200 && xhr.status < 300) {
+        const workflowId = data.workflow_id;
+        const workflow = data.workflow;
+        if (typeof workflowId !== "string" || typeof workflow !== "object" || workflow == null) {
+          reject(new Error("Malformed distill response from server."));
+          return;
+        }
+        resolve({
+          workflow_id: workflowId,
+          workflow: workflow as WorkflowTemplate,
+          saved_video_path:
+            typeof data.saved_video_path === "string" ? data.saved_video_path : undefined
+        });
+        return;
+      }
+
+      const detail =
+        (typeof data.detail === "string" && data.detail) ||
+        `${xhr.status} ${xhr.statusText}`;
+      reject(new Error(detail));
+    };
+
+    xhr.send(formData);
   });
 }
 

@@ -11,7 +11,7 @@ from app.core.storage import (
     save_run,
     update_run,
 )
-from app.executor.selenium_runner import WorkflowRunner
+from app.executor.greenhouse_selenium import WorkflowRunner
 from app.models.schemas import RunStatus
 
 router = APIRouter(prefix="/api/runs", tags=["runs"])

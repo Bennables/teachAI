@@ -1,0 +1,4 @@
+# MCP Server Requirements for TeachAI Integration
+mcp>=1.0.0
+httpx>=0.25.0
+asyncio-mqtt>=0.11.0

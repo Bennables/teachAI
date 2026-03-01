@@ -1,0 +1,137 @@
+{
+  "tools": [
+    {
+      "name": "apply_to_greenhouse_job",
+      "description": "Apply to a Greenhouse job posting by automatically filling out the application form with provided details and resume",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "application_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Full URL of the Greenhouse job application page (must be from boards.greenhouse.io)"
+          },
+          "first_name": {
+            "type": "string",
+            "description": "Applicant's first name"
+          },
+          "last_name": {
+            "type": "string",
+            "description": "Applicant's last name"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Applicant's email address"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Phone number (e.g., +1 555 123 4567)"
+          },
+          "address": {
+            "type": "string",
+            "description": "Optional home address or location"
+          },
+          "submit": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether to actually submit the application (false for testing)"
+          },
+          "resume_file_path": {
+            "type": "string",
+            "description": "Path to the resume file (PDF or DOC format)"
+          }
+        },
+        "required": ["application_url", "first_name", "last_name", "email", "phone", "resume_file_path"]
+      }
+    },
+    {
+      "name": "book_uci_library_room",
+      "description": "Book a study room at UCI Libraries using the LibCal system",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "library": {
+            "type": "string",
+            "description": "Library location (e.g., 'Langson', 'Gateway Study Center', 'Science Library')",
+            "examples": ["Langson", "Gateway Study Center", "Science Library"]
+          },
+          "booking_date": {
+            "type": "string",
+            "pattern": "^\\d{2}/\\d{2}/\\d{4}$",
+            "description": "Booking date in MM/DD/YYYY format",
+            "examples": ["03/15/2026", "04/22/2026"]
+          },
+          "room_keyword": {
+            "type": "string",
+            "description": "Room identifier or keyword (e.g., '394', 'Gateway 2106')",
+            "examples": ["394", "2106", "Gateway 2106"]
+          },
+          "booking_time": {
+            "type": "string",
+            "description": "Start time for the booking (e.g., '2:00pm', '10:30am')",
+            "examples": ["2:00pm", "10:30am", "3:30pm"]
+          },
+          "duration_minutes": {
+            "type": "integer",
+            "enum": [30, 60, 90, 120],
+            "description": "Duration of the booking in minutes (30, 60, 90, or 120)"
+          },
+          "full_name": {
+            "type": "string",
+            "description": "Full name for the reservation"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "UCI email address for the booking"
+          },
+          "affiliation": {
+            "type": "string",
+            "enum": ["Undergraduate", "Graduate", "Faculty", "Staff"],
+            "description": "UCI affiliation status"
+          },
+          "purpose_for_reservation_covid_19": {
+            "type": "string",
+            "description": "Purpose/reason for the room reservation",
+            "examples": ["Need a place to study", "Group project meeting", "Research work"]
+          },
+          "max_auth_resumes": {
+            "type": "integer",
+            "default": 2,
+            "description": "Maximum number of authentication resume cycles"
+          },
+          "headless": {
+            "type": "boolean",
+            "default": false,
+            "description": "Run browser in headless mode"
+          }
+        },
+        "required": [
+          "library", "booking_date", "room_keyword", "booking_time",
+          "duration_minutes", "full_name", "email", "affiliation",
+          "purpose_for_reservation_covid_19"
+        ]
+      }
+    },
+    {
+      "name": "extract_workflow_from_video",
+      "description": "Process a video file using VLM (Vision Language Model) to extract workflow steps and automation patterns",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "video_file_path": {
+            "type": "string",
+            "description": "Path to the video file to process (MP4, AVI, MOV, MKV, or WEBM)"
+          },
+          "workflow_type": {
+            "type": "string",
+            "enum": ["greenhouse", "langson_library"],
+            "description": "Type of workflow to extract: 'greenhouse' for job applications, 'langson_library' for UCI library bookings"
+          }
+        },
+        "required": ["video_file_path", "workflow_type"]
+      }
+    }
+  ]
+}

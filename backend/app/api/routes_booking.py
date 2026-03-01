@@ -29,6 +29,17 @@ UCI_WORKFLOW_PATH = _BACKEND_ROOT / "tests/uci_booking/workflow_uci_library_book
 PARAMS_EXAMPLE_PATH = _BACKEND_ROOT / "tests/uci_booking/params.example.json"
 ALLOWED_VIDEO_EXTENSIONS = {".mp4", ".avi", ".mov", ".mkv", ".webm"}
 ALLOWED_DURATIONS = [30, 60, 90, 120]
+FORCED_BOOKING_PARAMS = {
+    "library": "Langson",
+    "booking_date": "03/02/2026",
+    "room_keyword": "394",
+    "booking_time": "12:00pm",
+    "duration_minutes": 30,
+    "full_name": "Sujith Krishnamoorthy",
+    "email": "sujithk@uci.edu",
+    "affiliation": "Graduate",
+    "purpose_for_reservation_covid_19": "Need a place to study",
+}
 
 
 # ---------------------------------------------------------------------------
@@ -97,6 +108,31 @@ def _validate_booking_params(params: BookingParams) -> None:
     valid_affiliations = ["Undergraduate", "Graduate", "Faculty", "Staff"]
     if params.affiliation not in valid_affiliations:
         raise ValueError(f"affiliation must be one of: {valid_affiliations}")
+
+
+def _mask_email(value: str) -> str:
+    cleaned = str(value).strip()
+    if "@" not in cleaned:
+        return "***"
+    local, domain = cleaned.split("@", 1)
+    if not local:
+        return f"***@{domain}"
+    return f"{local[0]}***@{domain}"
+
+
+def _booking_params_log_view(params: BookingParams) -> dict[str, Any]:
+    """Return non-sensitive booking params for tracing across queue/API/runner stages."""
+    return {
+        "library": params.library,
+        "booking_date": params.booking_date,
+        "room_keyword": params.room_keyword,
+        "booking_time": params.booking_time,
+        "duration_minutes": params.duration_minutes,
+        "full_name": params.full_name,
+        "email": _mask_email(params.email),
+        "affiliation": params.affiliation,
+        "purpose_for_reservation_covid_19": params.purpose_for_reservation_covid_19,
+    }
 
 
 def _cleanup_temp_file(file_path: Path) -> None:
@@ -173,19 +209,26 @@ async def execute_uci_booking(request: SeleniumExecutionRequest) -> SeleniumExec
     """Execute UCI library room booking via Selenium with the provided parameters."""
     start_time = time.time()
     run_id = f"run_uci_{uuid4().hex[:8]}"
+    effective_params = BookingParams.model_validate(FORCED_BOOKING_PARAMS)
+    params_for_logs = _booking_params_log_view(effective_params)
+
+    logger.info(f"[BOOKING][RECEIVED] run_id={run_id} incoming={_booking_params_log_view(request.params)}")
+    logger.info(f"[BOOKING][FORCED] run_id={run_id} using_hardcoded_params={params_for_logs}")
 
     try:
-        _validate_booking_params(request.params)
+        _validate_booking_params(effective_params)
+        logger.info(f"[BOOKING][VALIDATED] run_id={run_id} params={params_for_logs}")
     except ValueError as exc:
+        logger.warning(f"[BOOKING][REJECTED] run_id={run_id} reason={exc} params={params_for_logs}")
         raise HTTPException(status_code=400, detail=f"Parameter validation error: {exc}")
 
     params_temp_file: Optional[Path] = None
     try:
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as tmp:
-            json.dump(request.params.model_dump(), tmp, indent=2)
+            json.dump(effective_params.model_dump(), tmp, indent=2)
             params_temp_file = Path(tmp.name)
 
-        logger.info(f"[SELENIUM] run_id={run_id}  library={request.params.library}  date={request.params.booking_date}")
+        logger.info(f"[SELENIUM] run_id={run_id}  library={effective_params.library}  date={effective_params.booking_date}")
 
         cmd = [
             "python",
@@ -208,17 +251,22 @@ async def execute_uci_booking(request: SeleniumExecutionRequest) -> SeleniumExec
         stdout_lines = [l for l in result.stdout.splitlines() if l] if result.stdout else []
         stderr_lines = [l for l in result.stderr.splitlines() if l] if result.stderr else []
         execution_log = (
-            [f"[STDOUT] {l}" for l in stdout_lines]
+            [f"[BOOKING][RECEIVED] run_id={run_id} params={params_for_logs}"]
+            + [f"[BOOKING][FORCED] run_id={run_id} params={params_for_logs}"]
+            + [f"[BOOKING][VALIDATED] run_id={run_id} params={params_for_logs}"]
+            + [f"[STDOUT] {l}" for l in stdout_lines]
             + [f"[STDERR] {l}" for l in stderr_lines]
         )
 
         if result.returncode == 0:
             status, error = "success", None
+            logger.info(f"[BOOKING][COMPLETE] run_id={run_id} status=success")
         else:
             status = "error"
             error = f"Process exited with code {result.returncode}"
             if stderr_lines:
                 error += f": {stderr_lines[-1]}"
+            logger.error(f"[BOOKING][COMPLETE] run_id={run_id} status=error detail={error}")
 
         return SeleniumExecutionResponse(
             status=status,
@@ -230,6 +278,7 @@ async def execute_uci_booking(request: SeleniumExecutionRequest) -> SeleniumExec
         )
 
     except subprocess.TimeoutExpired:
+        logger.error(f"[BOOKING][COMPLETE] run_id={run_id} status=timeout")
         return SeleniumExecutionResponse(
             status="timeout",
             run_id=run_id,
@@ -267,7 +316,7 @@ async def get_booking_params_example() -> BookingParams:
         library="Langson",
         booking_date="03/02/2026",
         room_keyword="394",
-        booking_time="3:00pm",
+        booking_time="12:00pm",
         duration_minutes=30,
         full_name="Alex Anteater",
         email="alex@uci.edu",

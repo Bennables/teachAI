@@ -343,7 +343,7 @@ async def get_booking_params_example() -> BookingParams:
                 library="Langson",
                 booking_date="03/02/2026",
                 room_keyword="394",
-                booking_time="3:00pm",
+                booking_time="12:00pm",
                 duration_minutes=30,
                 full_name="Sujith Krishnamoorthy",
                 email="sujithk@uci.edu",

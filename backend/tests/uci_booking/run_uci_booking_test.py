@@ -220,6 +220,20 @@ def main() -> int:
         print(f"Parameter validation error: {exc}", file=sys.stderr)
         return 2
 
+    # This line is consumed by /api/v1/execute-booking and helps confirm
+    # exactly what booking inputs made it through validation.
+    print(
+        "[BOOKING][RUNNER_PARAMS] "
+        f"library={params['library']} "
+        f"date={params['booking_date']} "
+        f"date_iso={params['booking_date_iso']} "
+        f"time={params['booking_time']} "
+        f"end_time={params['booking_end_time']} "
+        f"duration_minutes={params['duration_minutes']} "
+        f"room_keyword={params['room_keyword']} "
+        f"room_id={params['room_id']}"
+    )
+
     run_id = f"run_uci_test_{uuid4().hex[:8]}"
     workflow_id = f"wf_uci_test_{uuid4().hex[:8]}"
     runner = WorkflowRunner(run_id=run_id, workflow_id=workflow_id, status_callback=status_printer)

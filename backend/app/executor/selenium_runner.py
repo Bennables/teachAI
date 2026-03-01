@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 import time
 from collections.abc import Callable
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from pathlib import Path
 from typing import Any, Optional, Union
 from urllib.parse import urljoin
@@ -245,6 +245,18 @@ class WorkflowRunner:
                         selected = True
                     except NoSuchElementException:
                         selected = self._select_option_fuzzy(select, step.value)
+                if not selected and self._looks_like_end_time_step(step):
+                    fallback_selected = self._select_end_time_fallback(select, requested_value=step.value)
+                    if fallback_selected:
+                        add_log(
+                            self.run_id,
+                            level="warn",
+                            message=(
+                                f"Requested end time '{step.value}' was unavailable. "
+                                f"Using closest available option '{fallback_selected}'."
+                            ),
+                        )
+                        selected = True
                 if not selected:
                     message = self._build_select_unavailable_message(step, select, step.value)
                     add_log(
@@ -485,6 +497,7 @@ class WorkflowRunner:
         normalized_hint = self._normalize_text(hint)
         if not normalized_hint:
             return True
+        hint_times = self._time_match_tokens(hint)
 
         texts = [
             element.text,
@@ -495,7 +508,10 @@ class WorkflowRunner:
             element.get_attribute("data-tooltip"),
         ]
         for value in texts:
-            if normalized_hint in self._normalize_text(value or ""):
+            value_text = value or ""
+            if normalized_hint in self._normalize_text(value_text):
+                return True
+            if hint_times and (hint_times & self._time_match_tokens(value_text)):
                 return True
         return False
 
@@ -871,14 +887,36 @@ class WorkflowRunner:
     def _normalize_text(value: str) -> str:
         return re.sub(r"\s+", " ", (value or "")).strip().lower()
 
+    @staticmethod
+    def _time_match_tokens(value: str) -> set[str]:
+        """Normalize common time formats (3pm, 3:00pm, 3:00 pm) for matching."""
+        text = (value or "").lower()
+        tokens: set[str] = set()
+        for match in re.finditer(r"\b(\d{1,2})(?::(\d{2}))?\s*([ap]m)\b", text):
+            hour = int(match.group(1))
+            minute = int(match.group(2) or "00")
+            meridiem = match.group(3)
+            tokens.add(f"{hour}:{minute:02d}{meridiem}")
+            if minute == 0:
+                tokens.add(f"{hour}{meridiem}")
+        return tokens
+
     def _select_option_fuzzy(self, select: Select, target_value: str) -> bool:
         normalized_target = self._normalize_text(target_value)
+        target_times = self._time_match_tokens(target_value)
         for option in select.options:
             option_text = self._normalize_text(option.text)
             option_value = self._normalize_text(option.get_attribute("value") or "")
             if normalized_target in option_text or normalized_target in option_value:
                 option.click()
                 return True
+            if target_times:
+                option_times = self._time_match_tokens(option.text or "") | self._time_match_tokens(
+                    option.get_attribute("value") or ""
+                )
+                if target_times & option_times:
+                    option.click()
+                    return True
         return False
 
     @staticmethod
@@ -942,6 +980,48 @@ class WorkflowRunner:
         if available:
             return base + " Available options: " + ", ".join(available) + "."
         return base + " No selectable options were available in the dropdown."
+
+    @staticmethod
+    def _time_to_minutes(value: str) -> Optional[int]:
+        match = re.search(r"\b(\d{1,2})(?::(\d{2}))?\s*([ap]m)\b", (value or "").lower())
+        if not match:
+            return None
+        hour = int(match.group(1)) % 12
+        minute = int(match.group(2) or "00")
+        meridiem = match.group(3)
+        if meridiem == "pm":
+            hour += 12
+        return (hour * 60) + minute
+
+    def _select_end_time_fallback(self, select: Select, requested_value: str) -> Optional[str]:
+        requested_minutes = self._time_to_minutes(requested_value)
+        options: list[tuple[int, Any, str]] = []
+
+        for option in select.options:
+            label = " ".join((option.text or "").split()).strip() or (option.get_attribute("value") or "").strip()
+            if not label:
+                continue
+            lowered = label.lower()
+            if lowered in {"select", "select...", "--select--"}:
+                continue
+            minutes = self._time_to_minutes(label)
+            if minutes is None:
+                continue
+            options.append((minutes, option, label))
+
+        if not options:
+            return None
+
+        chosen = None
+        if requested_minutes is not None:
+            at_or_after = [item for item in options if item[0] >= requested_minutes]
+            if at_or_after:
+                chosen = min(at_or_after, key=lambda item: item[0])
+        if chosen is None:
+            chosen = max(options, key=lambda item: item[0])
+
+        chosen[1].click()
+        return chosen[2]
 
     def _resolve_end_time_select(self, select: Select, requested_value: str) -> Select:
         if self.driver is None:
@@ -1347,6 +1427,39 @@ class WorkflowRunner:
         return str(params[key])
 
     def _inject_derived_params(self, params: dict[str, Any]) -> None:
+        if "booking_date_iso" not in params or "booking_date_human" not in params:
+            parsed_booking_date: Optional[datetime] = None
+            raw_booking_date = str(params.get("booking_date", "")).strip()
+            if raw_booking_date:
+                for fmt in ("%m/%d/%Y", "%m/%d/%y", "%Y-%m-%d", "%b %d, %Y", "%B %d, %Y"):
+                    try:
+                        parsed_booking_date = datetime.strptime(raw_booking_date, fmt)
+                        break
+                    except ValueError:
+                        continue
+            if parsed_booking_date is not None:
+                params.setdefault("booking_date_iso", parsed_booking_date.strftime("%Y-%m-%d"))
+                params.setdefault(
+                    "booking_date_human",
+                    f"{parsed_booking_date.strftime('%B')} {parsed_booking_date.day}, {parsed_booking_date.year}",
+                )
+
+        if "booking_end_time" not in params:
+            raw_booking_time = str(params.get("booking_time", "")).strip().lower().replace(" ", "")
+            raw_duration = params.get("duration_minutes")
+            try:
+                duration_minutes = int(raw_duration) if raw_duration is not None else None
+            except (TypeError, ValueError):
+                duration_minutes = None
+
+            if raw_booking_time and duration_minutes:
+                try:
+                    start_dt = datetime.strptime(raw_booking_time, "%I:%M%p")
+                    end_dt = start_dt + timedelta(minutes=duration_minutes)
+                    params["booking_end_time"] = end_dt.strftime("%I:%M%p").lstrip("0").lower()
+                except ValueError:
+                    pass
+
         if "room_page_url" not in params and "room_keyword" in params:
             room_keyword = str(params.get("room_keyword", "")).strip()
             if room_keyword:

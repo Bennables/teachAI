@@ -948,7 +948,7 @@ async def _call_openai(frames: list[str], prompt: str) -> str:
     return response.choices[0].message.content
 
 async def _call_gemini(frames: list[str], prompt: str) -> str:
-    import google.generativeai as genai
+    import google.genai as genai
     from .config import settings
     
     genai.configure(api_key=settings.GEMINI_API_KEY)
@@ -1910,7 +1910,7 @@ opencv-python-headless==4.9.0.80
 selenium==4.17.2
 webdriver-manager==4.0.1
 openai==1.10.0
-google-generativeai==0.3.2
+google-genai==0.3.2
 aiosqlite==0.19.0
 python-dotenv==1.0.0
 ```

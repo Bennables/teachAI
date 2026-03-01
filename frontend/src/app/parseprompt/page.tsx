@@ -3,13 +3,13 @@
 import { useCallback, useState } from "react";
 import Link from "next/link";
 import { VoiceInput } from "@/components/VoiceInput";
-import { postParsePrompt } from "@/lib/api";
+import { postParsePrompt, type ParsePromptResponse } from "@/lib/api";
 
 export default function ParsePromptPage() {
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [sent, setSent] = useState(false);
+  const [result, setResult] = useState<ParsePromptResponse | null>(null);
 
   const onTranscript = useCallback((newText: string) => {
     setText((prev) => (prev + newText).trimStart());
@@ -19,10 +19,10 @@ export default function ParsePromptPage() {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    setSent(false);
+    setResult(null);
     try {
-      await postParsePrompt(text);
-      setSent(true);
+      const parsed = await postParsePrompt(text);
+      setResult(parsed);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to send prompt");
     } finally {
@@ -41,9 +41,7 @@ export default function ParsePromptPage() {
           <Link href="/" className="text-sm text-cyan-300/70 transition hover:text-cyan-200">← Workflows</Link>
           <p className="mt-5 text-xs uppercase tracking-[0.3em] text-cyan-300/80">Dev Tool</p>
           <h1 className="mt-2 text-3xl font-semibold text-slate-100">Parse Prompt</h1>
-          <p className="mt-2 text-sm text-slate-300/80">
-            Send raw text to the backend for parsing and storage.
-          </p>
+          <p className="mt-2 text-sm text-slate-300/80">Route text into booking or greenhouse actions.</p>
         </header>
 
         <div className="rounded-xl border border-cyan-300/20 bg-slate-950/80 p-6 backdrop-blur-sm">
@@ -74,8 +72,19 @@ export default function ParsePromptPage() {
               <p className="text-sm text-rose-400" role="alert">{error}</p>
             ) : null}
 
-            {sent ? (
-              <p className="text-sm text-emerald-400" role="status">Sent successfully.</p>
+            {result ? (
+              <div className="rounded-lg border border-emerald-300/30 bg-emerald-500/10 p-3 text-sm text-emerald-200" role="status">
+                <p>{result.message}</p>
+                <p className="mt-1 text-xs text-emerald-100/80">Route: {result.route}</p>
+                {result.booking_job_id ? (
+                  <p className="mt-1 text-xs text-emerald-100/80">Booking job: {result.booking_job_id}</p>
+                ) : null}
+                {result.missing_fields.length ? (
+                  <p className="mt-1 text-xs text-amber-200">
+                    Missing fields: {result.missing_fields.join(", ")}
+                  </p>
+                ) : null}
+              </div>
             ) : null}
 
             <button

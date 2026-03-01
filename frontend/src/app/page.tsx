@@ -6,6 +6,7 @@ import { useCallback, useState } from "react";
 import Link from "next/link";
 import { VoiceInput } from "@/components/VoiceInput";
 import { postParsePrompt } from "@/lib/api";
+import { useRouter } from "next/navigation";
 
 type WorkflowStatus = "ready" | "processing" | "failed";
 
@@ -21,6 +22,7 @@ function formatTime(timestamp: number): string {
 }
 
 export default function HomePage() {
+  const router = useRouter();
   const [workflows, setWorkflows] = useState<WorkflowCard[]>([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [workflowName, setWorkflowName] = useState("");
@@ -68,13 +70,13 @@ export default function HomePage() {
   }
 
   const isDistillDisabled = useMemo(
-    () => !workflowName.trim() || !videoFile || distilling,
-    [workflowName, videoFile, distilling]
+    () => !workflowName.trim() || (!videoFile && !useCaseNotes.trim()) || distilling,
+    [workflowName, videoFile, useCaseNotes, distilling]
   );
 
   async function onDistillVideo(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!workflowName.trim() || !videoFile) return;
+    if (!workflowName.trim()) return;
 
     setDistilling(true);
     setProgressStep("Uploading video…");
@@ -84,6 +86,45 @@ export default function HomePage() {
     setNotice(null);
 
     try {
+      if (useCaseNotes.trim()) {
+        const parsed = await postParsePrompt(useCaseNotes.trim());
+        if (parsed.route === "booking") {
+          if (parsed.booking_job_id) {
+            setNotice(
+              `Booking workflow queued (${parsed.booking_job_id}). It will run in the backend queue.`
+            );
+            setWorkflowName("");
+            setVideoFile(null);
+            setUseCaseNotes("");
+            setModalOpen(false);
+            return;
+          }
+          if (parsed.missing_fields.length) {
+            setError(`Booking details missing: ${parsed.missing_fields.join(", ")}`);
+            return;
+          }
+        }
+
+        if (parsed.route === "greenhouse" && parsed.greenhouse_draft) {
+          const qs = new URLSearchParams();
+          const draft = parsed.greenhouse_draft;
+          if (draft.application_url) qs.set("application_url", draft.application_url);
+          if (draft.first_name) qs.set("first_name", draft.first_name);
+          if (draft.last_name) qs.set("last_name", draft.last_name);
+          if (draft.email) qs.set("email", draft.email);
+          if (draft.phone) qs.set("phone", draft.phone);
+          if (draft.address) qs.set("address", draft.address);
+          qs.set("submit", String(Boolean(draft.submit)));
+          router.push(`/greenhouse-run?${qs.toString()}`);
+          return;
+        }
+      }
+
+      if (!videoFile) {
+        setError("Attach a video for distillation, or provide a parseable use-case note.");
+        return;
+      }
+
       const hint = useCaseNotes.trim()
         ? `${workflowName.trim()}. ${useCaseNotes.trim()}`
         : workflowName.trim();

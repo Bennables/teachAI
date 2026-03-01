@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 
 import { getWorkflow, postRun, WorkflowByIdResponse } from "@/lib/api";
@@ -72,39 +73,62 @@ export default function WorkflowPage() {
   }
 
   if (loading) {
-    return <main className="p-6">Loading workflow...</main>;
+    return (
+      <main className="cyber-shell min-h-screen">
+        <div className="parallax-layer parallax-far" aria-hidden="true" />
+        <div className="parallax-layer parallax-mid" aria-hidden="true" />
+        <div className="parallax-layer parallax-near" aria-hidden="true" />
+        <div className="relative z-10 mx-auto w-full max-w-5xl px-6 py-10">
+          <p className="text-slate-300">Loading workflow...</p>
+        </div>
+      </main>
+    );
   }
 
   if (error || !data) {
     return (
-      <main className="p-6">
-        <p className="text-red-600">{error ?? "Workflow not found."}</p>
+      <main className="cyber-shell min-h-screen">
+        <div className="parallax-layer parallax-far" aria-hidden="true" />
+        <div className="parallax-layer parallax-mid" aria-hidden="true" />
+        <div className="parallax-layer parallax-near" aria-hidden="true" />
+        <div className="relative z-10 mx-auto w-full max-w-5xl px-6 py-10">
+          <p className="text-rose-300">{error ?? "Workflow not found."}</p>
+        </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 px-6 py-8">
-      <div className="mx-auto max-w-4xl space-y-6">
-        <section className="rounded-lg border bg-white p-6 shadow-sm">
-          <h1 className="text-2xl font-bold">{data.workflow.name}</h1>
-          <p className="mt-2 text-sm text-gray-600">{data.workflow.description}</p>
-          <p className="mt-2 text-xs text-gray-500">Workflow ID: {data.workflow_id}</p>
+    <main className="cyber-shell min-h-screen">
+      <div className="parallax-layer parallax-far" aria-hidden="true" />
+      <div className="parallax-layer parallax-mid" aria-hidden="true" />
+      <div className="parallax-layer parallax-near" aria-hidden="true" />
+
+      <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-5xl flex-col px-6 py-10">
+        <section className="workflow-card rounded-2xl p-6">
+          <div className="mb-4">
+            <Link href="/" className="text-cyan-200/80 hover:text-cyan-100">
+              ← Home
+            </Link>
+          </div>
+          <h1 className="text-2xl font-semibold text-slate-100">{data.workflow.name}</h1>
+          <p className="mt-2 text-sm text-slate-300/80">{data.workflow.description}</p>
+          <p className="mt-2 text-xs text-slate-400">Workflow ID: {data.workflow_id}</p>
         </section>
 
-        <section className="rounded-lg border bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-semibold">Parameters</h2>
+        <section className="mt-6 workflow-card rounded-2xl p-6">
+          <h2 className="text-lg font-semibold text-slate-100">Parameters</h2>
           <div className="mt-4 space-y-4">
             {data.workflow.parameters.map((parameter) => {
               const inputType = parameter.input_type;
               return (
                 <div key={parameter.key}>
-                  <label className="mb-1 block text-sm font-medium text-gray-700">
+                  <label className="mb-1 block text-sm font-medium text-slate-300">
                     {parameter.description}
                   </label>
                   {inputType === "select" && parameter.options?.length ? (
                     <select
-                      className="w-full rounded-md border px-3 py-2"
+                      className="w-full rounded-lg border border-cyan-300/30 bg-slate-900 px-3 py-2 text-slate-100 outline-none transition focus:border-fuchsia-400"
                       value={paramValues[parameter.key] ?? ""}
                       onChange={(event) =>
                         setParamValues((current) => ({
@@ -122,7 +146,7 @@ export default function WorkflowPage() {
                   ) : (
                     <input
                       type={getInputType(inputType)}
-                      className="w-full rounded-md border px-3 py-2"
+                      className="w-full rounded-lg border border-cyan-300/30 bg-slate-900 px-3 py-2 text-slate-100 outline-none transition focus:border-fuchsia-400"
                       value={paramValues[parameter.key] ?? ""}
                       onChange={(event) =>
                         setParamValues((current) => ({
@@ -140,15 +164,15 @@ export default function WorkflowPage() {
           <button
             onClick={startRun}
             disabled={startingRun}
-            className="mt-6 rounded-md bg-blue-600 px-4 py-2 text-white disabled:cursor-not-allowed disabled:opacity-60"
+            className="cyber-button mt-6 rounded-lg px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-60"
           >
             {startingRun ? "Starting..." : "Start Run"}
           </button>
         </section>
 
-        <section className="rounded-lg border bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-semibold">Workflow JSON</h2>
-          <pre className="mt-3 max-h-[420px] overflow-auto rounded-md bg-gray-900 p-4 text-xs text-gray-100">
+        <section className="mt-6 workflow-card rounded-2xl p-6">
+          <h2 className="text-lg font-semibold text-slate-100">Workflow JSON</h2>
+          <pre className="mt-3 max-h-[420px] overflow-auto rounded-lg border border-cyan-300/20 bg-slate-900/80 p-4 text-xs text-cyan-100/90">
             {JSON.stringify(data.workflow, null, 2)}
           </pre>
         </section>

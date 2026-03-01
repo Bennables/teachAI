@@ -114,55 +114,59 @@ export default function GreenhousePage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 px-6 py-16">
-      <div className="mx-auto max-w-2xl rounded-lg border bg-white p-8 shadow-sm">
-        <div className="mb-6 flex items-center gap-4">
-          <Link href="/" className="text-gray-500 hover:text-gray-700" aria-label="Back to home">
-            ← Home
-          </Link>
-        </div>
-        <h1 className="text-2xl font-bold text-gray-900">Greenhouse job apply</h1>
-        <p className="mt-1 text-gray-600">
-          Enter a Greenhouse job application URL and your details. You can load data from a JSON
-          file or the example below.
-        </p>
+    <main className="cyber-shell min-h-screen">
+      <div className="parallax-layer parallax-far" aria-hidden="true" />
+      <div className="parallax-layer parallax-mid" aria-hidden="true" />
+      <div className="parallax-layer parallax-near" aria-hidden="true" />
 
-        {/* Load from JSON */}
-        <div className="mt-6 rounded-md border border-gray-200 bg-gray-50 p-4">
-          <p className="text-sm font-medium text-gray-700">Load from JSON</p>
-          <p className="mt-1 text-xs text-gray-500">
-            Use a JSON file with keys: application_url, first_name, last_name, email, phone,
-            address (optional), submit (optional).
-          </p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={onLoadExample}
-              className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              Load example
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".json,application/json"
-              onChange={onJsonFileChange}
-              className="hidden"
-              aria-label="Upload JSON file"
-            />
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              Choose JSON file…
-            </button>
+      <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-5xl flex-col px-6 py-10">
+        <div className="workflow-card rounded-2xl p-8">
+          <div className="mb-6 flex items-center gap-4">
+            <Link href="/" className="text-cyan-200/80 hover:text-cyan-100" aria-label="Back to home">
+              ← Home
+            </Link>
           </div>
-        </div>
+          <h1 className="text-2xl font-semibold text-slate-100">Greenhouse job apply</h1>
+          <p className="mt-2 text-sm text-slate-300/80">
+            Enter a Greenhouse job application URL and your details. You can load data from a JSON
+            file or the example below.
+          </p>
 
-        <form onSubmit={onSubmit} className="mt-6 space-y-4">
+          <div className="mt-6 rounded-lg border border-cyan-300/20 bg-slate-900/70 p-4">
+            <p className="text-sm font-medium text-slate-200">Load from JSON</p>
+            <p className="mt-1 text-xs text-slate-400">
+              Use a JSON file with keys: application_url, first_name, last_name, email, phone,
+              address (optional), submit (optional).
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={onLoadExample}
+                className="rounded-md border border-cyan-300/40 bg-cyan-400/10 px-3 py-1.5 text-sm font-medium text-cyan-100 hover:bg-cyan-400/20"
+              >
+                Load example
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".json,application/json"
+                onChange={onJsonFileChange}
+                className="hidden"
+                aria-label="Upload JSON file"
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="rounded-md border border-fuchsia-300/40 bg-fuchsia-400/10 px-3 py-1.5 text-sm font-medium text-fuchsia-100 hover:bg-fuchsia-400/20"
+              >
+                Choose JSON file...
+              </button>
+            </div>
+          </div>
+
+          <form onSubmit={onSubmit} className="mt-6 space-y-4">
           <div>
-            <label htmlFor="application_url" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="application_url" className="block text-sm font-medium text-slate-300">
               Greenhouse application URL *
             </label>
             <input
@@ -172,12 +176,12 @@ export default function GreenhousePage() {
               value={form.application_url}
               onChange={(e) => update("application_url", e.target.value)}
               placeholder="https://boards.greenhouse.io/company/jobs/123456"
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="mt-1 w-full rounded-lg border border-cyan-300/30 bg-slate-900 px-3 py-2 text-slate-100 outline-none transition focus:border-fuchsia-400"
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="first_name" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="first_name" className="block text-sm font-medium text-slate-300">
                 First name *
               </label>
               <input
@@ -186,11 +190,11 @@ export default function GreenhousePage() {
                 required
                 value={form.first_name}
                 onChange={(e) => update("first_name", e.target.value)}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 w-full rounded-lg border border-cyan-300/30 bg-slate-900 px-3 py-2 text-slate-100 outline-none transition focus:border-fuchsia-400"
               />
             </div>
             <div>
-              <label htmlFor="last_name" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="last_name" className="block text-sm font-medium text-slate-300">
                 Last name *
               </label>
               <input
@@ -199,12 +203,12 @@ export default function GreenhousePage() {
                 required
                 value={form.last_name}
                 onChange={(e) => update("last_name", e.target.value)}
-                className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 w-full rounded-lg border border-cyan-300/30 bg-slate-900 px-3 py-2 text-slate-100 outline-none transition focus:border-fuchsia-400"
               />
             </div>
           </div>
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="email" className="block text-sm font-medium text-slate-300">
               Email *
             </label>
             <input
@@ -213,11 +217,11 @@ export default function GreenhousePage() {
               required
               value={form.email}
               onChange={(e) => update("email", e.target.value)}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="mt-1 w-full rounded-lg border border-cyan-300/30 bg-slate-900 px-3 py-2 text-slate-100 outline-none transition focus:border-fuchsia-400"
             />
           </div>
           <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="phone" className="block text-sm font-medium text-slate-300">
               Phone *
             </label>
             <input
@@ -226,11 +230,11 @@ export default function GreenhousePage() {
               required
               value={form.phone}
               onChange={(e) => update("phone", e.target.value)}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="mt-1 w-full rounded-lg border border-cyan-300/30 bg-slate-900 px-3 py-2 text-slate-100 outline-none transition focus:border-fuchsia-400"
             />
           </div>
           <div>
-            <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="address" className="block text-sm font-medium text-slate-300">
               Address (optional)
             </label>
             <input
@@ -238,11 +242,11 @@ export default function GreenhousePage() {
               type="text"
               value={form.address}
               onChange={(e) => update("address", e.target.value)}
-              className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="mt-1 w-full rounded-lg border border-cyan-300/30 bg-slate-900 px-3 py-2 text-slate-100 outline-none transition focus:border-fuchsia-400"
             />
           </div>
           <div>
-            <label htmlFor="resume" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="resume" className="block text-sm font-medium text-slate-300">
               Resume (PDF or DOC) *
             </label>
             <input
@@ -251,10 +255,10 @@ export default function GreenhousePage() {
               accept=".pdf,.doc,.docx,application/pdf,application/msword"
               required={!form.resume}
               onChange={(e) => update("resume", e.target.files?.[0] ?? null)}
-              className="mt-1 w-full text-sm text-gray-600 file:mr-2 file:rounded-md file:border-0 file:bg-gray-100 file:px-3 file:py-1.5 file:text-gray-700"
+              className="mt-1 w-full text-sm text-slate-300 file:mr-2 file:rounded-md file:border-0 file:bg-cyan-500/20 file:px-3 file:py-1.5 file:text-cyan-100"
             />
             {form.resume && (
-              <p className="mt-1 text-xs text-gray-500">Selected: {form.resume.name}</p>
+              <p className="mt-1 text-xs text-slate-400">Selected: {form.resume.name}</p>
             )}
           </div>
           <div className="flex items-center gap-2">
@@ -263,21 +267,25 @@ export default function GreenhousePage() {
               type="checkbox"
               checked={form.submit}
               onChange={(e) => update("submit", e.target.checked)}
-              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              className="h-4 w-4 rounded border-cyan-300/40 bg-slate-900 text-cyan-400 focus:ring-cyan-500"
             />
-            <label htmlFor="submit_after" className="text-sm text-gray-700">
+            <label htmlFor="submit_after" className="text-sm text-slate-300">
               Click submit button after filling (optional)
             </label>
           </div>
 
           {error && (
-            <p className="text-sm text-red-600" role="alert">
+            <p className="text-sm text-rose-300" role="alert">
               {error}
             </p>
           )}
           {result && (
             <div
-              className={`rounded-md p-3 text-sm ${result.success ? "bg-green-50 text-green-800" : "bg-amber-50 text-amber-800"}`}
+              className={`rounded-md border p-3 text-sm ${
+                result.success
+                  ? "border-emerald-300/40 bg-emerald-300/10 text-emerald-100"
+                  : "border-amber-300/40 bg-amber-300/10 text-amber-100"
+              }`}
               role="status"
             >
               {result.message}
@@ -290,11 +298,12 @@ export default function GreenhousePage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-md bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+            className="cyber-button w-full rounded-lg px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? "Applying…" : "Apply to Greenhouse"}
           </button>
-        </form>
+          </form>
+        </div>
       </div>
     </main>
   );

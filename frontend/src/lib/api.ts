@@ -216,16 +216,50 @@ export async function postContinueRun(runId: string): Promise<{ ok: boolean }> {
   });
 }
 
-export async function postParsePrompt(text: string): Promise<void> {
+export interface ParsePromptBookingParams {
+  library: string;
+  booking_date: string;
+  room_keyword: string;
+  booking_time: string;
+  duration_minutes: number;
+  full_name: string;
+  email: string;
+  affiliation: string;
+  purpose_for_reservation_covid_19: string;
+}
+
+export interface ParsePromptGreenhouseDraft {
+  application_url: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  address: string;
+  submit: boolean;
+}
+
+export interface ParsePromptResponse {
+  route: "booking" | "greenhouse" | "unknown";
+  message: string;
+  booking_job_id?: string | null;
+  booking_params?: ParsePromptBookingParams | null;
+  greenhouse_draft?: ParsePromptGreenhouseDraft | null;
+  missing_fields: string[];
+}
+
+export async function postParsePrompt(text: string): Promise<ParsePromptResponse> {
   const response = await fetch(`${API_BASE_URL}/api/parseprompt`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ text })
   });
+  const data = (await response.json().catch(() => ({}))) as
+    | ParsePromptResponse
+    | { detail?: string };
   if (!response.ok) {
-    const data = (await response.json().catch(() => ({}))) as { detail?: string };
-    throw new Error(data.detail ?? `${response.status} ${response.statusText}`);
+    throw new Error((data as { detail?: string }).detail ?? `${response.status} ${response.statusText}`);
   }
+  return data as ParsePromptResponse;
 }
 
 export interface GreenhouseApplyParams {

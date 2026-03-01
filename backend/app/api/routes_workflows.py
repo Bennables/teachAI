@@ -170,6 +170,38 @@ def list_workflows() -> dict[str, list[dict[str, object]]]:
     return {"workflows": response}
 
 
+def _run_distill(job_id: str, saved_path: Path, workflow_hint: Optional[str]) -> None:
+    """Run sync extraction and update job state (called from thread)."""
+    job = _distill_jobs.get(job_id)
+    if not job or job.get("status") != "running":
+        return
+
+    def on_progress(message: str, percent: float) -> None:
+        job["message"] = message
+        job["percent"] = percent
+
+    try:
+        workflow = extract_workflow(saved_path, on_progress=on_progress)
+        if workflow_hint:
+            hint = workflow_hint.strip().lower()
+            if hint:
+                tags = list(workflow.tags)
+                if hint not in tags:
+                    tags.append(hint)
+                workflow = workflow.model_copy(update={"tags": tags})
+
+        workflow_id = f"wf_{uuid4().hex[:8]}"
+        save_workflow(workflow_id, workflow)
+        job["status"] = "done"
+        job["percent"] = 100
+        job["message"] = "Done"
+        job["workflow_id"] = workflow_id
+        job["workflow"] = workflow.model_dump(mode="json")
+    except Exception as e:
+        job["status"] = "error"
+        job["error"] = str(e)
+
+
 @router.post("/distill-video")
 async def distill_video(
     background_tasks: BackgroundTasks,

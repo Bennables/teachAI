@@ -4,7 +4,7 @@ import base64
 import json
 import os
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any, Callable, Optional, Union
 
 from app.core.storage import UCI_FALLBACK_WORKFLOW
 from app.models.schemas import WorkflowTemplate
@@ -183,28 +183,45 @@ def analyze_frame(frame_b64: str, frame_index: int, total_frames: int) -> dict[s
     return _extract_json_from_text(raw)
 
 
-def extract_workflow(video_path: Union[str, Path]) -> WorkflowTemplate:
+def extract_workflow(
+    video_path: Union[str, Path],
+    on_progress: Optional[Callable[[str, float], None]] = None,
+) -> WorkflowTemplate:
     """
     End-to-end workflow extraction:
     1) Extract video frames (1 FPS, max 30)
     2) Analyze each frame with Cactus LFM2-VL
     3) Synthesize WorkflowTemplate JSON
 
+    on_progress: optional callback (message, percent) for progress updates (0-100).
+
     On any failure, returns the hardcoded UCI fallback workflow.
     """
+    def progress(message: str, percent: float) -> None:
+        if on_progress:
+            on_progress(message, percent)
+
     try:
         path = str(video_path)
+        progress("Extracting frames from video", 0)
         frames = extract_frames(path, fps_sample=1, max_frames=30)
+        n = len(frames)
 
-        frame_analyses = [
-            analyze_frame(frame, idx, len(frames)) for idx, frame in enumerate(frames)
-        ]
+        progress(f"Analyzing {n} frames", 5)
+        frame_analyses = []
+        for idx, frame in enumerate(frames):
+            frame_analyses.append(analyze_frame(frame, idx, n))
+            # 5% -> 80% over frames
+            pct = 5 + (idx + 1) / n * 75
+            progress(f"Analyzed frame {idx + 1} of {n}", min(80, pct))
 
+        progress("Synthesizing workflow", 85)
         synthesis_prompt = _SYNTHESIS_PROMPT_TEMPLATE.format(
             frame_analyses=json.dumps(frame_analyses, ensure_ascii=True)
         )
         raw_workflow = _call_cactus(prompt=synthesis_prompt)
         workflow_json = _extract_json_from_text(raw_workflow)
+        progress("Workflow extraction complete", 100)
 
         return WorkflowTemplate.model_validate(workflow_json)
     except Exception:

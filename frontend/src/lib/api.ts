@@ -20,10 +20,25 @@ export interface WorkflowTemplate {
   steps: Record<string, unknown>[];
 }
 
+/** Response from POST /distill-video when starting a background distill job */
+export interface DistillVideoStartResponse {
+  job_id: string;
+}
+
+/** Final payload when distill status stream sends status "done" */
 export interface DistillVideoResponse {
   workflow_id: string;
   workflow: WorkflowTemplate;
   saved_video_path?: string;
+}
+
+export interface DistillStatusEvent {
+  status: "running" | "done" | "error";
+  percent: number;
+  message: string;
+  workflow_id?: string;
+  workflow?: WorkflowTemplate;
+  error?: string;
 }
 
 export interface WorkflowByIdResponse {
@@ -78,19 +93,25 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   return data as T;
 }
 
+/** Start video distillation; returns job_id. Use getDistillStatusStream for progress. */
 export async function postDistillVideo(
   file: File,
   workflowHint?: string
-): Promise<DistillVideoResponse> {
+): Promise<DistillVideoStartResponse> {
   const formData = new FormData();
   formData.append("file", file);
   if (workflowHint) {
     formData.append("workflow_hint", workflowHint);
   }
-  return apiFetch<DistillVideoResponse>("/api/workflows/distill-video", {
+  return apiFetch<DistillVideoStartResponse>("/api/workflows/distill-video", {
     method: "POST",
     body: formData
   });
+}
+
+/** SSE URL for distill job progress. Open with EventSource or fetch. */
+export function getDistillStatusStreamUrl(jobId: string): string {
+  return `${API_BASE_URL}/api/workflows/distill-video/status/${jobId}`;
 }
 
 export async function getWorkflow(workflowId: string): Promise<WorkflowByIdResponse> {

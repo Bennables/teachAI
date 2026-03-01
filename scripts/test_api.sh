@@ -19,20 +19,43 @@ video_file="${tmp_dir}/sample.mp4"
 # Distill route currently validates only non-empty bytes + filename.
 printf 'FAKE-MP4-BYTES' > "${video_file}"
 
-echo "[2/6] Distill video"
+echo "[2/6] Distill video (start job)"
 DISTILL_JSON="$(curl -fsS -X POST "${BASE_URL}/api/workflows/distill-video" \
   -F "file=@${video_file};type=video/mp4" \
   -F "workflow_hint=booking")"
 
-WORKFLOW_ID="$(python3 - <<'PY' "$DISTILL_JSON"
+JOB_ID="$(python3 - <<'PY' "$DISTILL_JSON"
 import json, sys
 payload = json.loads(sys.argv[1])
-wid = payload.get("workflow_id")
-assert wid, payload
-assert payload.get("workflow"), payload
-print(wid)
+jid = payload.get("job_id")
+assert jid, payload
+print(jid)
 PY
 )"
+echo "job_id=${JOB_ID}"
+
+echo "[2b/6] Poll distill status until done"
+WORKFLOW_ID=""
+while IFS= read -r line; do
+  if [[ "$line" == data:* ]]; then
+    WORKFLOW_ID="$(python3 -c "
+import json, sys
+s = sys.stdin.read()
+data = json.loads(s)
+if data.get('status') == 'done':
+    print(data.get('workflow_id', ''))
+elif data.get('status') == 'error':
+    sys.exit(1)
+" <<< "${line#data: }")"
+    if [[ -n "$WORKFLOW_ID" ]]; then
+      break
+    fi
+  fi
+done < <(curl -fsS -N "${BASE_URL}/api/workflows/distill-video/status/${JOB_ID}")
+if [[ -z "$WORKFLOW_ID" ]]; then
+  echo "Distill job did not complete with workflow_id"
+  exit 1
+fi
 echo "workflow_id=${WORKFLOW_ID}"
 
 echo "[3/6] Get workflow ${WORKFLOW_ID}"

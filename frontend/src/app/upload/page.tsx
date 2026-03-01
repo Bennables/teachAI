@@ -3,7 +3,7 @@
 import { DragEvent, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { postDistillVideo } from "@/lib/api";
+import { postDistillVideo, getDistillStatusStreamUrl, type DistillStatusEvent } from "@/lib/api";
 
 function isVideoFile(file: File): boolean {
   return file.type.startsWith("video/");
@@ -14,6 +14,7 @@ export default function UploadPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [dragActive, setDragActive] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState<{ percent: number; message: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const helperText = useMemo(() => {
@@ -45,16 +46,48 @@ export default function UploadPage() {
     }
 
     setLoading(true);
+    setProgress({ percent: 0, message: "Starting…" });
     setError(null);
     try {
-      const data = await postDistillVideo(selectedFile, "booking");
-      router.push(`/workflow/${data.workflow_id}`);
+      const { job_id } = await postDistillVideo(selectedFile, "booking");
+      const url = getDistillStatusStreamUrl(job_id);
+      const res = await fetch(url);
+      if (!res.ok || !res.body) throw new Error("Failed to open progress stream.");
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+        for (const line of lines) {
+          if (line.startsWith("data: ")) {
+            try {
+              const event: DistillStatusEvent = JSON.parse(line.slice(6));
+              setProgress({ percent: event.percent, message: event.message });
+              if (event.status === "done" && event.workflow_id) {
+                router.push(`/workflow/${event.workflow_id}`);
+                return;
+              }
+              if (event.status === "error") {
+                setError(event.error ?? "Distillation failed.");
+                return;
+              }
+            } catch {
+              // ignore parse errors
+            }
+          }
+        }
+      }
     } catch (submitError) {
       const message =
         submitError instanceof Error ? submitError.message : "Failed to distill video.";
       setError(message);
     } finally {
       setLoading(false);
+      setProgress(null);
     }
   }
 
@@ -97,6 +130,21 @@ export default function UploadPage() {
         </div>
 
         {error ? <p className="mt-4 text-sm text-red-600">{error}</p> : null}
+
+        {progress ? (
+          <div className="mt-4">
+            <div className="mb-1 flex justify-between text-xs text-gray-500">
+              <span>{progress.message}</span>
+              <span>{Math.round(progress.percent)}%</span>
+            </div>
+            <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
+              <div
+                className="h-full rounded-full bg-blue-600 transition-[width] duration-300"
+                style={{ width: `${Math.min(100, Math.max(0, progress.percent))}%` }}
+              />
+            </div>
+          </div>
+        ) : null}
 
         <button
           onClick={onSubmit}

@@ -948,7 +948,7 @@ async def _call_openai(frames: list[str], prompt: str) -> str:
     return response.choices[0].message.content
 
 async def _call_gemini(frames: list[str], prompt: str) -> str:
-    import google.generativeai as genai
+    import google.genai as genai
     from .config import settings
     
     genai.configure(api_key=settings.GEMINI_API_KEY)

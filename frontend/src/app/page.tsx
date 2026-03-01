@@ -1,7 +1,7 @@
 "use client";
 
-import { FormEvent, useMemo } from "react";
-import { postDistillVideo } from "@/lib/api";
+import { FormEvent, useMemo, useEffect, useRef } from "react";
+import { postDistillVideo, getDistillStatusStreamUrl, type DistillStatusEvent } from "@/lib/api";
 import { useCallback, useState } from "react";
 import Link from "next/link";
 import { VoiceInput } from "@/components/VoiceInput";
@@ -26,6 +26,7 @@ export default function HomePage() {
   const [workflowName, setWorkflowName] = useState("");
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [distilling, setDistilling] = useState(false);
+  const [distillProgress, setDistillProgress] = useState<{ percent: number; message: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [useCaseNotes, setUseCaseNotes] = useState("");
@@ -67,6 +68,7 @@ export default function HomePage() {
     if (!workflowName.trim() || !videoFile) return;
 
     setDistilling(true);
+    setDistillProgress({ percent: 0, message: "Starting…" });
     setError(null);
     setNotice(null);
 
@@ -74,19 +76,48 @@ export default function HomePage() {
       const hint = useCaseNotes.trim()
         ? `${workflowName.trim()}. ${useCaseNotes.trim()}`
         : workflowName.trim();
-      const response = await postDistillVideo(videoFile, hint);
-      const newWorkflow: WorkflowCard = {
-        id: response.workflow_id,
-        name: response.workflow.name || workflowName.trim(),
-        updatedAt: formatTime(Date.now()),
-        status: "ready"
-      };
-
-      setWorkflows((current) => [newWorkflow, ...current]);
-      setWorkflowName("");
-      setVideoFile(null);
-      setUseCaseNotes("");
-      setModalOpen(false);
+      const { job_id } = await postDistillVideo(videoFile, hint);
+      const url = getDistillStatusStreamUrl(job_id);
+      const res = await fetch(url);
+      if (!res.ok || !res.body) throw new Error("Failed to open progress stream.");
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+        for (const line of lines) {
+          if (line.startsWith("data: ")) {
+            try {
+              const event: DistillStatusEvent = JSON.parse(line.slice(6));
+              setDistillProgress({ percent: event.percent, message: event.message });
+              if (event.status === "done" && event.workflow_id && event.workflow) {
+                const newWorkflow: WorkflowCard = {
+                  id: event.workflow_id,
+                  name: event.workflow.name || workflowName.trim(),
+                  updatedAt: formatTime(Date.now()),
+                  status: "ready"
+                };
+                setWorkflows((current) => [newWorkflow, ...current]);
+                setWorkflowName("");
+                setVideoFile(null);
+                setUseCaseNotes("");
+                setModalOpen(false);
+                break;
+              }
+              if (event.status === "error") {
+                setError(event.error ?? "Distillation failed.");
+                break;
+              }
+            } catch {
+              // ignore parse errors for incomplete chunks
+            }
+          }
+        }
+      }
     } catch (requestError) {
       const message = requestError instanceof Error ? requestError.message : "Unable to distill video.";
       const backendUnavailable =
@@ -110,6 +141,7 @@ export default function HomePage() {
       }
     } finally {
       setDistilling(false);
+      setDistillProgress(null);
     }
   }
 
@@ -249,6 +281,21 @@ export default function HomePage() {
             </div>
 
             {error ? <p className="mb-4 text-sm text-rose-300">{error}</p> : null}
+
+            {distillProgress ? (
+              <div className="mb-4">
+                <div className="mb-1 flex justify-between text-xs text-slate-400">
+                  <span>{distillProgress.message}</span>
+                  <span>{Math.round(distillProgress.percent)}%</span>
+                </div>
+                <div className="h-2 w-full overflow-hidden rounded-full bg-slate-800">
+                  <div
+                    className="h-full rounded-full bg-cyan-400 transition-[width] duration-300"
+                    style={{ width: `${Math.min(100, Math.max(0, distillProgress.percent))}%` }}
+                  />
+                </div>
+              </div>
+            ) : null}
 
             <div className="mt-6 flex justify-end gap-3">
               <button

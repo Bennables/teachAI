@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     vlm_provider: str = "openai"
     openai_api_key: Optional[str] = None
     gemini_api_key: Optional[str] = None
+    grok_api_key: Optional[str] = None
     selenium_headless: bool = False
     selenium_timeout: int = 15
 

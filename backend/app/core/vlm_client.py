@@ -15,8 +15,8 @@ import dotenv
 dotenv.load_dotenv()
 
 try:
-    import google.generativeai as genai
-    from google.generativeai.types import HarmCategory, HarmBlockThreshold
+    import google.genai as genai
+    from google.genai.types import HarmCategory, HarmBlockThreshold
     GEMINI_AVAILABLE = True
 except ImportError:
     GEMINI_AVAILABLE = False

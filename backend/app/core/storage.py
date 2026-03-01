@@ -11,6 +11,43 @@ from app.models.schemas import (
     WorkflowTemplate,
 )
 
+_DATA_DIR = Path(__file__).resolve().parents[2] / "data"
+_WORKFLOWS_FILE = _DATA_DIR / "workflows.json"
+_RUNS_FILE = _DATA_DIR / "runs.json"
+
+
+def _ensure_data_dir() -> None:
+    _DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def _load_workflows_from_disk() -> dict[str, WorkflowTemplate]:
+    _ensure_data_dir()
+    if not _WORKFLOWS_FILE.exists():
+        return {}
+    try:
+        raw: dict[str, Any] = json.loads(_WORKFLOWS_FILE.read_text())
+        return {wid: WorkflowTemplate.model_validate(wf) for wid, wf in raw.items()}
+    except Exception:
+        return {}
+
+
+def _persist_workflows(data: dict[str, WorkflowTemplate]) -> None:
+    _ensure_data_dir()
+    _WORKFLOWS_FILE.write_text(
+        json.dumps({wid: wf.model_dump(mode="json") for wid, wf in data.items()}, indent=2)
+    )
+
+
+def _load_runs_from_disk() -> dict[str, RunState]:
+    _ensure_data_dir()
+    if not _RUNS_FILE.exists():
+        return {}
+    try:
+        raw: dict[str, Any] = json.loads(_RUNS_FILE.read_text())
+        return {rid: RunState.model_validate(rs) for rid, rs in raw.items()}
+    except Exception:
+        return {}
+
 
 def _utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
@@ -127,11 +164,12 @@ def _load_uci_fallback_workflow() -> WorkflowTemplate:
 UCI_FALLBACK_WORKFLOW_ID = "wf_abc123"
 UCI_FALLBACK_WORKFLOW = _load_uci_fallback_workflow()
 
+_disk_workflows = _load_workflows_from_disk()
+if UCI_FALLBACK_WORKFLOW_ID not in _disk_workflows:
+    _disk_workflows[UCI_FALLBACK_WORKFLOW_ID] = UCI_FALLBACK_WORKFLOW
 
-workflows: dict[str, WorkflowTemplate] = {
-    UCI_FALLBACK_WORKFLOW_ID: UCI_FALLBACK_WORKFLOW
-}
-runs: dict[str, RunState] = {}
+workflows: dict[str, WorkflowTemplate] = _disk_workflows
+runs: dict[str, RunState] = _load_runs_from_disk()
 
 
 def list_workflows() -> dict[str, WorkflowTemplate]:
@@ -144,11 +182,22 @@ def get_workflow(workflow_id: str) -> Optional[WorkflowTemplate]:
 
 def save_workflow(workflow_id: str, workflow: WorkflowTemplate) -> WorkflowTemplate:
     workflows[workflow_id] = workflow
+    _persist_workflows(workflows)
     return workflow
 
 
 def delete_workflow(workflow_id: str) -> Optional[WorkflowTemplate]:
-    return workflows.pop(workflow_id, None)
+    removed = workflows.pop(workflow_id, None)
+    if removed is not None:
+        _persist_workflows(workflows)
+    return removed
+
+
+def _persist_runs(data: dict[str, RunState]) -> None:
+    _ensure_data_dir()
+    _RUNS_FILE.write_text(
+        json.dumps({rid: rs.model_dump(mode="json") for rid, rs in data.items()}, indent=2)
+    )
 
 
 def list_runs() -> dict[str, RunState]:
@@ -176,6 +225,7 @@ def save_run(
         disambiguation=None,
     )
     runs[run_id] = run
+    _persist_runs(runs)
     return run
 
 
@@ -208,6 +258,7 @@ def update_run(
 
     updated = run.model_copy(update=updates)
     runs[run_id] = updated
+    _persist_runs(runs)
     return updated
 
 
@@ -231,6 +282,7 @@ def add_log(
     )
     updated_logs = [*run.logs, log]
     runs[run_id] = run.model_copy(update={"logs": updated_logs})
+    _persist_runs(runs)
     return log
 
 

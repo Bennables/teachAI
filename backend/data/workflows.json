@@ -1,0 +1,2784 @@
+{
+  "wf_abc123": {
+    "name": "UCI Library Room Booking",
+    "description": "Best-effort automated booking flow for UCI Libraries rooms using LibCal/Springshare UI patterns.",
+    "start_url": "https://spaces.lib.uci.edu/spaces",
+    "parameters": [
+      {
+        "key": "library",
+        "description": "Library location dropdown value (for example: Gateway Study Center, Science Library, Langson Library).",
+        "example": "Gateway Study Center",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "booking_date",
+        "description": "Booking date in MM/DD/YYYY format",
+        "example": "03/02/2026",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "room_keyword",
+        "description": "Room identifier (e.g., 2106 or Gateway 2106).",
+        "example": "2106",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "booking_time",
+        "description": "Time slot label text to click (must match visible slot text)",
+        "example": "2:00pm",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "duration_minutes",
+        "description": "Meeting duration in minutes (UCI allows 30-minute increments up to 120 per day)",
+        "example": "60",
+        "required": true,
+        "input_type": "select"
+      },
+      {
+        "key": "full_name",
+        "description": "Full name for reservation form",
+        "example": "Alex Anteater",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "email",
+        "description": "UCI email for reservation form",
+        "example": "alex@uci.edu",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "affiliation",
+        "description": "Affiliation dropdown value",
+        "example": "Undergraduate",
+        "required": true,
+        "input_type": "select"
+      },
+      {
+        "key": "purpose_for_reservation_covid_19",
+        "description": "Purpose for Reservation COVID-19 dropdown value",
+        "example": "Studying",
+        "required": true,
+        "input_type": "text"
+      }
+    ],
+    "steps": [
+      {
+        "type": "GOTO",
+        "description": "Open UCI Libraries spaces page",
+        "resolved_css_selector": null,
+        "url": "https://spaces.lib.uci.edu/spaces"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for page content to appear",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "Space Availability"
+      },
+      {
+        "type": "WAIT",
+        "description": "Allow room grid and scripts to fully initialize",
+        "resolved_css_selector": null,
+        "seconds": 0.4,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SELECT",
+        "description": "Select library from Location dropdown",
+        "resolved_css_selector": null,
+        "target_semantic": "Location",
+        "css_selector_hint": "select[name*='location'], select[id*='location'], select[name*='lid'], select[id*='lid'], select[aria-label*='Location']",
+        "value": "{{library}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for room list to refresh for selected library",
+        "resolved_css_selector": null,
+        "seconds": 1.0,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "GOTO",
+        "description": "Open room details page directly",
+        "resolved_css_selector": null,
+        "url": "{{room_page_url}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for room page booking grid to load",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "First select a start time from the grid below"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select room start slot on room page",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{booking_time}}",
+        "target_semantic": null,
+        "css_selector_hint": "a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][title*='{{booking_time}}'], a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][aria-label*='{{booking_time}}'], a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][data-original-title*='{{booking_time}}'], a.s-lc-eq-avail[title*='{{booking_date_human}}'][title*='{{booking_time}}'], a.s-lc-eq-avail[title*='{{booking_time}}'], a.s-lc-eq-avail[aria-label*='{{booking_time}}'], a.s-lc-eq-avail[data-original-title*='{{booking_time}}']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait briefly for end-time controls to appear",
+        "resolved_css_selector": null,
+        "seconds": 0.2,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SELECT",
+        "description": "Select end time from dropdown based on computed duration",
+        "resolved_css_selector": null,
+        "target_semantic": "End Time",
+        "css_selector_hint": "select[name*='end'], select[id*='end'], select[name*='to'], select[id*='to'], select[aria-label*='End'], select[aria-label*='To']",
+        "value": "{{booking_end_time}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for selected slot state to apply",
+        "resolved_css_selector": null,
+        "seconds": 0.8,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "CLICK",
+        "description": "Click Submit Times to proceed to booking form",
+        "resolved_css_selector": null,
+        "target_text_hint": "Submit Times",
+        "target_semantic": "Submit Times",
+        "css_selector_hint": "button#submit_times, button[name='submit_times'], button.btn-submit-times, input[value='Submit Times'], button[type='submit']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for checkout form after Submit Times",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "Space Checkout"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select Affiliation option",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{affiliation}}",
+        "target_semantic": null,
+        "css_selector_hint": "label, .radio, span, div"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select Purpose for Reservation COVID-19 option",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{purpose_for_reservation_covid_19}}",
+        "target_semantic": null,
+        "css_selector_hint": "label, .checkbox, span, div"
+      },
+      {
+        "type": "SCREENSHOT",
+        "description": "Capture filled reservation form before submission",
+        "resolved_css_selector": null,
+        "filename": "before_submit.png"
+      },
+      {
+        "type": "CLICK",
+        "description": "Submit my booking",
+        "resolved_css_selector": null,
+        "target_text_hint": "Submit my booking",
+        "target_semantic": null,
+        "css_selector_hint": "button[type='submit'], input[type='submit'], button.s-lc-rm-book, button.btn-primary, button[name='submit']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for confirmation state",
+        "resolved_css_selector": null,
+        "seconds": 2.0,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SCREENSHOT",
+        "description": "Capture post-submit confirmation view",
+        "resolved_css_selector": null,
+        "filename": "after_submit.png"
+      }
+    ],
+    "category": "booking",
+    "tags": [
+      "uci",
+      "library",
+      "booking"
+    ],
+    "estimated_duration_seconds": null
+  },
+  "wf_2d27be64": {
+    "name": "UCI Library Room Booking",
+    "description": "Best-effort automated booking flow for UCI Libraries rooms using LibCal/Springshare UI patterns.",
+    "start_url": "https://spaces.lib.uci.edu/spaces",
+    "parameters": [
+      {
+        "key": "library",
+        "description": "Library location dropdown value (for example: Gateway Study Center, Science Library, Langson Library).",
+        "example": "Gateway Study Center",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "booking_date",
+        "description": "Booking date in MM/DD/YYYY format",
+        "example": "03/02/2026",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "room_keyword",
+        "description": "Room identifier (e.g., 2106 or Gateway 2106).",
+        "example": "2106",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "booking_time",
+        "description": "Time slot label text to click (must match visible slot text)",
+        "example": "2:00pm",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "duration_minutes",
+        "description": "Meeting duration in minutes (UCI allows 30-minute increments up to 120 per day)",
+        "example": "60",
+        "required": true,
+        "input_type": "select"
+      },
+      {
+        "key": "full_name",
+        "description": "Full name for reservation form",
+        "example": "Alex Anteater",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "email",
+        "description": "UCI email for reservation form",
+        "example": "alex@uci.edu",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "affiliation",
+        "description": "Affiliation dropdown value",
+        "example": "Undergraduate",
+        "required": true,
+        "input_type": "select"
+      },
+      {
+        "key": "purpose_for_reservation_covid_19",
+        "description": "Purpose for Reservation COVID-19 dropdown value",
+        "example": "Studying",
+        "required": true,
+        "input_type": "text"
+      }
+    ],
+    "steps": [
+      {
+        "type": "GOTO",
+        "description": "Open UCI Libraries spaces page",
+        "resolved_css_selector": null,
+        "url": "https://spaces.lib.uci.edu/spaces"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for page content to appear",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "Space Availability"
+      },
+      {
+        "type": "WAIT",
+        "description": "Allow room grid and scripts to fully initialize",
+        "resolved_css_selector": null,
+        "seconds": 0.4,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SELECT",
+        "description": "Select library from Location dropdown",
+        "resolved_css_selector": null,
+        "target_semantic": "Location",
+        "css_selector_hint": "select[name*='location'], select[id*='location'], select[name*='lid'], select[id*='lid'], select[aria-label*='Location']",
+        "value": "{{library}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for room list to refresh for selected library",
+        "resolved_css_selector": null,
+        "seconds": 1.0,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "GOTO",
+        "description": "Open room details page directly",
+        "resolved_css_selector": null,
+        "url": "{{room_page_url}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for room page booking grid to load",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "First select a start time from the grid below"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select room start slot on room page",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{booking_time}}",
+        "target_semantic": null,
+        "css_selector_hint": "a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][title*='{{booking_time}}'], a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][aria-label*='{{booking_time}}'], a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][data-original-title*='{{booking_time}}'], a.s-lc-eq-avail[title*='{{booking_date_human}}'][title*='{{booking_time}}'], a.s-lc-eq-avail[title*='{{booking_time}}'], a.s-lc-eq-avail[aria-label*='{{booking_time}}'], a.s-lc-eq-avail[data-original-title*='{{booking_time}}']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait briefly for end-time controls to appear",
+        "resolved_css_selector": null,
+        "seconds": 0.2,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SELECT",
+        "description": "Select end time from dropdown based on computed duration",
+        "resolved_css_selector": null,
+        "target_semantic": "End Time",
+        "css_selector_hint": "select[name*='end'], select[id*='end'], select[name*='to'], select[id*='to'], select[aria-label*='End'], select[aria-label*='To']",
+        "value": "{{booking_end_time}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for selected slot state to apply",
+        "resolved_css_selector": null,
+        "seconds": 0.8,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "CLICK",
+        "description": "Click Submit Times to proceed to booking form",
+        "resolved_css_selector": null,
+        "target_text_hint": "Submit Times",
+        "target_semantic": "Submit Times",
+        "css_selector_hint": "button#submit_times, button[name='submit_times'], button.btn-submit-times, input[value='Submit Times'], button[type='submit']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for checkout form after Submit Times",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "Space Checkout"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select Affiliation option",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{affiliation}}",
+        "target_semantic": null,
+        "css_selector_hint": "label, .radio, span, div"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select Purpose for Reservation COVID-19 option",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{purpose_for_reservation_covid_19}}",
+        "target_semantic": null,
+        "css_selector_hint": "label, .checkbox, span, div"
+      },
+      {
+        "type": "SCREENSHOT",
+        "description": "Capture filled reservation form before submission",
+        "resolved_css_selector": null,
+        "filename": "before_submit.png"
+      },
+      {
+        "type": "CLICK",
+        "description": "Submit my booking",
+        "resolved_css_selector": null,
+        "target_text_hint": "Submit my booking",
+        "target_semantic": null,
+        "css_selector_hint": "button[type='submit'], input[type='submit'], button.s-lc-rm-book, button.btn-primary, button[name='submit']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for confirmation state",
+        "resolved_css_selector": null,
+        "seconds": 2.0,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SCREENSHOT",
+        "description": "Capture post-submit confirmation view",
+        "resolved_css_selector": null,
+        "filename": "after_submit.png"
+      }
+    ],
+    "category": "booking",
+    "tags": [
+      "uci",
+      "library",
+      "booking",
+      "afds"
+    ],
+    "estimated_duration_seconds": null
+  },
+  "wf_9d8af409": {
+    "name": "UCI Library Room Booking",
+    "description": "Best-effort automated booking flow for UCI Libraries rooms using LibCal/Springshare UI patterns.",
+    "start_url": "https://spaces.lib.uci.edu/spaces",
+    "parameters": [
+      {
+        "key": "library",
+        "description": "Library location dropdown value (for example: Gateway Study Center, Science Library, Langson Library).",
+        "example": "Gateway Study Center",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "booking_date",
+        "description": "Booking date in MM/DD/YYYY format",
+        "example": "03/02/2026",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "room_keyword",
+        "description": "Room identifier (e.g., 2106 or Gateway 2106).",
+        "example": "2106",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "booking_time",
+        "description": "Time slot label text to click (must match visible slot text)",
+        "example": "2:00pm",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "duration_minutes",
+        "description": "Meeting duration in minutes (UCI allows 30-minute increments up to 120 per day)",
+        "example": "60",
+        "required": true,
+        "input_type": "select"
+      },
+      {
+        "key": "full_name",
+        "description": "Full name for reservation form",
+        "example": "Alex Anteater",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "email",
+        "description": "UCI email for reservation form",
+        "example": "alex@uci.edu",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "affiliation",
+        "description": "Affiliation dropdown value",
+        "example": "Undergraduate",
+        "required": true,
+        "input_type": "select"
+      },
+      {
+        "key": "purpose_for_reservation_covid_19",
+        "description": "Purpose for Reservation COVID-19 dropdown value",
+        "example": "Studying",
+        "required": true,
+        "input_type": "text"
+      }
+    ],
+    "steps": [
+      {
+        "type": "GOTO",
+        "description": "Open UCI Libraries spaces page",
+        "resolved_css_selector": null,
+        "url": "https://spaces.lib.uci.edu/spaces"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for page content to appear",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "Space Availability"
+      },
+      {
+        "type": "WAIT",
+        "description": "Allow room grid and scripts to fully initialize",
+        "resolved_css_selector": null,
+        "seconds": 0.4,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SELECT",
+        "description": "Select library from Location dropdown",
+        "resolved_css_selector": null,
+        "target_semantic": "Location",
+        "css_selector_hint": "select[name*='location'], select[id*='location'], select[name*='lid'], select[id*='lid'], select[aria-label*='Location']",
+        "value": "{{library}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for room list to refresh for selected library",
+        "resolved_css_selector": null,
+        "seconds": 1.0,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "GOTO",
+        "description": "Open room details page directly",
+        "resolved_css_selector": null,
+        "url": "{{room_page_url}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for room page booking grid to load",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "First select a start time from the grid below"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select room start slot on room page",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{booking_time}}",
+        "target_semantic": null,
+        "css_selector_hint": "a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][title*='{{booking_time}}'], a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][aria-label*='{{booking_time}}'], a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][data-original-title*='{{booking_time}}'], a.s-lc-eq-avail[title*='{{booking_date_human}}'][title*='{{booking_time}}'], a.s-lc-eq-avail[title*='{{booking_time}}'], a.s-lc-eq-avail[aria-label*='{{booking_time}}'], a.s-lc-eq-avail[data-original-title*='{{booking_time}}']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait briefly for end-time controls to appear",
+        "resolved_css_selector": null,
+        "seconds": 0.2,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SELECT",
+        "description": "Select end time from dropdown based on computed duration",
+        "resolved_css_selector": null,
+        "target_semantic": "End Time",
+        "css_selector_hint": "select[name*='end'], select[id*='end'], select[name*='to'], select[id*='to'], select[aria-label*='End'], select[aria-label*='To']",
+        "value": "{{booking_end_time}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for selected slot state to apply",
+        "resolved_css_selector": null,
+        "seconds": 0.8,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "CLICK",
+        "description": "Click Submit Times to proceed to booking form",
+        "resolved_css_selector": null,
+        "target_text_hint": "Submit Times",
+        "target_semantic": "Submit Times",
+        "css_selector_hint": "button#submit_times, button[name='submit_times'], button.btn-submit-times, input[value='Submit Times'], button[type='submit']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for checkout form after Submit Times",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "Space Checkout"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select Affiliation option",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{affiliation}}",
+        "target_semantic": null,
+        "css_selector_hint": "label, .radio, span, div"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select Purpose for Reservation COVID-19 option",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{purpose_for_reservation_covid_19}}",
+        "target_semantic": null,
+        "css_selector_hint": "label, .checkbox, span, div"
+      },
+      {
+        "type": "SCREENSHOT",
+        "description": "Capture filled reservation form before submission",
+        "resolved_css_selector": null,
+        "filename": "before_submit.png"
+      },
+      {
+        "type": "CLICK",
+        "description": "Submit my booking",
+        "resolved_css_selector": null,
+        "target_text_hint": "Submit my booking",
+        "target_semantic": null,
+        "css_selector_hint": "button[type='submit'], input[type='submit'], button.s-lc-rm-book, button.btn-primary, button[name='submit']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for confirmation state",
+        "resolved_css_selector": null,
+        "seconds": 2.0,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SCREENSHOT",
+        "description": "Capture post-submit confirmation view",
+        "resolved_css_selector": null,
+        "filename": "after_submit.png"
+      }
+    ],
+    "category": "booking",
+    "tags": [
+      "uci",
+      "library",
+      "booking",
+      "sdf"
+    ],
+    "estimated_duration_seconds": null
+  },
+  "wf_c1c37a5e": {
+    "name": "UCI Library Room Booking",
+    "description": "Best-effort automated booking flow for UCI Libraries rooms using LibCal/Springshare UI patterns.",
+    "start_url": "https://spaces.lib.uci.edu/spaces",
+    "parameters": [
+      {
+        "key": "library",
+        "description": "Library location dropdown value (for example: Gateway Study Center, Science Library, Langson Library).",
+        "example": "Gateway Study Center",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "booking_date",
+        "description": "Booking date in MM/DD/YYYY format",
+        "example": "03/02/2026",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "room_keyword",
+        "description": "Room identifier (e.g., 2106 or Gateway 2106).",
+        "example": "2106",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "booking_time",
+        "description": "Time slot label text to click (must match visible slot text)",
+        "example": "2:00pm",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "duration_minutes",
+        "description": "Meeting duration in minutes (UCI allows 30-minute increments up to 120 per day)",
+        "example": "60",
+        "required": true,
+        "input_type": "select"
+      },
+      {
+        "key": "full_name",
+        "description": "Full name for reservation form",
+        "example": "Alex Anteater",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "email",
+        "description": "UCI email for reservation form",
+        "example": "alex@uci.edu",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "affiliation",
+        "description": "Affiliation dropdown value",
+        "example": "Undergraduate",
+        "required": true,
+        "input_type": "select"
+      },
+      {
+        "key": "purpose_for_reservation_covid_19",
+        "description": "Purpose for Reservation COVID-19 dropdown value",
+        "example": "Studying",
+        "required": true,
+        "input_type": "text"
+      }
+    ],
+    "steps": [
+      {
+        "type": "GOTO",
+        "description": "Open UCI Libraries spaces page",
+        "resolved_css_selector": null,
+        "url": "https://spaces.lib.uci.edu/spaces"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for page content to appear",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "Space Availability"
+      },
+      {
+        "type": "WAIT",
+        "description": "Allow room grid and scripts to fully initialize",
+        "resolved_css_selector": null,
+        "seconds": 0.4,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SELECT",
+        "description": "Select library from Location dropdown",
+        "resolved_css_selector": null,
+        "target_semantic": "Location",
+        "css_selector_hint": "select[name*='location'], select[id*='location'], select[name*='lid'], select[id*='lid'], select[aria-label*='Location']",
+        "value": "{{library}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for room list to refresh for selected library",
+        "resolved_css_selector": null,
+        "seconds": 1.0,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "GOTO",
+        "description": "Open room details page directly",
+        "resolved_css_selector": null,
+        "url": "{{room_page_url}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for room page booking grid to load",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "First select a start time from the grid below"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select room start slot on room page",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{booking_time}}",
+        "target_semantic": null,
+        "css_selector_hint": "a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][title*='{{booking_time}}'], a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][aria-label*='{{booking_time}}'], a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][data-original-title*='{{booking_time}}'], a.s-lc-eq-avail[title*='{{booking_date_human}}'][title*='{{booking_time}}'], a.s-lc-eq-avail[title*='{{booking_time}}'], a.s-lc-eq-avail[aria-label*='{{booking_time}}'], a.s-lc-eq-avail[data-original-title*='{{booking_time}}']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait briefly for end-time controls to appear",
+        "resolved_css_selector": null,
+        "seconds": 0.2,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SELECT",
+        "description": "Select end time from dropdown based on computed duration",
+        "resolved_css_selector": null,
+        "target_semantic": "End Time",
+        "css_selector_hint": "select[name*='end'], select[id*='end'], select[name*='to'], select[id*='to'], select[aria-label*='End'], select[aria-label*='To']",
+        "value": "{{booking_end_time}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for selected slot state to apply",
+        "resolved_css_selector": null,
+        "seconds": 0.8,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "CLICK",
+        "description": "Click Submit Times to proceed to booking form",
+        "resolved_css_selector": null,
+        "target_text_hint": "Submit Times",
+        "target_semantic": "Submit Times",
+        "css_selector_hint": "button#submit_times, button[name='submit_times'], button.btn-submit-times, input[value='Submit Times'], button[type='submit']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for checkout form after Submit Times",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "Space Checkout"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select Affiliation option",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{affiliation}}",
+        "target_semantic": null,
+        "css_selector_hint": "label, .radio, span, div"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select Purpose for Reservation COVID-19 option",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{purpose_for_reservation_covid_19}}",
+        "target_semantic": null,
+        "css_selector_hint": "label, .checkbox, span, div"
+      },
+      {
+        "type": "SCREENSHOT",
+        "description": "Capture filled reservation form before submission",
+        "resolved_css_selector": null,
+        "filename": "before_submit.png"
+      },
+      {
+        "type": "CLICK",
+        "description": "Submit my booking",
+        "resolved_css_selector": null,
+        "target_text_hint": "Submit my booking",
+        "target_semantic": null,
+        "css_selector_hint": "button[type='submit'], input[type='submit'], button.s-lc-rm-book, button.btn-primary, button[name='submit']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for confirmation state",
+        "resolved_css_selector": null,
+        "seconds": 2.0,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SCREENSHOT",
+        "description": "Capture post-submit confirmation view",
+        "resolved_css_selector": null,
+        "filename": "after_submit.png"
+      }
+    ],
+    "category": "booking",
+    "tags": [
+      "uci",
+      "library",
+      "booking",
+      "ifsd"
+    ],
+    "estimated_duration_seconds": null
+  },
+  "wf_4293663e": {
+    "name": "UCI Library Room Booking",
+    "description": "Best-effort automated booking flow for UCI Libraries rooms using LibCal/Springshare UI patterns.",
+    "start_url": "https://spaces.lib.uci.edu/spaces",
+    "parameters": [
+      {
+        "key": "library",
+        "description": "Library location dropdown value (for example: Gateway Study Center, Science Library, Langson Library).",
+        "example": "Gateway Study Center",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "booking_date",
+        "description": "Booking date in MM/DD/YYYY format",
+        "example": "03/02/2026",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "room_keyword",
+        "description": "Room identifier (e.g., 2106 or Gateway 2106).",
+        "example": "2106",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "booking_time",
+        "description": "Time slot label text to click (must match visible slot text)",
+        "example": "2:00pm",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "duration_minutes",
+        "description": "Meeting duration in minutes (UCI allows 30-minute increments up to 120 per day)",
+        "example": "60",
+        "required": true,
+        "input_type": "select"
+      },
+      {
+        "key": "full_name",
+        "description": "Full name for reservation form",
+        "example": "Alex Anteater",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "email",
+        "description": "UCI email for reservation form",
+        "example": "alex@uci.edu",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "affiliation",
+        "description": "Affiliation dropdown value",
+        "example": "Undergraduate",
+        "required": true,
+        "input_type": "select"
+      },
+      {
+        "key": "purpose_for_reservation_covid_19",
+        "description": "Purpose for Reservation COVID-19 dropdown value",
+        "example": "Studying",
+        "required": true,
+        "input_type": "text"
+      }
+    ],
+    "steps": [
+      {
+        "type": "GOTO",
+        "description": "Open UCI Libraries spaces page",
+        "resolved_css_selector": null,
+        "url": "https://spaces.lib.uci.edu/spaces"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for page content to appear",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "Space Availability"
+      },
+      {
+        "type": "WAIT",
+        "description": "Allow room grid and scripts to fully initialize",
+        "resolved_css_selector": null,
+        "seconds": 0.4,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SELECT",
+        "description": "Select library from Location dropdown",
+        "resolved_css_selector": null,
+        "target_semantic": "Location",
+        "css_selector_hint": "select[name*='location'], select[id*='location'], select[name*='lid'], select[id*='lid'], select[aria-label*='Location']",
+        "value": "{{library}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for room list to refresh for selected library",
+        "resolved_css_selector": null,
+        "seconds": 1.0,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "GOTO",
+        "description": "Open room details page directly",
+        "resolved_css_selector": null,
+        "url": "{{room_page_url}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for room page booking grid to load",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "First select a start time from the grid below"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select room start slot on room page",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{booking_time}}",
+        "target_semantic": null,
+        "css_selector_hint": "a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][title*='{{booking_time}}'], a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][aria-label*='{{booking_time}}'], a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][data-original-title*='{{booking_time}}'], a.s-lc-eq-avail[title*='{{booking_date_human}}'][title*='{{booking_time}}'], a.s-lc-eq-avail[title*='{{booking_time}}'], a.s-lc-eq-avail[aria-label*='{{booking_time}}'], a.s-lc-eq-avail[data-original-title*='{{booking_time}}']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait briefly for end-time controls to appear",
+        "resolved_css_selector": null,
+        "seconds": 0.2,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SELECT",
+        "description": "Select end time from dropdown based on computed duration",
+        "resolved_css_selector": null,
+        "target_semantic": "End Time",
+        "css_selector_hint": "select[name*='end'], select[id*='end'], select[name*='to'], select[id*='to'], select[aria-label*='End'], select[aria-label*='To']",
+        "value": "{{booking_end_time}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for selected slot state to apply",
+        "resolved_css_selector": null,
+        "seconds": 0.8,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "CLICK",
+        "description": "Click Submit Times to proceed to booking form",
+        "resolved_css_selector": null,
+        "target_text_hint": "Submit Times",
+        "target_semantic": "Submit Times",
+        "css_selector_hint": "button#submit_times, button[name='submit_times'], button.btn-submit-times, input[value='Submit Times'], button[type='submit']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for checkout form after Submit Times",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "Space Checkout"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select Affiliation option",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{affiliation}}",
+        "target_semantic": null,
+        "css_selector_hint": "label, .radio, span, div"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select Purpose for Reservation COVID-19 option",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{purpose_for_reservation_covid_19}}",
+        "target_semantic": null,
+        "css_selector_hint": "label, .checkbox, span, div"
+      },
+      {
+        "type": "SCREENSHOT",
+        "description": "Capture filled reservation form before submission",
+        "resolved_css_selector": null,
+        "filename": "before_submit.png"
+      },
+      {
+        "type": "CLICK",
+        "description": "Submit my booking",
+        "resolved_css_selector": null,
+        "target_text_hint": "Submit my booking",
+        "target_semantic": null,
+        "css_selector_hint": "button[type='submit'], input[type='submit'], button.s-lc-rm-book, button.btn-primary, button[name='submit']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for confirmation state",
+        "resolved_css_selector": null,
+        "seconds": 2.0,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SCREENSHOT",
+        "description": "Capture post-submit confirmation view",
+        "resolved_css_selector": null,
+        "filename": "after_submit.png"
+      }
+    ],
+    "category": "booking",
+    "tags": [
+      "uci",
+      "library",
+      "booking",
+      "asdf"
+    ],
+    "estimated_duration_seconds": null
+  },
+  "wf_3d6de5a4": {
+    "name": "UCI Library Room Booking",
+    "description": "Best-effort automated booking flow for UCI Libraries rooms using LibCal/Springshare UI patterns.",
+    "start_url": "https://spaces.lib.uci.edu/spaces",
+    "parameters": [
+      {
+        "key": "library",
+        "description": "Library location dropdown value (for example: Gateway Study Center, Science Library, Langson Library).",
+        "example": "Gateway Study Center",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "booking_date",
+        "description": "Booking date in MM/DD/YYYY format",
+        "example": "03/02/2026",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "room_keyword",
+        "description": "Room identifier (e.g., 2106 or Gateway 2106).",
+        "example": "2106",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "booking_time",
+        "description": "Time slot label text to click (must match visible slot text)",
+        "example": "2:00pm",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "duration_minutes",
+        "description": "Meeting duration in minutes (UCI allows 30-minute increments up to 120 per day)",
+        "example": "60",
+        "required": true,
+        "input_type": "select"
+      },
+      {
+        "key": "full_name",
+        "description": "Full name for reservation form",
+        "example": "Alex Anteater",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "email",
+        "description": "UCI email for reservation form",
+        "example": "alex@uci.edu",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "affiliation",
+        "description": "Affiliation dropdown value",
+        "example": "Undergraduate",
+        "required": true,
+        "input_type": "select"
+      },
+      {
+        "key": "purpose_for_reservation_covid_19",
+        "description": "Purpose for Reservation COVID-19 dropdown value",
+        "example": "Studying",
+        "required": true,
+        "input_type": "text"
+      }
+    ],
+    "steps": [
+      {
+        "type": "GOTO",
+        "description": "Open UCI Libraries spaces page",
+        "resolved_css_selector": null,
+        "url": "https://spaces.lib.uci.edu/spaces"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for page content to appear",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "Space Availability"
+      },
+      {
+        "type": "WAIT",
+        "description": "Allow room grid and scripts to fully initialize",
+        "resolved_css_selector": null,
+        "seconds": 0.4,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SELECT",
+        "description": "Select library from Location dropdown",
+        "resolved_css_selector": null,
+        "target_semantic": "Location",
+        "css_selector_hint": "select[name*='location'], select[id*='location'], select[name*='lid'], select[id*='lid'], select[aria-label*='Location']",
+        "value": "{{library}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for room list to refresh for selected library",
+        "resolved_css_selector": null,
+        "seconds": 1.0,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "GOTO",
+        "description": "Open room details page directly",
+        "resolved_css_selector": null,
+        "url": "{{room_page_url}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for room page booking grid to load",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "First select a start time from the grid below"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select room start slot on room page",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{booking_time}}",
+        "target_semantic": null,
+        "css_selector_hint": "a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][title*='{{booking_time}}'], a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][aria-label*='{{booking_time}}'], a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][data-original-title*='{{booking_time}}'], a.s-lc-eq-avail[title*='{{booking_date_human}}'][title*='{{booking_time}}'], a.s-lc-eq-avail[title*='{{booking_time}}'], a.s-lc-eq-avail[aria-label*='{{booking_time}}'], a.s-lc-eq-avail[data-original-title*='{{booking_time}}']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait briefly for end-time controls to appear",
+        "resolved_css_selector": null,
+        "seconds": 0.2,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SELECT",
+        "description": "Select end time from dropdown based on computed duration",
+        "resolved_css_selector": null,
+        "target_semantic": "End Time",
+        "css_selector_hint": "select[name*='end'], select[id*='end'], select[name*='to'], select[id*='to'], select[aria-label*='End'], select[aria-label*='To']",
+        "value": "{{booking_end_time}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for selected slot state to apply",
+        "resolved_css_selector": null,
+        "seconds": 0.8,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "CLICK",
+        "description": "Click Submit Times to proceed to booking form",
+        "resolved_css_selector": null,
+        "target_text_hint": "Submit Times",
+        "target_semantic": "Submit Times",
+        "css_selector_hint": "button#submit_times, button[name='submit_times'], button.btn-submit-times, input[value='Submit Times'], button[type='submit']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for checkout form after Submit Times",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "Space Checkout"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select Affiliation option",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{affiliation}}",
+        "target_semantic": null,
+        "css_selector_hint": "label, .radio, span, div"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select Purpose for Reservation COVID-19 option",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{purpose_for_reservation_covid_19}}",
+        "target_semantic": null,
+        "css_selector_hint": "label, .checkbox, span, div"
+      },
+      {
+        "type": "SCREENSHOT",
+        "description": "Capture filled reservation form before submission",
+        "resolved_css_selector": null,
+        "filename": "before_submit.png"
+      },
+      {
+        "type": "CLICK",
+        "description": "Submit my booking",
+        "resolved_css_selector": null,
+        "target_text_hint": "Submit my booking",
+        "target_semantic": null,
+        "css_selector_hint": "button[type='submit'], input[type='submit'], button.s-lc-rm-book, button.btn-primary, button[name='submit']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for confirmation state",
+        "resolved_css_selector": null,
+        "seconds": 2.0,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SCREENSHOT",
+        "description": "Capture post-submit confirmation view",
+        "resolved_css_selector": null,
+        "filename": "after_submit.png"
+      }
+    ],
+    "category": "booking",
+    "tags": [
+      "uci",
+      "library",
+      "booking",
+      "dfs"
+    ],
+    "estimated_duration_seconds": null
+  },
+  "wf_b6571f61": {
+    "name": "UCI Library Room Booking",
+    "description": "Best-effort automated booking flow for UCI Libraries rooms using LibCal/Springshare UI patterns.",
+    "start_url": "https://spaces.lib.uci.edu/spaces",
+    "parameters": [
+      {
+        "key": "library",
+        "description": "Library location dropdown value (for example: Gateway Study Center, Science Library, Langson Library).",
+        "example": "Gateway Study Center",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "booking_date",
+        "description": "Booking date in MM/DD/YYYY format",
+        "example": "03/02/2026",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "room_keyword",
+        "description": "Room identifier (e.g., 2106 or Gateway 2106).",
+        "example": "2106",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "booking_time",
+        "description": "Time slot label text to click (must match visible slot text)",
+        "example": "2:00pm",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "duration_minutes",
+        "description": "Meeting duration in minutes (UCI allows 30-minute increments up to 120 per day)",
+        "example": "60",
+        "required": true,
+        "input_type": "select"
+      },
+      {
+        "key": "full_name",
+        "description": "Full name for reservation form",
+        "example": "Alex Anteater",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "email",
+        "description": "UCI email for reservation form",
+        "example": "alex@uci.edu",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "affiliation",
+        "description": "Affiliation dropdown value",
+        "example": "Undergraduate",
+        "required": true,
+        "input_type": "select"
+      },
+      {
+        "key": "purpose_for_reservation_covid_19",
+        "description": "Purpose for Reservation COVID-19 dropdown value",
+        "example": "Studying",
+        "required": true,
+        "input_type": "text"
+      }
+    ],
+    "steps": [
+      {
+        "type": "GOTO",
+        "description": "Open UCI Libraries spaces page",
+        "resolved_css_selector": null,
+        "url": "https://spaces.lib.uci.edu/spaces"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for page content to appear",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "Space Availability"
+      },
+      {
+        "type": "WAIT",
+        "description": "Allow room grid and scripts to fully initialize",
+        "resolved_css_selector": null,
+        "seconds": 0.4,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SELECT",
+        "description": "Select library from Location dropdown",
+        "resolved_css_selector": null,
+        "target_semantic": "Location",
+        "css_selector_hint": "select[name*='location'], select[id*='location'], select[name*='lid'], select[id*='lid'], select[aria-label*='Location']",
+        "value": "{{library}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for room list to refresh for selected library",
+        "resolved_css_selector": null,
+        "seconds": 1.0,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "GOTO",
+        "description": "Open room details page directly",
+        "resolved_css_selector": null,
+        "url": "{{room_page_url}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for room page booking grid to load",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "First select a start time from the grid below"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select room start slot on room page",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{booking_time}}",
+        "target_semantic": null,
+        "css_selector_hint": "a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][title*='{{booking_time}}'], a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][aria-label*='{{booking_time}}'], a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][data-original-title*='{{booking_time}}'], a.s-lc-eq-avail[title*='{{booking_date_human}}'][title*='{{booking_time}}'], a.s-lc-eq-avail[title*='{{booking_time}}'], a.s-lc-eq-avail[aria-label*='{{booking_time}}'], a.s-lc-eq-avail[data-original-title*='{{booking_time}}']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait briefly for end-time controls to appear",
+        "resolved_css_selector": null,
+        "seconds": 0.2,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SELECT",
+        "description": "Select end time from dropdown based on computed duration",
+        "resolved_css_selector": null,
+        "target_semantic": "End Time",
+        "css_selector_hint": "select[name*='end'], select[id*='end'], select[name*='to'], select[id*='to'], select[aria-label*='End'], select[aria-label*='To']",
+        "value": "{{booking_end_time}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for selected slot state to apply",
+        "resolved_css_selector": null,
+        "seconds": 0.8,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "CLICK",
+        "description": "Click Submit Times to proceed to booking form",
+        "resolved_css_selector": null,
+        "target_text_hint": "Submit Times",
+        "target_semantic": "Submit Times",
+        "css_selector_hint": "button#submit_times, button[name='submit_times'], button.btn-submit-times, input[value='Submit Times'], button[type='submit']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for checkout form after Submit Times",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "Space Checkout"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select Affiliation option",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{affiliation}}",
+        "target_semantic": null,
+        "css_selector_hint": "label, .radio, span, div"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select Purpose for Reservation COVID-19 option",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{purpose_for_reservation_covid_19}}",
+        "target_semantic": null,
+        "css_selector_hint": "label, .checkbox, span, div"
+      },
+      {
+        "type": "SCREENSHOT",
+        "description": "Capture filled reservation form before submission",
+        "resolved_css_selector": null,
+        "filename": "before_submit.png"
+      },
+      {
+        "type": "CLICK",
+        "description": "Submit my booking",
+        "resolved_css_selector": null,
+        "target_text_hint": "Submit my booking",
+        "target_semantic": null,
+        "css_selector_hint": "button[type='submit'], input[type='submit'], button.s-lc-rm-book, button.btn-primary, button[name='submit']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for confirmation state",
+        "resolved_css_selector": null,
+        "seconds": 2.0,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SCREENSHOT",
+        "description": "Capture post-submit confirmation view",
+        "resolved_css_selector": null,
+        "filename": "after_submit.png"
+      }
+    ],
+    "category": "booking",
+    "tags": [
+      "uci",
+      "library",
+      "booking",
+      "asdf"
+    ],
+    "estimated_duration_seconds": null
+  },
+  "wf_defd0f8f": {
+    "name": "UCI Library Room Booking",
+    "description": "Best-effort automated booking flow for UCI Libraries rooms using LibCal/Springshare UI patterns.",
+    "start_url": "https://spaces.lib.uci.edu/spaces",
+    "parameters": [
+      {
+        "key": "library",
+        "description": "Library location dropdown value (for example: Gateway Study Center, Science Library, Langson Library).",
+        "example": "Gateway Study Center",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "booking_date",
+        "description": "Booking date in MM/DD/YYYY format",
+        "example": "03/02/2026",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "room_keyword",
+        "description": "Room identifier (e.g., 2106 or Gateway 2106).",
+        "example": "2106",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "booking_time",
+        "description": "Time slot label text to click (must match visible slot text)",
+        "example": "2:00pm",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "duration_minutes",
+        "description": "Meeting duration in minutes (UCI allows 30-minute increments up to 120 per day)",
+        "example": "60",
+        "required": true,
+        "input_type": "select"
+      },
+      {
+        "key": "full_name",
+        "description": "Full name for reservation form",
+        "example": "Alex Anteater",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "email",
+        "description": "UCI email for reservation form",
+        "example": "alex@uci.edu",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "affiliation",
+        "description": "Affiliation dropdown value",
+        "example": "Undergraduate",
+        "required": true,
+        "input_type": "select"
+      },
+      {
+        "key": "purpose_for_reservation_covid_19",
+        "description": "Purpose for Reservation COVID-19 dropdown value",
+        "example": "Studying",
+        "required": true,
+        "input_type": "text"
+      }
+    ],
+    "steps": [
+      {
+        "type": "GOTO",
+        "description": "Open UCI Libraries spaces page",
+        "resolved_css_selector": null,
+        "url": "https://spaces.lib.uci.edu/spaces"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for page content to appear",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "Space Availability"
+      },
+      {
+        "type": "WAIT",
+        "description": "Allow room grid and scripts to fully initialize",
+        "resolved_css_selector": null,
+        "seconds": 0.4,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SELECT",
+        "description": "Select library from Location dropdown",
+        "resolved_css_selector": null,
+        "target_semantic": "Location",
+        "css_selector_hint": "select[name*='location'], select[id*='location'], select[name*='lid'], select[id*='lid'], select[aria-label*='Location']",
+        "value": "{{library}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for room list to refresh for selected library",
+        "resolved_css_selector": null,
+        "seconds": 1.0,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "GOTO",
+        "description": "Open room details page directly",
+        "resolved_css_selector": null,
+        "url": "{{room_page_url}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for room page booking grid to load",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "First select a start time from the grid below"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select room start slot on room page",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{booking_time}}",
+        "target_semantic": null,
+        "css_selector_hint": "a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][title*='{{booking_time}}'], a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][aria-label*='{{booking_time}}'], a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][data-original-title*='{{booking_time}}'], a.s-lc-eq-avail[title*='{{booking_date_human}}'][title*='{{booking_time}}'], a.s-lc-eq-avail[title*='{{booking_time}}'], a.s-lc-eq-avail[aria-label*='{{booking_time}}'], a.s-lc-eq-avail[data-original-title*='{{booking_time}}']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait briefly for end-time controls to appear",
+        "resolved_css_selector": null,
+        "seconds": 0.2,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SELECT",
+        "description": "Select end time from dropdown based on computed duration",
+        "resolved_css_selector": null,
+        "target_semantic": "End Time",
+        "css_selector_hint": "select[name*='end'], select[id*='end'], select[name*='to'], select[id*='to'], select[aria-label*='End'], select[aria-label*='To']",
+        "value": "{{booking_end_time}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for selected slot state to apply",
+        "resolved_css_selector": null,
+        "seconds": 0.8,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "CLICK",
+        "description": "Click Submit Times to proceed to booking form",
+        "resolved_css_selector": null,
+        "target_text_hint": "Submit Times",
+        "target_semantic": "Submit Times",
+        "css_selector_hint": "button#submit_times, button[name='submit_times'], button.btn-submit-times, input[value='Submit Times'], button[type='submit']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for checkout form after Submit Times",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "Space Checkout"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select Affiliation option",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{affiliation}}",
+        "target_semantic": null,
+        "css_selector_hint": "label, .radio, span, div"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select Purpose for Reservation COVID-19 option",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{purpose_for_reservation_covid_19}}",
+        "target_semantic": null,
+        "css_selector_hint": "label, .checkbox, span, div"
+      },
+      {
+        "type": "SCREENSHOT",
+        "description": "Capture filled reservation form before submission",
+        "resolved_css_selector": null,
+        "filename": "before_submit.png"
+      },
+      {
+        "type": "CLICK",
+        "description": "Submit my booking",
+        "resolved_css_selector": null,
+        "target_text_hint": "Submit my booking",
+        "target_semantic": null,
+        "css_selector_hint": "button[type='submit'], input[type='submit'], button.s-lc-rm-book, button.btn-primary, button[name='submit']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for confirmation state",
+        "resolved_css_selector": null,
+        "seconds": 2.0,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SCREENSHOT",
+        "description": "Capture post-submit confirmation view",
+        "resolved_css_selector": null,
+        "filename": "after_submit.png"
+      }
+    ],
+    "category": "booking",
+    "tags": [
+      "uci",
+      "library",
+      "booking",
+      "fdsafd"
+    ],
+    "estimated_duration_seconds": null
+  },
+  "wf_c049be8c": {
+    "name": "UCI Library Room Booking",
+    "description": "Best-effort automated booking flow for UCI Libraries rooms using LibCal/Springshare UI patterns.",
+    "start_url": "https://spaces.lib.uci.edu/spaces",
+    "parameters": [
+      {
+        "key": "library",
+        "description": "Library location dropdown value (for example: Gateway Study Center, Science Library, Langson Library).",
+        "example": "Gateway Study Center",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "booking_date",
+        "description": "Booking date in MM/DD/YYYY format",
+        "example": "03/02/2026",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "room_keyword",
+        "description": "Room identifier (e.g., 2106 or Gateway 2106).",
+        "example": "2106",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "booking_time",
+        "description": "Time slot label text to click (must match visible slot text)",
+        "example": "2:00pm",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "duration_minutes",
+        "description": "Meeting duration in minutes (UCI allows 30-minute increments up to 120 per day)",
+        "example": "60",
+        "required": true,
+        "input_type": "select"
+      },
+      {
+        "key": "full_name",
+        "description": "Full name for reservation form",
+        "example": "Alex Anteater",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "email",
+        "description": "UCI email for reservation form",
+        "example": "alex@uci.edu",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "affiliation",
+        "description": "Affiliation dropdown value",
+        "example": "Undergraduate",
+        "required": true,
+        "input_type": "select"
+      },
+      {
+        "key": "purpose_for_reservation_covid_19",
+        "description": "Purpose for Reservation COVID-19 dropdown value",
+        "example": "Studying",
+        "required": true,
+        "input_type": "text"
+      }
+    ],
+    "steps": [
+      {
+        "type": "GOTO",
+        "description": "Open UCI Libraries spaces page",
+        "resolved_css_selector": null,
+        "url": "https://spaces.lib.uci.edu/spaces"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for page content to appear",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "Space Availability"
+      },
+      {
+        "type": "WAIT",
+        "description": "Allow room grid and scripts to fully initialize",
+        "resolved_css_selector": null,
+        "seconds": 0.4,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SELECT",
+        "description": "Select library from Location dropdown",
+        "resolved_css_selector": null,
+        "target_semantic": "Location",
+        "css_selector_hint": "select[name*='location'], select[id*='location'], select[name*='lid'], select[id*='lid'], select[aria-label*='Location']",
+        "value": "{{library}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for room list to refresh for selected library",
+        "resolved_css_selector": null,
+        "seconds": 1.0,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "GOTO",
+        "description": "Open room details page directly",
+        "resolved_css_selector": null,
+        "url": "{{room_page_url}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for room page booking grid to load",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "First select a start time from the grid below"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select room start slot on room page",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{booking_time}}",
+        "target_semantic": null,
+        "css_selector_hint": "a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][title*='{{booking_time}}'], a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][aria-label*='{{booking_time}}'], a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][data-original-title*='{{booking_time}}'], a.s-lc-eq-avail[title*='{{booking_date_human}}'][title*='{{booking_time}}'], a.s-lc-eq-avail[title*='{{booking_time}}'], a.s-lc-eq-avail[aria-label*='{{booking_time}}'], a.s-lc-eq-avail[data-original-title*='{{booking_time}}']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait briefly for end-time controls to appear",
+        "resolved_css_selector": null,
+        "seconds": 0.2,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SELECT",
+        "description": "Select end time from dropdown based on computed duration",
+        "resolved_css_selector": null,
+        "target_semantic": "End Time",
+        "css_selector_hint": "select[name*='end'], select[id*='end'], select[name*='to'], select[id*='to'], select[aria-label*='End'], select[aria-label*='To']",
+        "value": "{{booking_end_time}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for selected slot state to apply",
+        "resolved_css_selector": null,
+        "seconds": 0.8,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "CLICK",
+        "description": "Click Submit Times to proceed to booking form",
+        "resolved_css_selector": null,
+        "target_text_hint": "Submit Times",
+        "target_semantic": "Submit Times",
+        "css_selector_hint": "button#submit_times, button[name='submit_times'], button.btn-submit-times, input[value='Submit Times'], button[type='submit']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for checkout form after Submit Times",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "Space Checkout"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select Affiliation option",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{affiliation}}",
+        "target_semantic": null,
+        "css_selector_hint": "label, .radio, span, div"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select Purpose for Reservation COVID-19 option",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{purpose_for_reservation_covid_19}}",
+        "target_semantic": null,
+        "css_selector_hint": "label, .checkbox, span, div"
+      },
+      {
+        "type": "SCREENSHOT",
+        "description": "Capture filled reservation form before submission",
+        "resolved_css_selector": null,
+        "filename": "before_submit.png"
+      },
+      {
+        "type": "CLICK",
+        "description": "Submit my booking",
+        "resolved_css_selector": null,
+        "target_text_hint": "Submit my booking",
+        "target_semantic": null,
+        "css_selector_hint": "button[type='submit'], input[type='submit'], button.s-lc-rm-book, button.btn-primary, button[name='submit']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for confirmation state",
+        "resolved_css_selector": null,
+        "seconds": 2.0,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SCREENSHOT",
+        "description": "Capture post-submit confirmation view",
+        "resolved_css_selector": null,
+        "filename": "after_submit.png"
+      }
+    ],
+    "category": "booking",
+    "tags": [
+      "uci",
+      "library",
+      "booking",
+      "fas. i don't know"
+    ],
+    "estimated_duration_seconds": null
+  },
+  "wf_80dfd2f6": {
+    "name": "UCI Library Room Booking",
+    "description": "Best-effort automated booking flow for UCI Libraries rooms using LibCal/Springshare UI patterns.",
+    "start_url": "https://spaces.lib.uci.edu/spaces",
+    "parameters": [
+      {
+        "key": "library",
+        "description": "Library location dropdown value (for example: Gateway Study Center, Science Library, Langson Library).",
+        "example": "Gateway Study Center",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "booking_date",
+        "description": "Booking date in MM/DD/YYYY format",
+        "example": "03/02/2026",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "room_keyword",
+        "description": "Room identifier (e.g., 2106 or Gateway 2106).",
+        "example": "2106",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "booking_time",
+        "description": "Time slot label text to click (must match visible slot text)",
+        "example": "2:00pm",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "duration_minutes",
+        "description": "Meeting duration in minutes (UCI allows 30-minute increments up to 120 per day)",
+        "example": "60",
+        "required": true,
+        "input_type": "select"
+      },
+      {
+        "key": "full_name",
+        "description": "Full name for reservation form",
+        "example": "Alex Anteater",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "email",
+        "description": "UCI email for reservation form",
+        "example": "alex@uci.edu",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "affiliation",
+        "description": "Affiliation dropdown value",
+        "example": "Undergraduate",
+        "required": true,
+        "input_type": "select"
+      },
+      {
+        "key": "purpose_for_reservation_covid_19",
+        "description": "Purpose for Reservation COVID-19 dropdown value",
+        "example": "Studying",
+        "required": true,
+        "input_type": "text"
+      }
+    ],
+    "steps": [
+      {
+        "type": "GOTO",
+        "description": "Open UCI Libraries spaces page",
+        "resolved_css_selector": null,
+        "url": "https://spaces.lib.uci.edu/spaces"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for page content to appear",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "Space Availability"
+      },
+      {
+        "type": "WAIT",
+        "description": "Allow room grid and scripts to fully initialize",
+        "resolved_css_selector": null,
+        "seconds": 0.4,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SELECT",
+        "description": "Select library from Location dropdown",
+        "resolved_css_selector": null,
+        "target_semantic": "Location",
+        "css_selector_hint": "select[name*='location'], select[id*='location'], select[name*='lid'], select[id*='lid'], select[aria-label*='Location']",
+        "value": "{{library}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for room list to refresh for selected library",
+        "resolved_css_selector": null,
+        "seconds": 1.0,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "GOTO",
+        "description": "Open room details page directly",
+        "resolved_css_selector": null,
+        "url": "{{room_page_url}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for room page booking grid to load",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "First select a start time from the grid below"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select room start slot on room page",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{booking_time}}",
+        "target_semantic": null,
+        "css_selector_hint": "a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][title*='{{booking_time}}'], a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][aria-label*='{{booking_time}}'], a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][data-original-title*='{{booking_time}}'], a.s-lc-eq-avail[title*='{{booking_date_human}}'][title*='{{booking_time}}'], a.s-lc-eq-avail[title*='{{booking_time}}'], a.s-lc-eq-avail[aria-label*='{{booking_time}}'], a.s-lc-eq-avail[data-original-title*='{{booking_time}}']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait briefly for end-time controls to appear",
+        "resolved_css_selector": null,
+        "seconds": 0.2,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SELECT",
+        "description": "Select end time from dropdown based on computed duration",
+        "resolved_css_selector": null,
+        "target_semantic": "End Time",
+        "css_selector_hint": "select[name*='end'], select[id*='end'], select[name*='to'], select[id*='to'], select[aria-label*='End'], select[aria-label*='To']",
+        "value": "{{booking_end_time}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for selected slot state to apply",
+        "resolved_css_selector": null,
+        "seconds": 0.8,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "CLICK",
+        "description": "Click Submit Times to proceed to booking form",
+        "resolved_css_selector": null,
+        "target_text_hint": "Submit Times",
+        "target_semantic": "Submit Times",
+        "css_selector_hint": "button#submit_times, button[name='submit_times'], button.btn-submit-times, input[value='Submit Times'], button[type='submit']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for checkout form after Submit Times",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "Space Checkout"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select Affiliation option",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{affiliation}}",
+        "target_semantic": null,
+        "css_selector_hint": "label, .radio, span, div"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select Purpose for Reservation COVID-19 option",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{purpose_for_reservation_covid_19}}",
+        "target_semantic": null,
+        "css_selector_hint": "label, .checkbox, span, div"
+      },
+      {
+        "type": "SCREENSHOT",
+        "description": "Capture filled reservation form before submission",
+        "resolved_css_selector": null,
+        "filename": "before_submit.png"
+      },
+      {
+        "type": "CLICK",
+        "description": "Submit my booking",
+        "resolved_css_selector": null,
+        "target_text_hint": "Submit my booking",
+        "target_semantic": null,
+        "css_selector_hint": "button[type='submit'], input[type='submit'], button.s-lc-rm-book, button.btn-primary, button[name='submit']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for confirmation state",
+        "resolved_css_selector": null,
+        "seconds": 2.0,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SCREENSHOT",
+        "description": "Capture post-submit confirmation view",
+        "resolved_css_selector": null,
+        "filename": "after_submit.png"
+      }
+    ],
+    "category": "booking",
+    "tags": [
+      "uci",
+      "library",
+      "booking",
+      "fdasd"
+    ],
+    "estimated_duration_seconds": null
+  },
+  "wf_8c73cab8": {
+    "name": "UCI Library Room Booking",
+    "description": "Best-effort automated booking flow for UCI Libraries rooms using LibCal/Springshare UI patterns.",
+    "start_url": "https://spaces.lib.uci.edu/spaces",
+    "parameters": [
+      {
+        "key": "library",
+        "description": "Library location dropdown value (for example: Gateway Study Center, Science Library, Langson Library).",
+        "example": "Gateway Study Center",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "booking_date",
+        "description": "Booking date in MM/DD/YYYY format",
+        "example": "03/02/2026",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "room_keyword",
+        "description": "Room identifier (e.g., 2106 or Gateway 2106).",
+        "example": "2106",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "booking_time",
+        "description": "Time slot label text to click (must match visible slot text)",
+        "example": "2:00pm",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "duration_minutes",
+        "description": "Meeting duration in minutes (UCI allows 30-minute increments up to 120 per day)",
+        "example": "60",
+        "required": true,
+        "input_type": "select"
+      },
+      {
+        "key": "full_name",
+        "description": "Full name for reservation form",
+        "example": "Alex Anteater",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "email",
+        "description": "UCI email for reservation form",
+        "example": "alex@uci.edu",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "affiliation",
+        "description": "Affiliation dropdown value",
+        "example": "Undergraduate",
+        "required": true,
+        "input_type": "select"
+      },
+      {
+        "key": "purpose_for_reservation_covid_19",
+        "description": "Purpose for Reservation COVID-19 dropdown value",
+        "example": "Studying",
+        "required": true,
+        "input_type": "text"
+      }
+    ],
+    "steps": [
+      {
+        "type": "GOTO",
+        "description": "Open UCI Libraries spaces page",
+        "resolved_css_selector": null,
+        "url": "https://spaces.lib.uci.edu/spaces"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for page content to appear",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "Space Availability"
+      },
+      {
+        "type": "WAIT",
+        "description": "Allow room grid and scripts to fully initialize",
+        "resolved_css_selector": null,
+        "seconds": 0.4,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SELECT",
+        "description": "Select library from Location dropdown",
+        "resolved_css_selector": null,
+        "target_semantic": "Location",
+        "css_selector_hint": "select[name*='location'], select[id*='location'], select[name*='lid'], select[id*='lid'], select[aria-label*='Location']",
+        "value": "{{library}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for room list to refresh for selected library",
+        "resolved_css_selector": null,
+        "seconds": 1.0,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "GOTO",
+        "description": "Open room details page directly",
+        "resolved_css_selector": null,
+        "url": "{{room_page_url}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for room page booking grid to load",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "First select a start time from the grid below"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select room start slot on room page",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{booking_time}}",
+        "target_semantic": null,
+        "css_selector_hint": "a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][title*='{{booking_time}}'], a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][aria-label*='{{booking_time}}'], a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][data-original-title*='{{booking_time}}'], a.s-lc-eq-avail[title*='{{booking_date_human}}'][title*='{{booking_time}}'], a.s-lc-eq-avail[title*='{{booking_time}}'], a.s-lc-eq-avail[aria-label*='{{booking_time}}'], a.s-lc-eq-avail[data-original-title*='{{booking_time}}']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait briefly for end-time controls to appear",
+        "resolved_css_selector": null,
+        "seconds": 0.2,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SELECT",
+        "description": "Select end time from dropdown based on computed duration",
+        "resolved_css_selector": null,
+        "target_semantic": "End Time",
+        "css_selector_hint": "select[name*='end'], select[id*='end'], select[name*='to'], select[id*='to'], select[aria-label*='End'], select[aria-label*='To']",
+        "value": "{{booking_end_time}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for selected slot state to apply",
+        "resolved_css_selector": null,
+        "seconds": 0.8,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "CLICK",
+        "description": "Click Submit Times to proceed to booking form",
+        "resolved_css_selector": null,
+        "target_text_hint": "Submit Times",
+        "target_semantic": "Submit Times",
+        "css_selector_hint": "button#submit_times, button[name='submit_times'], button.btn-submit-times, input[value='Submit Times'], button[type='submit']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for checkout form after Submit Times",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "Space Checkout"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select Affiliation option",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{affiliation}}",
+        "target_semantic": null,
+        "css_selector_hint": "label, .radio, span, div"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select Purpose for Reservation COVID-19 option",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{purpose_for_reservation_covid_19}}",
+        "target_semantic": null,
+        "css_selector_hint": "label, .checkbox, span, div"
+      },
+      {
+        "type": "SCREENSHOT",
+        "description": "Capture filled reservation form before submission",
+        "resolved_css_selector": null,
+        "filename": "before_submit.png"
+      },
+      {
+        "type": "CLICK",
+        "description": "Submit my booking",
+        "resolved_css_selector": null,
+        "target_text_hint": "Submit my booking",
+        "target_semantic": null,
+        "css_selector_hint": "button[type='submit'], input[type='submit'], button.s-lc-rm-book, button.btn-primary, button[name='submit']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for confirmation state",
+        "resolved_css_selector": null,
+        "seconds": 2.0,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SCREENSHOT",
+        "description": "Capture post-submit confirmation view",
+        "resolved_css_selector": null,
+        "filename": "after_submit.png"
+      }
+    ],
+    "category": "booking",
+    "tags": [
+      "uci",
+      "library",
+      "booking"
+    ],
+    "estimated_duration_seconds": null
+  },
+  "wf_206fac0a": {
+    "name": "UCI Library Room Booking",
+    "description": "Best-effort automated booking flow for UCI Libraries rooms using LibCal/Springshare UI patterns.",
+    "start_url": "https://spaces.lib.uci.edu/spaces",
+    "parameters": [
+      {
+        "key": "library",
+        "description": "Library location dropdown value (for example: Gateway Study Center, Science Library, Langson Library).",
+        "example": "Gateway Study Center",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "booking_date",
+        "description": "Booking date in MM/DD/YYYY format",
+        "example": "03/02/2026",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "room_keyword",
+        "description": "Room identifier (e.g., 2106 or Gateway 2106).",
+        "example": "2106",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "booking_time",
+        "description": "Time slot label text to click (must match visible slot text)",
+        "example": "2:00pm",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "duration_minutes",
+        "description": "Meeting duration in minutes (UCI allows 30-minute increments up to 120 per day)",
+        "example": "60",
+        "required": true,
+        "input_type": "select"
+      },
+      {
+        "key": "full_name",
+        "description": "Full name for reservation form",
+        "example": "Alex Anteater",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "email",
+        "description": "UCI email for reservation form",
+        "example": "alex@uci.edu",
+        "required": true,
+        "input_type": "text"
+      },
+      {
+        "key": "affiliation",
+        "description": "Affiliation dropdown value",
+        "example": "Undergraduate",
+        "required": true,
+        "input_type": "select"
+      },
+      {
+        "key": "purpose_for_reservation_covid_19",
+        "description": "Purpose for Reservation COVID-19 dropdown value",
+        "example": "Studying",
+        "required": true,
+        "input_type": "text"
+      }
+    ],
+    "steps": [
+      {
+        "type": "GOTO",
+        "description": "Open UCI Libraries spaces page",
+        "resolved_css_selector": null,
+        "url": "https://spaces.lib.uci.edu/spaces"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for page content to appear",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "Space Availability"
+      },
+      {
+        "type": "WAIT",
+        "description": "Allow room grid and scripts to fully initialize",
+        "resolved_css_selector": null,
+        "seconds": 0.4,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SELECT",
+        "description": "Select library from Location dropdown",
+        "resolved_css_selector": null,
+        "target_semantic": "Location",
+        "css_selector_hint": "select[name*='location'], select[id*='location'], select[name*='lid'], select[id*='lid'], select[aria-label*='Location']",
+        "value": "{{library}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for room list to refresh for selected library",
+        "resolved_css_selector": null,
+        "seconds": 1.0,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "GOTO",
+        "description": "Open room details page directly",
+        "resolved_css_selector": null,
+        "url": "{{room_page_url}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for room page booking grid to load",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "First select a start time from the grid below"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select room start slot on room page",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{booking_time}}",
+        "target_semantic": null,
+        "css_selector_hint": "a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][title*='{{booking_time}}'], a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][aria-label*='{{booking_time}}'], a.s-lc-eq-avail[data-start*='{{booking_date_iso}}'][data-original-title*='{{booking_time}}'], a.s-lc-eq-avail[title*='{{booking_date_human}}'][title*='{{booking_time}}'], a.s-lc-eq-avail[title*='{{booking_time}}'], a.s-lc-eq-avail[aria-label*='{{booking_time}}'], a.s-lc-eq-avail[data-original-title*='{{booking_time}}']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait briefly for end-time controls to appear",
+        "resolved_css_selector": null,
+        "seconds": 0.2,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SELECT",
+        "description": "Select end time from dropdown based on computed duration",
+        "resolved_css_selector": null,
+        "target_semantic": "End Time",
+        "css_selector_hint": "select[name*='end'], select[id*='end'], select[name*='to'], select[id*='to'], select[aria-label*='End'], select[aria-label*='To']",
+        "value": "{{booking_end_time}}"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for selected slot state to apply",
+        "resolved_css_selector": null,
+        "seconds": 0.8,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "CLICK",
+        "description": "Click Submit Times to proceed to booking form",
+        "resolved_css_selector": null,
+        "target_text_hint": "Submit Times",
+        "target_semantic": "Submit Times",
+        "css_selector_hint": "button#submit_times, button[name='submit_times'], button.btn-submit-times, input[value='Submit Times'], button[type='submit']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for checkout form after Submit Times",
+        "resolved_css_selector": null,
+        "seconds": null,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": "Space Checkout"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select Affiliation option",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{affiliation}}",
+        "target_semantic": null,
+        "css_selector_hint": "label, .radio, span, div"
+      },
+      {
+        "type": "CLICK",
+        "description": "Select Purpose for Reservation COVID-19 option",
+        "resolved_css_selector": null,
+        "target_text_hint": "{{purpose_for_reservation_covid_19}}",
+        "target_semantic": null,
+        "css_selector_hint": "label, .checkbox, span, div"
+      },
+      {
+        "type": "SCREENSHOT",
+        "description": "Capture filled reservation form before submission",
+        "resolved_css_selector": null,
+        "filename": "before_submit.png"
+      },
+      {
+        "type": "CLICK",
+        "description": "Submit my booking",
+        "resolved_css_selector": null,
+        "target_text_hint": "Submit my booking",
+        "target_semantic": null,
+        "css_selector_hint": "button[type='submit'], input[type='submit'], button.s-lc-rm-book, button.btn-primary, button[name='submit']"
+      },
+      {
+        "type": "WAIT",
+        "description": "Wait for confirmation state",
+        "resolved_css_selector": null,
+        "seconds": 2.0,
+        "until_url_contains": null,
+        "until_selector": null,
+        "until_text_visible": null
+      },
+      {
+        "type": "SCREENSHOT",
+        "description": "Capture post-submit confirmation view",
+        "resolved_css_selector": null,
+        "filename": "after_submit.png"
+      }
+    ],
+    "category": "booking",
+    "tags": [
+      "uci",
+      "library",
+      "booking",
+      "sdf"
+    ],
+    "estimated_duration_seconds": null
+  }
+}

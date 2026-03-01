@@ -169,9 +169,15 @@ def extract_frames(video_path: str, fps_sample: int = 1, max_frames: int = 30) -
     return frames
 
 
-def analyze_frame(frame_b64: str, frame_index: int, total_frames: int) -> dict[str, Any]:
+def analyze_frame(
+    frame_b64: str,
+    frame_index: int,
+    total_frames: int,
+    on_output: Optional[Any] = None,
+) -> dict[str, Any]:
     """
     Analyze a single frame via Cactus LFM2-VL using a UI analysis prompt.
+    Calls on_output(text) with the raw model response if provided.
     """
     prompt = (
         f"{_UI_ANALYSIS_PROMPT}\n\n"
@@ -180,32 +186,70 @@ def analyze_frame(frame_b64: str, frame_index: int, total_frames: int) -> dict[s
         "Focus on actionable UI changes in this frame."
     )
     raw = _call_cactus(prompt=prompt, image_b64=frame_b64)
+    if on_output:
+        try:
+            on_output(raw)
+        except Exception:
+            pass
     return _extract_json_from_text(raw)
 
 
-def extract_workflow(video_path: Union[str, Path]) -> WorkflowTemplate:
+def extract_workflow(
+    video_path: Union[str, Path],
+    on_progress: Optional[Any] = None,
+    on_output: Optional[Any] = None,
+) -> WorkflowTemplate:
     """
     End-to-end workflow extraction:
     1) Extract video frames (1 FPS, max 30)
     2) Analyze each frame with Cactus LFM2-VL
     3) Synthesize WorkflowTemplate JSON
 
+    on_progress(step, pct) is called at key milestones.
+    on_output(text) is called with the raw model response after each parse.
     On any failure, returns the hardcoded UCI fallback workflow.
     """
+    def progress(step: str, pct: float) -> None:
+        if on_progress:
+            try:
+                on_progress(step, pct)
+            except Exception:
+                pass
+
+    def emit(text: str) -> None:
+        if on_output:
+            try:
+                on_output(text)
+            except Exception:
+                pass
+
     try:
+        progress("Extracting frames from video", 5)
         path = str(video_path)
         frames = extract_frames(path, fps_sample=1, max_frames=30)
+        progress(f"Extracted {len(frames)} frames", 20)
 
-        frame_analyses = [
-            analyze_frame(frame, idx, len(frames)) for idx, frame in enumerate(frames)
-        ]
+        frame_analyses: list[dict[str, Any]] = []
+        for idx, frame in enumerate(frames):
+            emit(f"\n--- Frame {idx + 1} / {len(frames)} ---\n")
+            analysis = analyze_frame(frame, idx, len(frames), on_output=emit)
+            frame_analyses.append(analysis)
+            pct = 20 + int((idx + 1) / len(frames) * 50)
+            progress(f"Analyzed frame {idx + 1} of {len(frames)}", pct)
 
+        progress("Synthesizing workflow", 75)
+        emit("\n--- Synthesis ---\n")
         synthesis_prompt = _SYNTHESIS_PROMPT_TEMPLATE.format(
             frame_analyses=json.dumps(frame_analyses, ensure_ascii=True)
         )
         raw_workflow = _call_cactus(prompt=synthesis_prompt)
+        emit(raw_workflow)
+        progress("Parsing workflow JSON", 90)
         workflow_json = _extract_json_from_text(raw_workflow)
-
-        return WorkflowTemplate.model_validate(workflow_json)
-    except Exception:
+        result = WorkflowTemplate.model_validate(workflow_json)
+        progress("Complete", 100)
+        return result
+    except Exception as exc:
+        emit(f"\n[Extraction error: {exc}]\n[Falling back to default workflow]\n")
+        progress("Complete", 100)
         return _fallback_workflow()

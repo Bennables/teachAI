@@ -165,65 +165,201 @@ class WorkflowExtractionService:
             raise RuntimeError(f"Gemini analysis failed: {e}")
 
     def _create_optimal_prompts(self, num_frames: int, video_name: str) -> tuple[str, str]:
-        """Create optimal prompts that analyze actual frame content."""
+        """Create optimal prompts that analyze actual frame content and generate reusable workflow templates."""
 
-        system_prompt = """You are an expert at analyzing web application workflows from screenshots and generating complete Selenium automation JSON.
+        system_prompt = """You are an expert at analyzing web application workflows from screenshots and generating REUSABLE Selenium automation templates.
 
-Your task is to carefully analyze the provided screenshots in sequence to understand what the user actually did, then create a comprehensive workflow that captures every action step-by-step.
+Your task is to carefully analyze the provided screenshots to understand the user's workflow pattern, then create a TEMPLATE workflow that can be reused for similar bookings with different parameters.
 
 CRITICAL REQUIREMENTS:
-1. CAREFULLY EXAMINE each screenshot to understand what the user actually clicked, typed, and selected
-2. Use ONLY the information visible in the screenshots - do not make assumptions
-3. Generate a COMPLETE workflow with ALL steps from start to finish based on what you see
+1. CAREFULLY EXAMINE each screenshot to understand the workflow PATTERN (not just the specific values)
+2. Create a REUSABLE template with placeholder variables instead of hardcoded values
+3. Generate a workflow template compatible with Selenium automation that uses parameter substitution
 4. Use semantic descriptions only (NO CSS selectors or XPath)
-5. Focus on visible text, labels, and UI element roles exactly as they appear"""
+5. Focus on the GENERAL workflow pattern, not specific room numbers or dates
+
+TEMPLATE PLACEHOLDER RULES - ALWAYS USE THESE:
+- {{library}} for location/library names
+- {{room_keyword}} for room numbers or identifiers
+- {{booking_date}} for dates
+- {{booking_time}} for start times
+- {{booking_end_time}} for end times
+- {{full_name}} for person names
+- {{email}} for email addresses
+- {{affiliation}} for affiliation selections (Undergraduate/Graduate/Faculty/Staff)
+- {{purpose_for_reservation_covid_19}} for reservation purposes
+- {{duration_minutes}} for booking durations"""
 
         user_prompt = f"""CAREFULLY analyze these {num_frames} screenshots showing a user booking a study room.
 
-STEP 1: First, examine each screenshot and identify:
-- What library/location is shown?
-- What specific room/space is being booked?
-- What time slot is selected?
-- What form fields are filled out?
-- What buttons are clicked?
+STEP 1: First, examine each screenshot and identify the WORKFLOW PATTERN:
+- What types of elements are being interacted with (dropdowns, buttons, form fields)?
+- What is the sequence of actions (navigation -> room selection -> time selection -> form filling)?
+- What form fields need to be filled out?
+- What buttons need to be clicked?
 
-STEP 2: Based on your analysis of the actual screenshots, create a COMPLETE Selenium workflow JSON with this structure:
+STEP 2: Based on the workflow pattern you observe, create a REUSABLE Selenium workflow template with this exact structure:
 
 {{
-  "name": "[Descriptive name based on what you see]",
-  "description": "[Description based on the actual location/room from screenshots]",
-  "start_url": "[URL visible in screenshots]",
+  "name": "UCI Library Study Room Booking",
+  "description": "Template for booking study rooms at UCI libraries",
+  "start_url": "[URL visible in screenshots or use https://spaces.lib.uci.edu/spaces]",
+  "category": "booking",
+  "tags": ["uci", "library", "booking"],
+  "parameters": [
+    {{
+      "key": "library",
+      "description": "Library location",
+      "example": "Gateway Study Center",
+      "required": true,
+      "input_type": "text"
+    }},
+    {{
+      "key": "room_keyword",
+      "description": "Room identifier",
+      "example": "2107",
+      "required": true,
+      "input_type": "text"
+    }},
+    {{
+      "key": "booking_date",
+      "description": "Booking date in MM/DD/YYYY format",
+      "example": "03/02/2026",
+      "required": true,
+      "input_type": "text"
+    }},
+    {{
+      "key": "booking_time",
+      "description": "Time slot to book",
+      "example": "6:30pm",
+      "required": true,
+      "input_type": "text"
+    }},
+    {{
+      "key": "duration_minutes",
+      "description": "Duration in minutes",
+      "example": "60",
+      "required": true,
+      "input_type": "select",
+      "options": ["30", "60", "90", "120"]
+    }},
+    {{
+      "key": "full_name",
+      "description": "Full name for reservation",
+      "example": "Alex Anteater",
+      "required": true,
+      "input_type": "text"
+    }},
+    {{
+      "key": "email",
+      "description": "Email for reservation",
+      "example": "alex@uci.edu",
+      "required": true,
+      "input_type": "text"
+    }},
+    {{
+      "key": "affiliation",
+      "description": "Affiliation selection",
+      "example": "Undergraduate",
+      "required": true,
+      "input_type": "select",
+      "options": ["Undergraduate", "Graduate", "Faculty", "Staff"]
+    }},
+    {{
+      "key": "purpose_for_reservation_covid_19",
+      "description": "Purpose for reservation",
+      "example": "Need a place to study",
+      "required": true,
+      "input_type": "text"
+    }}
+  ],
   "steps": [
     {{
       "type": "GOTO",
-      "description": "Navigate to the booking system",
-      "url": "[actual URL from screenshots]",
-      "wait_for": "PAGE_LOAD",
-      "timeout_seconds": 10.0
+      "description": "Open UCI Libraries spaces page",
+      "url": "https://spaces.lib.uci.edu/spaces"
+    }},
+    {{
+      "type": "WAIT",
+      "description": "Wait for page content to appear",
+      "until_text_visible": "Space Availability"
+    }},
+    {{
+      "type": "SELECT",
+      "description": "Select library from Location dropdown",
+      "target_semantic": "Location",
+      "value": "{{{{library}}}}"
+    }},
+    {{
+      "type": "WAIT",
+      "description": "Wait for room list to refresh",
+      "seconds": 1.0
     }},
     {{
       "type": "CLICK",
-      "description": "Select [actual room name from screenshots]",
-      "target": {{
-        "text_hint": "[exact room name visible in screenshots]",
-        "role_hint": "[button/link/etc]",
-        "page_context": "room selection"
-      }},
-      "wait_for": "ELEMENT_VISIBLE",
-      "timeout_seconds": 10.0
+      "description": "Select the study room",
+      "target_text_hint": "{{{{room_keyword}}}}"
+    }},
+    {{
+      "type": "CLICK",
+      "description": "Select time slot",
+      "target_text_hint": "{{{{booking_time}}}}"
+    }},
+    {{
+      "type": "CLICK",
+      "description": "Submit Times to proceed to booking form",
+      "target_text_hint": "Submit Times"
+    }},
+    {{
+      "type": "WAIT",
+      "description": "Wait for booking form to load",
+      "until_text_visible": "Space Checkout"
+    }},
+    {{
+      "type": "TYPE",
+      "description": "Enter full name",
+      "target_semantic": "Full Name",
+      "value": "{{{{full_name}}}}"
+    }},
+    {{
+      "type": "TYPE",
+      "description": "Enter email",
+      "target_semantic": "Email",
+      "value": "{{{{email}}}}"
+    }},
+    {{
+      "type": "CLICK",
+      "description": "Select affiliation",
+      "target_text_hint": "{{{{affiliation}}}}"
+    }},
+    {{
+      "type": "CLICK",
+      "description": "Select purpose for reservation",
+      "target_text_hint": "{{{{purpose_for_reservation_covid_19}}}}"
+    }},
+    {{
+      "type": "CLICK",
+      "description": "Submit the booking",
+      "target_text_hint": "Submit my booking"
+    }},
+    {{
+      "type": "WAIT",
+      "description": "Wait for confirmation",
+      "seconds": 2.0
     }}
-    // ... continue with ALL steps you observe in the screenshots
   ]
 }}
 
-CRITICAL:
-- Use ONLY information visible in the screenshots
-- Use exact room names, times, and text you can see
-- Do NOT use generic examples or placeholder text
-- Generate 8-12 steps covering the complete workflow
-- Include form filling with actual values if visible
+CRITICAL SELENIUM TEMPLATE GUIDELINES:
+- Use EXACT field names: target_text_hint, target_semantic, until_text_visible, seconds
+- Replace ALL specific values with {{{{variable}}}} placeholders (double braces for escaping)
+- Include a complete parameters section with all variables used in steps
+- Use semantic descriptions for target_semantic (like "Location", "Full Name", "Email")
+- Use visible text for target_text_hint (with placeholders for dynamic text)
+- Generate 10-15 steps covering the complete workflow
+- Do NOT use nested target objects or role_hint fields
 
-Return ONLY the JSON object based on your analysis of the actual screenshots."""
+Return ONLY the JSON template with this exact structure for Selenium automation."""
 
         return system_prompt, user_prompt
 
@@ -265,51 +401,58 @@ Return ONLY the JSON object based on your analysis of the actual screenshots."""
         return workflow_data
 
     def _fix_common_issues(self, data: dict) -> dict:
-        """Fix common validation issues in workflow data."""
-        # Ensure required fields
+        """Fix common validation issues in workflow data to match selenium runner format."""
+        # Ensure required top-level fields
         if "name" not in data:
-            data["name"] = "UC Irvine Study Room Booking"
+            data["name"] = "UCI Library Study Room Booking"
         if "description" not in data:
-            data["description"] = "Book a study room at UC Irvine Science Library"
+            data["description"] = "Template for booking study rooms at UCI libraries"
         if "start_url" not in data:
-            data["start_url"] = "https://uci.libcal.com/"
+            data["start_url"] = "https://spaces.lib.uci.edu/spaces"
+        if "category" not in data:
+            data["category"] = "booking"
+        if "tags" not in data:
+            data["tags"] = ["uci", "library", "booking"]
+
+        # Ensure parameters section exists
+        if "parameters" not in data:
+            data["parameters"] = []
 
         # Fix steps if needed
         if "steps" not in data:
             data["steps"] = []
 
-        # Fix individual steps
+        # Fix individual steps to match selenium runner expectations
         for i, step in enumerate(data.get("steps", [])):
             if "type" not in step:
                 step["type"] = "CLICK"
             if "description" not in step:
                 step["description"] = f"Step {i + 1}"
-            if "timeout_seconds" not in step:
-                step["timeout_seconds"] = 10.0
 
-            # Fix invalid action types - convert common alternatives
-            if "type" in step:
-                action_type = step["type"]
-                # Convert ASSERT and VERIFY to WAIT with text checking
-                if action_type in ["ASSERT", "VERIFY"]:
-                    step["type"] = "WAIT"
-                    # If there's a text hint, use it for wait condition
-                    if step.get("target") and step["target"].get("text_hint"):
-                        step["wait_text"] = step["target"]["text_hint"]
-                        step["wait_for"] = "TEXT_PRESENT"
-                    else:
-                        step["wait_for"] = "ELEMENT_PRESENT"
+            # Convert old format target objects to selenium runner format
+            if "target" in step:
+                target = step.pop("target")
+                # Convert target object to selenium runner field format
+                if target.get("text_hint"):
+                    step["target_text_hint"] = target["text_hint"]
+                if target.get("label_hint"):
+                    step["target_semantic"] = target["label_hint"]
 
-            # Fix invalid wait conditions - map common alternatives
+            # Convert old wait_for format to selenium runner format
             if "wait_for" in step:
-                wait_condition = step["wait_for"]
-                # Map common variations to valid conditions
-                if wait_condition in ["ELEMENT_LOADED", "ELEMENT_READY"]:
-                    step["wait_for"] = "ELEMENT_PRESENT"
-                elif wait_condition in ["PAGE_READY", "LOAD_COMPLETE"]:
-                    step["wait_for"] = "PAGE_LOAD"
-                elif wait_condition in ["ELEMENT_CLICKABLE", "ELEMENT_INTERACTABLE"]:
-                    step["wait_for"] = "ELEMENT_CLICKABLE"
+                wait_condition = step.pop("wait_for")
+                if wait_condition == "TEXT_PRESENT":
+                    step["until_text_visible"] = step.get("wait_text", "")
+                elif wait_condition in ["PAGE_LOAD", "ELEMENT_VISIBLE"]:
+                    if not step.get("until_text_visible") and not step.get("seconds"):
+                        step["seconds"] = 1.0
+
+            # Remove old format fields not used by selenium runner
+            step.pop("timeout_seconds", None)
+            step.pop("wait_text", None)
+            step.pop("wait", None)
+            step.pop("until_selector", None)
+            step.pop("until_url_contains", None)
 
         return data
 

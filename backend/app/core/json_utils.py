@@ -163,6 +163,76 @@ def create_example_workflow() -> dict:
     }
 
 
+def validate_workflow_json(workflow_data: dict) -> tuple[bool, list[str]]:
+    """
+    Validate workflow JSON structure.
+
+    Args:
+        workflow_data: Workflow dictionary to validate
+
+    Returns:
+        Tuple of (is_valid, errors_list)
+    """
+    errors = []
+
+    # Check required top-level fields
+    required_fields = ["name", "start_url", "steps"]
+    for field in required_fields:
+        if field not in workflow_data:
+            errors.append(f"Missing required field: {field}")
+        elif not workflow_data[field]:
+            errors.append(f"Field '{field}' cannot be empty")
+
+    # Check steps structure
+    if "steps" in workflow_data:
+        steps = workflow_data["steps"]
+        if not isinstance(steps, list):
+            errors.append("'steps' must be a list")
+        elif len(steps) == 0:
+            errors.append("'steps' cannot be empty")
+        else:
+            # Validate each step
+            for i, step in enumerate(steps):
+                if not isinstance(step, dict):
+                    errors.append(f"Step {i} must be a dictionary")
+                    continue
+
+                # Check required step fields
+                if "type" not in step:
+                    errors.append(f"Step {i} missing required field 'type'")
+                elif step["type"] not in ["GOTO", "CLICK", "TYPE", "SELECT", "WAIT", "SCROLL", "SCREENSHOT"]:
+                    errors.append(f"Step {i} has invalid type '{step['type']}'")
+
+                if "description" not in step:
+                    errors.append(f"Step {i} missing required field 'description'")
+
+                # Type-specific validations
+                step_type = step.get("type")
+                if step_type == "GOTO" and "url" not in step:
+                    errors.append(f"GOTO step {i} missing required field 'url'")
+                elif step_type == "TYPE" and "value" not in step:
+                    errors.append(f"TYPE step {i} missing required field 'value'")
+                elif step_type == "SELECT" and "value" not in step:
+                    errors.append(f"SELECT step {i} missing required field 'value'")
+                elif step_type == "SCREENSHOT" and "filename" not in step:
+                    errors.append(f"SCREENSHOT step {i} missing required field 'filename'")
+
+    # Check parameters if present
+    if "parameters" in workflow_data:
+        parameters = workflow_data["parameters"]
+        if not isinstance(parameters, list):
+            errors.append("'parameters' must be a list")
+        else:
+            for i, param in enumerate(parameters):
+                if not isinstance(param, dict):
+                    errors.append(f"Parameter {i} must be a dictionary")
+                    continue
+                if "key" not in param:
+                    errors.append(f"Parameter {i} missing required field 'key'")
+
+    return len(errors) == 0, errors
+
+
 def sanitize_for_vlm_repair(json_data: dict) -> dict:
     """
     Sanitize workflow data for VLM repair attempts.

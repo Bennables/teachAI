@@ -1110,6 +1110,12 @@ def apply_to_greenhouse(
         )
         time.sleep(_DELAY_AFTER_PAGE)
         _wait_form_ready(driver, timeout=timeout)
+        time.sleep(1.0)
+        try:
+            first_name_el = driver.find_element(By.ID, "first_name")
+            driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", first_name_el)
+        except Exception:
+            pass
         time.sleep(0.5)
 
         filled: list[str] = []

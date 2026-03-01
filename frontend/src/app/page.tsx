@@ -1,8 +1,11 @@
 "use client";
 
-import Link from "next/link";
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useMemo } from "react";
 import { postDistillVideo } from "@/lib/api";
+import { useCallback, useState } from "react";
+import Link from "next/link";
+import { VoiceInput } from "@/components/VoiceInput";
+import { postParsePrompt } from "@/lib/api";
 
 type WorkflowStatus = "ready" | "processing" | "failed";
 
@@ -26,7 +29,33 @@ export default function HomePage() {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [useCaseNotes, setUseCaseNotes] = useState("");
-  const [isListening, setIsListening] = useState(false);
+
+  const [text, setText] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [sent, setSent] = useState(false);
+
+  const onTranscript = useCallback((newText: string) => {
+    setText((prev) => (prev + newText).trimStart());
+  }, []);
+
+  const onUseCaseTranscript = useCallback((newText: string) => {
+    setUseCaseNotes((prev) => (prev + newText).trimStart());
+  }, []);
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSent(false);
+    try {
+      await postParsePrompt(text);
+      setSent(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to send prompt");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const isDistillDisabled = useMemo(
     () => !workflowName.trim() || !videoFile || distilling,
@@ -82,45 +111,6 @@ export default function HomePage() {
     } finally {
       setDistilling(false);
     }
-  }
-
-  function onListenClick() {
-    const speechWindow = window as Window & {
-      SpeechRecognition?: new () => any;
-      webkitSpeechRecognition?: new () => any;
-    };
-    const SpeechRecognitionCtor = speechWindow.SpeechRecognition ?? speechWindow.webkitSpeechRecognition;
-
-    if (!SpeechRecognitionCtor) {
-      setError("Speech recognition is not supported in this browser.");
-      return;
-    }
-
-    const recognition: any = new SpeechRecognitionCtor();
-    recognition.lang = "en-US";
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-
-    setError(null);
-    setIsListening(true);
-
-    recognition.onresult = (event: any) => {
-      const transcript = event.results?.[0]?.[0]?.transcript?.trim() ?? "";
-      if (transcript) {
-        setUseCaseNotes((current) => (current ? `${current} ${transcript}` : transcript));
-      }
-    };
-
-    recognition.onerror = () => {
-      setError("Could not capture speech. Please try again.");
-      setIsListening(false);
-    };
-
-    recognition.onend = () => {
-      setIsListening(false);
-    };
-
-    recognition.start();
   }
 
   return (
@@ -243,14 +233,11 @@ export default function HomePage() {
                 <label className="block text-sm font-medium text-slate-300">
                   Describe Your Use Case
                 </label>
-                <button
-                  type="button"
-                  onClick={onListenClick}
-                  disabled={isListening}
+                <VoiceInput
+                  onTranscript={onUseCaseTranscript}
+                  disabled={distilling}
                   className="listen-button rounded-md px-3 py-1.5 text-xs font-medium disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {isListening ? "Listening..." : "Listen"}
-                </button>
+                />
               </div>
               <textarea
                 value={useCaseNotes}
@@ -282,9 +269,12 @@ export default function HomePage() {
                 {distilling ? "Distilling..." : "Distill Video"}
               </button>
             </div>
+
+
           </form>
         </div>
       ) : null}
+      
     </main>
   );
 }

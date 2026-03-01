@@ -117,3 +117,15 @@ export async function postContinueRun(runId: string): Promise<{ ok: boolean }> {
     method: "POST"
   });
 }
+
+export async function postParsePrompt(text: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/api/parseprompt`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ text })
+  });
+  if (!response.ok) {
+    const data = (await response.json().catch(() => ({}))) as { detail?: string };
+    throw new Error(data.detail ?? `${response.status} ${response.statusText}`);
+  }
+}

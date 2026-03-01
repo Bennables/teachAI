@@ -4,6 +4,8 @@ JSON parsing and validation utilities for VLM output.
 Handles common issues with LLM-generated JSON like markdown blocks,
 trailing commas, comments, and unquoted keys.
 """
+from __future__ import annotations
+
 import json
 import re
 import logging

@@ -3,6 +3,8 @@ Main pipeline orchestrator for semantic workflow extraction.
 
 Coordinates all components: frame extraction, VLM analysis, JSON parsing, and validation.
 """
+from __future__ import annotations
+
 import asyncio
 import json
 import logging
@@ -13,7 +15,6 @@ from pathlib import Path
 from typing import Callable
 
 from .vlm_client import VLMClient
-from .frame_extractor import extract_keyframes
 from .json_utils import parse_json_safe, validate_workflow_json, fix_common_json_errors
 from .vlm_prompts import create_extraction_prompt, create_repair_prompt
 from ..models.schemas import SemanticWorkflow
@@ -135,6 +136,14 @@ class WorkflowExtractionPipeline:
 
     async def _extract_keyframes(self, video_path: Path) -> Path:
         """Extract keyframes to temporary directory."""
+        try:
+            from .frame_extractor import extract_keyframes
+        except Exception as exc:  # noqa: BLE001
+            raise RuntimeError(
+                "Frame extraction dependencies are not available. "
+                "Check OpenCV/NumPy installation for this Python version."
+            ) from exc
+
         # Ensure temp directory exists
         if self.temp_dir:
             Path(self.temp_dir).mkdir(parents=True, exist_ok=True)

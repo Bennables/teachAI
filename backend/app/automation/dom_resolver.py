@@ -4,6 +4,8 @@ DOM Grounding Resolver - translates semantic targets to DOM selectors.
 This is the core component that bridges semantic descriptions from the VLM
 to actual DOM elements that Selenium can interact with.
 """
+from __future__ import annotations
+
 import json
 import logging
 import time

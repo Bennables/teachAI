@@ -4,6 +4,7 @@ VLM prompts for semantic workflow extraction.
 CRITICAL: These prompts enforce semantic descriptions only (NO CSS/XPath).
 The VLM describes WHAT the user intended, not HOW to implement it.
 """
+from __future__ import annotations
 
 # System prompt with strict rules against technical selectors
 SYSTEM_PROMPT = """You are a web workflow extraction expert. Your job is to analyze video frames showing a user interacting with a website and extract a semantic workflow describing their actions.

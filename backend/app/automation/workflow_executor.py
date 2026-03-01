@@ -3,6 +3,8 @@ Selenium workflow executor with DOM resolution integration.
 
 Executes semantic workflows by resolving targets to DOM elements at runtime.
 """
+from __future__ import annotations
+
 import logging
 import time
 from contextlib import contextmanager

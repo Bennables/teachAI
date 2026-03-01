@@ -2,6 +2,8 @@
 Workflow extraction service using Google Gemini VLM.
 Extracts semantic workflows from video recordings.
 """
+from __future__ import annotations
+
 import asyncio
 import json
 import logging
@@ -13,7 +15,6 @@ import dotenv
 
 dotenv.load_dotenv()
 
-from ..core.frame_extractor import extract_keyframes
 from ..core.vlm_client import VLMClient
 from ..core.json_utils import parse_json_safe
 from ..models.schemas import SemanticWorkflow
@@ -117,6 +118,14 @@ class WorkflowExtractionService:
 
     async def _extract_keyframes(self, video_path: Path) -> list[Path]:
         """Extract keyframes to permanent directory for debugging."""
+        try:
+            from ..core.frame_extractor import extract_keyframes
+        except Exception as exc:  # noqa: BLE001
+            raise RuntimeError(
+                "Frame extraction dependencies are not available. "
+                "Check OpenCV/NumPy installation for this Python version."
+            ) from exc
+
         # Create permanent debug directory next to video file
         debug_dir = video_path.parent / f"keyframes_{video_path.stem}"
         debug_dir.mkdir(exist_ok=True)

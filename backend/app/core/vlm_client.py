@@ -2,6 +2,8 @@
 Vision-Language Model client for workflow extraction.
 Uses Google Gemini for reliable image analysis.
 """
+from __future__ import annotations
+
 import asyncio
 import base64
 import logging

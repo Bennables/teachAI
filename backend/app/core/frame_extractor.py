@@ -2,6 +2,8 @@
 Change-based keyframe extraction for workflow video analysis.
 Captures interaction moments, not uniform time samples.
 """
+from __future__ import annotations
+
 import cv2
 import numpy as np
 from pathlib import Path

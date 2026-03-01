@@ -9,10 +9,12 @@ Teach an agent with one video. Record once, automate repeatedly.
 
 ## Backend Setup
 
+**Requires Python 3.12** (recommended; 3.13 can break some deps e.g. FastAPI/opencv). If you use [pyenv](https://github.com/pyenv/pyenv): `pyenv install 3.12 && pyenv local 3.12`.
+
 ```bash
 cd backend
 python -m venv venv
-source venv/bin/activate  # Windows: venv\\Scripts\\activate
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
 cp .env.example .env

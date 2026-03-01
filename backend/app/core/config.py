@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     grok_api_key: Optional[str] = None
     selenium_headless: bool = False
     selenium_timeout: int = 15
+    selenium_auth_wait_seconds: int = 600
 
 
 settings = Settings()

@@ -1,36 +1,28 @@
-from enum import Enum
-from typing import Annotated, Literal, Optional, Union
+"""Pydantic schemas used by extraction and Selenium execution."""
 
-from pydantic import BaseModel, ConfigDict, Field
+from __future__ import annotations
+
+from enum import Enum
+from typing import Annotated, Literal
+
+from pydantic import BaseModel, Field
+
+
+# === Selenium workflow template models ===
 
 
 class ParameterSpec(BaseModel):
-    """
-    Defines a user-fillable parameter in the workflow.
-
-    Examples:
-    - {"key": "room", "description": "Room to book", "example": "Study Room 3A"}
-    - {"key": "amount", "description": "Expense amount in USD", "example": "125.50"}
-    - {"key": "date", "description": "Appointment date", "example": "2024-01-15"}
-    """
-
-    key: str = Field(
-        ...,
-        pattern=r"^[a-z][a-z0-9_]*$",
-        description="Parameter name (lowercase, underscores)",
-    )
-    description: str = Field(..., description="Human-readable description")
-    example: str = Field(..., description="Example value")
-    required: bool = Field(default=True)
-    input_type: Literal["text", "date", "time", "number", "select"] = "text"
-    options: Optional[list[str]] = None
+    key: str
+    description: str | None = None
+    example: str | None = None
+    required: bool = True
+    input_type: Literal["text", "number", "date", "time", "email", "password", "select"] = "text"
 
 
 class BaseStep(BaseModel):
-    """Common fields for all step types."""
-
+    type: str
     description: str
-    resolved_css_selector: Optional[str] = None
+    resolved_css_selector: str | None = None
 
 
 class GotoStep(BaseStep):
@@ -40,85 +32,62 @@ class GotoStep(BaseStep):
 
 class ClickStep(BaseStep):
     type: Literal["CLICK"]
-    target_text_hint: Optional[str] = None
-    target_semantic: Optional[str] = None
-    css_selector_hint: Optional[str] = None
+    target_text_hint: str | None = None
+    target_semantic: str | None = None
+    css_selector_hint: str | None = None
 
 
 class TypeStep(BaseStep):
     type: Literal["TYPE"]
-    target_text_hint: Optional[str] = None
-    target_semantic: Optional[str] = None
-    css_selector_hint: Optional[str] = None
+    target_text_hint: str | None = None
+    target_semantic: str | None = None
+    css_selector_hint: str | None = None
     value: str
     clear_first: bool = True
 
 
 class SelectStep(BaseStep):
-    """For dropdown/select elements."""
-
     type: Literal["SELECT"]
-    target_semantic: Optional[str] = None
-    css_selector_hint: Optional[str] = None
+    target_semantic: str | None = None
+    css_selector_hint: str | None = None
     value: str
 
 
 class WaitStep(BaseStep):
     type: Literal["WAIT"]
-    seconds: Optional[float] = None
-    until_url_contains: Optional[str] = None
-    until_selector: Optional[str] = None
-    until_text_visible: Optional[str] = None
+    seconds: float | None = None
+    until_url_contains: str | None = None
+    until_selector: str | None = None
+    until_text_visible: str | None = None
 
 
 class ScrollStep(BaseStep):
-    """Scroll to element or position."""
-
     type: Literal["SCROLL"]
-    target_selector: Optional[str] = None
+    target_selector: str | None = None
     direction: Literal["up", "down"] = "down"
     pixels: int = 300
 
 
 class ScreenshotStep(BaseStep):
-    """Capture screenshot (useful for verification)."""
-
     type: Literal["SCREENSHOT"]
     filename: str
 
 
 Step = Annotated[
-    Union[
-        GotoStep,
-        ClickStep,
-        TypeStep,
-        SelectStep,
-        WaitStep,
-        ScrollStep,
-        ScreenshotStep,
-    ],
+    GotoStep | ClickStep | TypeStep | SelectStep | WaitStep | ScrollStep | ScreenshotStep,
     Field(discriminator="type"),
 ]
 
 
 class WorkflowTemplate(BaseModel):
-    """
-    Complete workflow definition.
-    This is site-agnostic - same schema works for any web task.
-    """
-
     name: str
-    description: Optional[str] = None
+    description: str | None = None
     start_url: str
-    parameters: list[ParameterSpec]
+    parameters: list[ParameterSpec] = Field(default_factory=list)
     steps: list[Step]
-
-    # Metadata (not used in execution)
     category: str = "custom"
     tags: list[str] = Field(default_factory=list)
-    estimated_duration_seconds: Optional[int] = None
-
-    model_config = ConfigDict(extra="forbid")
+    estimated_duration_seconds: int | None = None
 
 
 class RunStatus(str, Enum):
@@ -134,8 +103,8 @@ class LogEntry(BaseModel):
     ts: str
     level: Literal["info", "warn", "error"]
     message: str
-    step_index: Optional[int] = None
-    screenshot_path: Optional[str] = None
+    step_index: int | None = None
+    screenshot_path: str | None = None
 
 
 class DisambiguationCandidate(BaseModel):
@@ -143,7 +112,7 @@ class DisambiguationCandidate(BaseModel):
     label: str
     css: str
     confidence: float
-    location: Optional[str] = None
+    location: str | None = None
 
 
 class DisambiguationPayload(BaseModel):
@@ -161,4 +130,64 @@ class RunState(BaseModel):
     current_step: int
     total_steps: int
     logs: list[LogEntry]
-    disambiguation: Optional[DisambiguationPayload] = None
+    disambiguation: DisambiguationPayload | None = None
+
+
+# === Semantic workflow models ===
+
+
+class ActionType(str, Enum):
+    GOTO = "GOTO"
+    CLICK = "CLICK"
+    TYPE = "TYPE"
+    SELECT = "SELECT"
+    WAIT = "WAIT"
+    SCROLL = "SCROLL"
+    HOVER = "HOVER"
+
+
+class WaitCondition(str, Enum):
+    URL_CHANGE = "URL_CHANGE"
+    ELEMENT_VISIBLE = "ELEMENT_VISIBLE"
+    ELEMENT_CLICKABLE = "ELEMENT_CLICKABLE"
+    ELEMENT_PRESENT = "ELEMENT_PRESENT"
+    TEXT_PRESENT = "TEXT_PRESENT"
+    PAGE_LOAD = "PAGE_LOAD"
+
+
+class SemanticTarget(BaseModel):
+    text_hint: str | None = None
+    role_hint: str | None = None
+    label_hint: str | None = None
+    placeholder_hint: str | None = None
+    relative_hint: str | None = None
+    page_context: str | None = None
+    visual_description: str | None = None
+
+
+class WorkflowStep(BaseModel):
+    type: ActionType
+    description: str
+    target: SemanticTarget | None = None
+    value: str | None = None
+    url: str | None = None
+    wait_for: WaitCondition | None = None
+    wait_text: str | None = None
+    timeout_seconds: float = Field(default=10.0, gt=0)
+
+
+class SemanticWorkflow(BaseModel):
+    name: str
+    description: str
+    start_url: str
+    steps: list[WorkflowStep]
+    extracted_at: str | None = None
+    source_video: str | None = None
+
+
+class ResolvedStep(BaseModel):
+    original_step: WorkflowStep
+    resolved_selector: str | None = None
+    selector_type: Literal["css", "xpath"] | None = None
+    confidence: float = Field(default=0.0, ge=0.0, le=1.0)
+    alternatives: list[str] = Field(default_factory=list)

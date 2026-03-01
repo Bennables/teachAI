@@ -1,4 +1,6 @@
 from datetime import datetime, timezone
+import json
+from pathlib import Path
 from typing import Any, Literal, Optional, Union
 
 from app.models.schemas import (
@@ -14,84 +16,116 @@ def _utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-UCI_FALLBACK_WORKFLOW_ID = "wf_abc123"
-UCI_FALLBACK_WORKFLOW = WorkflowTemplate.model_validate(
-    {
+def _load_uci_fallback_workflow() -> WorkflowTemplate:
+    default_payload = {
         "name": "UCI Library Room Booking",
         "description": "Fallback workflow for booking a UCI library room.",
-        "start_url": "https://spaces.lib.uci.edu/",
+        "start_url": "https://spaces.lib.uci.edu/spaces",
         "category": "booking",
         "tags": ["uci", "library", "booking"],
         "parameters": [
             {
-                "key": "room",
-                "description": "Room to book",
-                "example": "Study Room 3A",
+                "key": "library",
+                "description": "Library location dropdown value.",
+                "example": "Gateway Study Center",
                 "required": True,
                 "input_type": "text",
             },
             {
-                "key": "date",
-                "description": "Booking date",
-                "example": "2024-01-15",
+                "key": "booking_date",
+                "description": "Booking date in MM/DD/YYYY format",
+                "example": "03/02/2026",
                 "required": True,
-                "input_type": "date",
+                "input_type": "text",
             },
             {
-                "key": "time",
-                "description": "Preferred booking time",
-                "example": "2:00 PM",
+                "key": "room_keyword",
+                "description": "Room identifier keyword (partial match).",
+                "example": "2106",
                 "required": True,
-                "input_type": "time",
+                "input_type": "text",
+            },
+            {
+                "key": "booking_time",
+                "description": "Booking start time label",
+                "example": "2:00pm",
+                "required": True,
+                "input_type": "text",
+            },
+            {
+                "key": "duration_minutes",
+                "description": "Duration in minutes (30,60,90,120).",
+                "example": "60",
+                "required": True,
+                "input_type": "select",
+                "options": ["30", "60", "90", "120"],
+            },
+            {
+                "key": "full_name",
+                "description": "Full name",
+                "example": "Alex Anteater",
+                "required": True,
+                "input_type": "text",
+            },
+            {
+                "key": "email",
+                "description": "Email",
+                "example": "alex@uci.edu",
+                "required": True,
+                "input_type": "text",
+            },
+            {
+                "key": "affiliation",
+                "description": "Affiliation value",
+                "example": "Undergraduate",
+                "required": True,
+                "input_type": "select",
+                "options": ["Undergraduate", "Graduate", "Faculty", "Staff"],
+            },
+            {
+                "key": "purpose_for_reservation_covid_19",
+                "description": "Reservation purpose value",
+                "example": "Other",
+                "required": True,
+                "input_type": "text",
             },
         ],
         "steps": [
             {
                 "type": "GOTO",
-                "description": "Navigate to UCI Library booking page",
-                "url": "https://spaces.lib.uci.edu/",
-            },
-            {
-                "type": "CLICK",
-                "description": "Open room booking interface",
-                "target_text_hint": "Book a Room",
+                "description": "Open UCI Library Gateway booking page",
+                "url": "https://spaces.lib.uci.edu/booking/Gateway",
             },
             {
                 "type": "WAIT",
-                "description": "Wait for booking form to render",
-                "seconds": 1.0,
-            },
-            {
-                "type": "TYPE",
-                "description": "Enter desired date",
-                "target_semantic": "Date",
-                "value": "{{date}}",
-            },
-            {
-                "type": "TYPE",
-                "description": "Enter desired time",
-                "target_semantic": "Time",
-                "value": "{{time}}",
-            },
-            {
-                "type": "TYPE",
-                "description": "Enter desired room",
-                "target_semantic": "Room",
-                "value": "{{room}}",
-            },
-            {
-                "type": "CLICK",
-                "description": "Submit room search",
-                "target_text_hint": "Search",
+                "description": "Wait for page content to appear",
+                "until_text_visible": "Space Availability",
             },
             {
                 "type": "WAIT",
-                "description": "Wait for search results",
-                "seconds": 2.0,
+                "description": "Allow room grid and scripts to fully initialize",
+                "seconds": 2.5,
             },
         ],
     }
-)
+
+    workflow_path = (
+        Path(__file__).resolve().parents[2]
+        / "tests"
+        / "uci_booking"
+        / "workflow_uci_library_booking.json"
+    )
+    if workflow_path.exists():
+        try:
+            return WorkflowTemplate.model_validate(json.loads(workflow_path.read_text()))
+        except Exception:
+            pass
+
+    return WorkflowTemplate.model_validate(default_payload)
+
+
+UCI_FALLBACK_WORKFLOW_ID = "wf_abc123"
+UCI_FALLBACK_WORKFLOW = _load_uci_fallback_workflow()
 
 
 workflows: dict[str, WorkflowTemplate] = {

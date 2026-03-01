@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useMemo, useEffect, useRef } from "react";
-import { postDistillVideo, getDistillStatusStreamUrl, type DistillStatusEvent } from "@/lib/api";
+import { postDistillVideo, WS_BASE_URL, type DistillStatusEvent } from "@/lib/api";
 import { useCallback, useState } from "react";
 import Link from "next/link";
 import { VoiceInput } from "@/components/VoiceInput";
@@ -77,47 +77,49 @@ export default function HomePage() {
         ? `${workflowName.trim()}. ${useCaseNotes.trim()}`
         : workflowName.trim();
       const { job_id } = await postDistillVideo(videoFile, hint);
-      const url = getDistillStatusStreamUrl(job_id);
-      const res = await fetch(url);
-      if (!res.ok || !res.body) throw new Error("Failed to open progress stream.");
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split("\n");
-        buffer = lines.pop() ?? "";
-        for (const line of lines) {
-          if (line.startsWith("data: ")) {
-            try {
-              const event: DistillStatusEvent = JSON.parse(line.slice(6));
-              setDistillProgress({ percent: event.percent, message: event.message });
-              if (event.status === "done" && event.workflow_id && event.workflow) {
-                const newWorkflow: WorkflowCard = {
-                  id: event.workflow_id,
-                  name: event.workflow.name || workflowName.trim(),
-                  updatedAt: formatTime(Date.now()),
-                  status: "ready"
-                };
-                setWorkflows((current) => [newWorkflow, ...current]);
-                setWorkflowName("");
-                setVideoFile(null);
-                setUseCaseNotes("");
-                setModalOpen(false);
-                break;
-              }
-              if (event.status === "error") {
-                setError(event.error ?? "Distillation failed.");
-                break;
-              }
-            } catch {
-              // ignore parse errors for incomplete chunks
+      await new Promise<void>((resolve, reject) => {
+        const ws = new WebSocket(`${WS_BASE_URL}/ws`);
+
+        ws.onopen = () => {
+          ws.send(JSON.stringify({ job_id }));
+        };
+
+        ws.onmessage = (msgEvent) => {
+          try {
+            const event = JSON.parse(msgEvent.data) as DistillStatusEvent;
+            const frameMessage =
+              event.current_frame != null && event.total_frames != null
+                ? `Analyzing frame ${event.current_frame}/${event.total_frames}`
+                : event.message;
+            setDistillProgress({ percent: event.percent, message: frameMessage });
+
+            if (event.status === "done" && event.workflow_id && event.workflow) {
+              const newWorkflow: WorkflowCard = {
+                id: event.workflow_id,
+                name: event.workflow.name || workflowName.trim(),
+                updatedAt: formatTime(Date.now()),
+                status: "ready"
+              };
+              setWorkflows((current) => [newWorkflow, ...current]);
+              setWorkflowName("");
+              setVideoFile(null);
+              setUseCaseNotes("");
+              setModalOpen(false);
+              ws.close();
+              resolve();
+            } else if (event.status === "error") {
+              ws.close();
+              reject(new Error(event.error ?? event.message ?? "Distillation failed."));
             }
+          } catch {
+            // ignore malformed websocket frames
           }
-        }
-      }
+        };
+
+        ws.onerror = () => {
+          reject(new Error("Failed to connect to workflow status websocket."));
+        };
+      });
     } catch (requestError) {
       const message = requestError instanceof Error ? requestError.message : "Unable to distill video.";
       const backendUnavailable =

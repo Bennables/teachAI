@@ -8,6 +8,7 @@ import asyncio
 import base64
 import logging
 import os
+
 from pathlib import Path
 from typing import Callable, Optional
 import dotenv 
@@ -16,7 +17,7 @@ dotenv.load_dotenv()
 
 try:
     import google.genai as genai
-    from google.generativeai.types import HarmCategory, HarmBlockThreshold
+    from genai.types import HarmCategory, HarmBlockThreshold
     GEMINI_AVAILABLE = True
 except ImportError:
     GEMINI_AVAILABLE = False

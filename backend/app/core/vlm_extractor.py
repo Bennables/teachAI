@@ -4,7 +4,7 @@ import base64
 import json
 import os
 from pathlib import Path
-from typing import Any, Callable, Optional, Union
+from typing import Any, Callable, Iterator, Optional, Union
 
 from app.core.storage import UCI_FALLBACK_WORKFLOW
 from app.models.schemas import WorkflowTemplate
@@ -117,10 +117,12 @@ def _call_cactus(prompt: str, image_b64: Optional[str] = None) -> str:
     return message
 
 
-def extract_frames(video_path: str, fps_sample: int = 1, max_frames: int = 30) -> list[str]:
+def extract_frames_iter(
+    video_path: str, fps_sample: int = 1, max_frames: int = 30
+) -> Iterator[str]:
     """
-    Extract frames from a video at 1 FPS (default), capped at max_frames.
-    Returns base64-encoded JPEG frames.
+    Yield base64-encoded JPEG frames from a video stream.
+    Frames are sampled at fps_sample and capped at max_frames.
     """
     import cv2
 
@@ -128,7 +130,7 @@ def extract_frames(video_path: str, fps_sample: int = 1, max_frames: int = 30) -
     if not cap.isOpened():
         raise ValueError(f"Unable to open video: {video_path}")
 
-    frames: list[str] = []
+    emitted = 0
     try:
         video_fps = cap.get(cv2.CAP_PROP_FPS)
         if not video_fps or video_fps <= 0:
@@ -137,7 +139,7 @@ def extract_frames(video_path: str, fps_sample: int = 1, max_frames: int = 30) -
         frame_interval = max(1, int(round(video_fps / fps_sample)))
         frame_idx = 0
 
-        while len(frames) < max_frames:
+        while emitted < max_frames:
             ok, frame = cap.read()
             if not ok:
                 break
@@ -158,15 +160,39 @@ def extract_frames(video_path: str, fps_sample: int = 1, max_frames: int = 30) -
                 )
                 if not encoded_ok:
                     raise RuntimeError("Failed to encode extracted frame")
-                frames.append(base64.b64encode(buf).decode("utf-8"))
+                emitted += 1
+                yield base64.b64encode(buf).decode("utf-8")
 
             frame_idx += 1
     finally:
         cap.release()
 
-    if not frames:
+    if emitted == 0:
         raise ValueError("No frames extracted from video")
-    return frames
+
+
+def _estimate_sampled_frame_count(
+    video_path: str, fps_sample: int = 1, max_frames: int = 30
+) -> int:
+    """
+    Estimate how many sampled frames we'll process for progress reporting.
+    """
+    import cv2
+
+    cap = cv2.VideoCapture(video_path)
+    if not cap.isOpened():
+        return max_frames
+    try:
+        video_fps = cap.get(cv2.CAP_PROP_FPS)
+        if not video_fps or video_fps <= 0:
+            video_fps = 1.0
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
+        if total_frames <= 0:
+            return max_frames
+        frame_interval = max(1, int(round(video_fps / fps_sample)))
+        return max(1, min(max_frames, (total_frames + frame_interval - 1) // frame_interval))
+    finally:
+        cap.release()
 
 
 def analyze_frame(frame_b64: str, frame_index: int, total_frames: int) -> dict[str, Any]:
@@ -204,16 +230,24 @@ def extract_workflow(
     try:
         path = str(video_path)
         progress("Extracting frames from video", 0)
-        frames = extract_frames(path, fps_sample=1, max_frames=30)
-        n = len(frames)
+        estimated_total = _estimate_sampled_frame_count(path, fps_sample=1, max_frames=30)
 
-        progress(f"Analyzing {n} frames", 5)
+        progress(f"Analyzing up to {estimated_total} frames", 5)
         frame_analyses = []
-        for idx, frame in enumerate(frames):
-            frame_analyses.append(analyze_frame(frame, idx, n))
+        processed = 0
+        for idx, frame in enumerate(extract_frames_iter(path, fps_sample=1, max_frames=30)):
+            total_for_prompt = max(estimated_total, idx + 1)
+            frame_analyses.append(analyze_frame(frame, idx, total_for_prompt))
+            processed = idx + 1
             # 5% -> 80% over frames
-            pct = 5 + (idx + 1) / n * 75
-            progress(f"Analyzed frame {idx + 1} of {n}", min(80, pct))
+            pct = 5 + processed / max(1, estimated_total) * 75
+            progress(
+                f"Analyzed frame {processed} of {max(estimated_total, processed)}",
+                min(80, pct),
+            )
+
+        if processed == 0:
+            raise ValueError("No frames extracted from video")
 
         progress("Synthesizing workflow", 85)
         synthesis_prompt = _SYNTHESIS_PROMPT_TEMPLATE.format(

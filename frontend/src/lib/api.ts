@@ -1,6 +1,8 @@
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
+export const WS_BASE_URL = API_BASE_URL.replace(/^http/, "ws");
+
 export interface ParameterSpec {
   key: string;
   description: string;
@@ -33,11 +35,14 @@ export interface DistillVideoResponse {
 }
 
 export interface DistillStatusEvent {
-  status: "running" | "done" | "error";
+  status: "queued" | "running" | "done" | "error";
   percent: number;
   message: string;
+  current_frame?: number;
+  total_frames?: number;
   workflow_id?: string;
   workflow?: WorkflowTemplate;
+  saved_video_path?: string;
   error?: string;
 }
 
@@ -109,11 +114,6 @@ export async function postDistillVideo(
   });
 }
 
-/** SSE URL for distill job progress. Open with EventSource or fetch. */
-export function getDistillStatusStreamUrl(jobId: string): string {
-  return `${API_BASE_URL}/api/workflows/distill-video/status/${jobId}`;
-}
-
 export async function getWorkflow(workflowId: string): Promise<WorkflowByIdResponse> {
   return apiFetch<WorkflowByIdResponse>(`/api/workflows/${workflowId}`);
 }
@@ -155,6 +155,37 @@ export interface GreenhouseApplyResponse {
   success: boolean;
   message: string;
   submit_clicked?: boolean;
+}
+
+// ── Booking (WebSocket) ──────────────────────────────────────────────────────
+
+export interface BookingParams {
+  library: string;
+  booking_date: string;
+  room_keyword: string;
+  booking_time: string;
+  duration_minutes: number;
+  full_name: string;
+  email: string;
+  affiliation: string;
+  purpose_for_reservation_covid_19: string;
+}
+
+export interface BookingWsRequest {
+  params: BookingParams;
+  max_auth_resumes?: number;
+  headless?: boolean;
+}
+
+export type BookingWsMessageType = "started" | "log" | "done" | "error";
+
+export interface BookingWsMessage {
+  type: BookingWsMessageType;
+  run_id?: string;
+  message?: string;
+  status?: "success" | "error" | "timeout";
+  execution_time_ms?: number;
+  error?: string | null;
 }
 
 export async function postGreenhouseApply(

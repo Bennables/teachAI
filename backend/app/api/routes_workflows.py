@@ -1,14 +1,13 @@
 import asyncio
-import json
 from pathlib import Path
 from typing import Any, Optional
 from urllib.parse import urlparse
 from uuid import uuid4
 
-from fastapi import APIRouter, File, Form, HTTPException, UploadFile
-from fastapi.responses import StreamingResponse
+from fastapi import APIRouter, BackgroundTasks, File, Form, HTTPException, UploadFile
 
-from app.core.vlm_extractor import extract_workflow
+from app.models.schemas import WorkflowTemplate
+from app.services.workflow_extraction_service import WorkflowExtractionService
 from app.core.storage import (
     get_workflow,
     list_runs,
@@ -22,8 +21,124 @@ UPLOADS_DIR = Path("uploads")
 UPLOADS_DIR.mkdir(parents=True, exist_ok=True)
 ALLOWED_VIDEO_SUFFIXES = {".mp4", ".webm", ".mov", ".mkv", ".avi", ".m4v"}
 
-# In-memory distill jobs: job_id -> { status, percent, message, workflow_id?, workflow?, error? }
 _distill_jobs: dict[str, dict[str, Any]] = {}
+
+
+def get_distill_job(job_id: str) -> Optional[dict[str, Any]]:
+    return _distill_jobs.get(job_id)
+
+
+def _semantic_to_template(semantic_workflow: Any, workflow_hint: Optional[str]) -> WorkflowTemplate:
+    """Convert SemanticWorkflow output into legacy WorkflowTemplate shape."""
+    step_dicts: list[dict[str, Any]] = []
+    for step in semantic_workflow.steps:
+        step_type = str(step.type)
+        base: dict[str, Any] = {"type": step_type, "description": step.description}
+        target = step.target
+
+        if step_type == "GOTO":
+            base["url"] = step.url or semantic_workflow.start_url
+        elif step_type == "CLICK":
+            if target and target.text_hint:
+                base["target_text_hint"] = target.text_hint
+            if target:
+                base["target_semantic"] = (
+                    target.label_hint
+                    or target.role_hint
+                    or target.placeholder_hint
+                    or target.visual_description
+                )
+        elif step_type == "TYPE":
+            if target and target.text_hint:
+                base["target_text_hint"] = target.text_hint
+            if target:
+                base["target_semantic"] = (
+                    target.label_hint
+                    or target.placeholder_hint
+                    or target.role_hint
+                    or target.visual_description
+                )
+            base["value"] = step.value or ""
+        elif step_type == "SELECT":
+            if target:
+                base["target_semantic"] = (
+                    target.label_hint
+                    or target.text_hint
+                    or target.role_hint
+                    or target.visual_description
+                )
+            base["value"] = step.value or ""
+        elif step_type == "WAIT":
+            if step.wait_text:
+                base["until_text_visible"] = step.wait_text
+            else:
+                base["seconds"] = max(0.5, float(step.timeout_seconds or 1.0))
+        elif step_type == "SCROLL":
+            base["direction"] = "down"
+            base["pixels"] = 300
+        else:
+            # Skip unsupported step types in the legacy template schema.
+            continue
+
+        step_dicts.append(base)
+
+    tags: list[str] = ["distilled"]
+    if workflow_hint and workflow_hint.strip():
+        tags.append(workflow_hint.strip().lower())
+
+    payload = {
+        "name": semantic_workflow.name,
+        "description": semantic_workflow.description,
+        "start_url": semantic_workflow.start_url,
+        "category": "custom",
+        "tags": tags,
+        "parameters": [],
+        "steps": step_dicts,
+    }
+    return WorkflowTemplate.model_validate(payload)
+
+
+async def _run_distill_job(job_id: str, saved_path: Path, workflow_hint: Optional[str]) -> None:
+    _distill_jobs[job_id] = {
+        "status": "running",
+        "percent": 10,
+        "message": "Uploading video saved. Starting extraction...",
+    }
+    try:
+        def _on_progress(message: str, percent: float) -> None:
+            job = _distill_jobs.get(job_id)
+            if job is None:
+                return
+            job["status"] = "running"
+            job["percent"] = max(0.0, min(100.0, float(percent)))
+            job["message"] = message
+
+        service = WorkflowExtractionService()
+        semantic_workflow = await service.extract_workflow(saved_path, progress_callback=_on_progress)
+        workflow = _semantic_to_template(semantic_workflow, workflow_hint)
+
+        _distill_jobs[job_id] = {
+            "status": "running",
+            "percent": 85,
+            "message": "Saving workflow...",
+        }
+        workflow_id = f"wf_{uuid4().hex[:8]}"
+        save_workflow(workflow_id, workflow)
+        _distill_jobs[job_id] = {
+            "status": "done",
+            "percent": 100,
+            "message": "Workflow distillation complete.",
+            "workflow_id": workflow_id,
+            "workflow": workflow.model_dump(mode="json"),
+            "saved_video_path": str(saved_path),
+        }
+    except Exception as exc:
+        _distill_jobs[job_id] = {
+            "status": "error",
+            "percent": 100,
+            "message": "Workflow distillation failed.",
+            "error": str(exc),
+        }
 
 
 @router.get("")
@@ -55,40 +170,9 @@ def list_workflows() -> dict[str, list[dict[str, object]]]:
     return {"workflows": response}
 
 
-def _run_distill(job_id: str, saved_path: Path, workflow_hint: Optional[str]) -> None:
-    """Run sync extraction and update job state (called from thread)."""
-    job = _distill_jobs.get(job_id)
-    if not job or job.get("status") != "running":
-        return
-
-    def on_progress(message: str, percent: float) -> None:
-        job["message"] = message
-        job["percent"] = percent
-
-    try:
-        workflow = extract_workflow(saved_path, on_progress=on_progress)
-        if workflow_hint:
-            hint = workflow_hint.strip().lower()
-            if hint:
-                tags = list(workflow.tags)
-                if hint not in tags:
-                    tags.append(hint)
-                workflow = workflow.model_copy(update={"tags": tags})
-
-        workflow_id = f"wf_{uuid4().hex[:8]}"
-        save_workflow(workflow_id, workflow)
-        job["status"] = "done"
-        job["percent"] = 100
-        job["message"] = "Done"
-        job["workflow_id"] = workflow_id
-        job["workflow"] = workflow.model_dump(mode="json")
-    except Exception as e:
-        job["status"] = "error"
-        job["error"] = str(e)
-
-
 @router.post("/distill-video")
 async def distill_video(
+    background_tasks: BackgroundTasks,
     file: UploadFile = File(...),
     workflow_hint: Optional[str] = Form(default=None),
 ) -> dict[str, object]:
@@ -111,48 +195,14 @@ async def distill_video(
         raise HTTPException(status_code=400, detail="Uploaded file is empty.")
     saved_path.write_bytes(content)
 
-    job_id = f"distill_{uuid4().hex[:12]}"
+    job_id = f"job_{uuid4().hex[:8]}"
     _distill_jobs[job_id] = {
-        "status": "running",
+        "status": "queued",
         "percent": 0,
-        "message": "Starting…",
+        "message": "Queued distillation job.",
     }
-    asyncio.create_task(
-        asyncio.to_thread(_run_distill, job_id, saved_path, workflow_hint)
-    )
+    background_tasks.add_task(_run_distill_job, job_id, saved_path, workflow_hint)
     return {"job_id": job_id}
-
-
-@router.get("/distill-video/status/{job_id}")
-async def distill_video_status(job_id: str) -> StreamingResponse:
-    """SSE stream of distill progress. Events: progress (percent, message) then done or error."""
-    if job_id not in _distill_jobs:
-        raise HTTPException(status_code=404, detail="Unknown distill job.")
-
-    async def event_stream():
-        while True:
-            job = _distill_jobs.get(job_id, {})
-            status = job.get("status", "running")
-            payload = {
-                "status": status,
-                "percent": job.get("percent", 0),
-                "message": job.get("message", ""),
-            }
-            if status == "done":
-                payload["workflow_id"] = job.get("workflow_id")
-                payload["workflow"] = job.get("workflow")
-            elif status == "error":
-                payload["error"] = job.get("error", "Unknown error")
-            yield f"data: {json.dumps(payload)}\n\n"
-            if status in ("done", "error"):
-                break
-            await asyncio.sleep(0.25)
-
-    return StreamingResponse(
-        event_stream(),
-        media_type="text/event-stream",
-        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
-    )
 
 
 @router.get("/{workflow_id}")

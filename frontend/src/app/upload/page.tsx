@@ -1,10 +1,10 @@
 "use client";
 
-import { DragEvent, useMemo, useState } from "react";
+import { DragEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-import { postDistillVideo, getDistillStatusStreamUrl, type DistillStatusEvent } from "@/lib/api";
+import { postDistillVideo, WS_BASE_URL, type DistillStatusEvent } from "@/lib/api";
 
 function isVideoFile(file: File): boolean {
   return file.type.startsWith("video/");
@@ -17,11 +17,17 @@ export default function UploadPage() {
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState<{ percent: number; message: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [streamMessages, setStreamMessages] = useState<string[]>([]);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const helperText = useMemo(() => {
     if (!selectedFile) return "Drag and drop a video file here, or choose a file.";
     return `Selected: ${selectedFile.name}`;
   }, [selectedFile]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [streamMessages]);
 
   function onFilePicked(file: File | null) {
     if (!file) return;
@@ -49,43 +55,50 @@ export default function UploadPage() {
     setLoading(true);
     setProgress({ percent: 0, message: "Starting…" });
     setError(null);
+    setStreamMessages(["Starting distillation..."]);
     try {
       const { job_id } = await postDistillVideo(selectedFile, "booking");
-      const url = getDistillStatusStreamUrl(job_id);
-      const res = await fetch(url);
-      if (!res.ok || !res.body) throw new Error("Failed to open progress stream.");
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split("\n");
-        buffer = lines.pop() ?? "";
-        for (const line of lines) {
-          if (line.startsWith("data: ")) {
-            try {
-              const event: DistillStatusEvent = JSON.parse(line.slice(6));
-              setProgress({ percent: event.percent, message: event.message });
-              if (event.status === "done" && event.workflow_id) {
-                router.push(`/workflow/${event.workflow_id}`);
-                return;
-              }
-              if (event.status === "error") {
-                setError(event.error ?? "Distillation failed.");
-                return;
-              }
-            } catch {
-              // ignore parse errors
+      await new Promise<void>((resolve, reject) => {
+        const ws = new WebSocket(`${WS_BASE_URL}/ws`);
+
+        ws.onopen = () => {
+          ws.send(JSON.stringify({ job_id }));
+        };
+
+        ws.onmessage = (msgEvent) => {
+          try {
+            const event = JSON.parse(msgEvent.data) as DistillStatusEvent;
+            const frameMessage =
+              event.current_frame != null && event.total_frames != null
+                ? `Analyzing frame ${event.current_frame}/${event.total_frames}`
+                : event.message;
+            setProgress({ percent: event.percent, message: frameMessage });
+            setStreamMessages((prev) => [...prev, frameMessage]);
+            if (event.status === "done" && event.workflow_id) {
+              ws.close();
+              router.push(`/workflow/${event.workflow_id}`);
+              resolve();
+              return;
             }
+            if (event.status === "error") {
+              ws.close();
+              reject(new Error(event.error ?? event.message ?? "Distillation failed."));
+            }
+          } catch {
+            // ignore malformed websocket frames
           }
-        }
-      }
+        };
+
+        ws.onerror = () => {
+          setStreamMessages((prev) => [...prev, "WebSocket connection error."]);
+          reject(new Error("Failed to connect to workflow status websocket."));
+        };
+      });
     } catch (submitError) {
       const message =
         submitError instanceof Error ? submitError.message : "Failed to distill video.";
       setError(message);
+      setStreamMessages((prev) => [...prev, `Error: ${message}`]);
     } finally {
       setLoading(false);
       setProgress(null);
@@ -146,6 +159,22 @@ export default function UploadPage() {
                 className="h-full rounded-full bg-blue-600 transition-[width] duration-300"
                 style={{ width: `${Math.min(100, Math.max(0, progress.percent))}%` }}
               />
+            </div>
+          </div>
+        ) : null}
+
+        {streamMessages.length > 0 ? (
+          <div className="mt-4">
+            <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">
+              Live stream
+            </p>
+            <div className="max-h-40 overflow-y-auto rounded-md border bg-gray-50 p-3 font-mono text-xs text-gray-700">
+              {streamMessages.map((message, index) => (
+                <p key={`${index}-${message}`} className="mb-1 last:mb-0">
+                  {message}
+                </p>
+              ))}
+              <div ref={messagesEndRef} />
             </div>
           </div>
         ) : null}

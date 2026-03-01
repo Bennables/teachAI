@@ -5,6 +5,7 @@ Legacy v1 endpoints ported from server.py:
   GET  /api/v1/booking-params-example
 """
 
+import asyncio
 import json
 import logging
 import subprocess
@@ -12,10 +13,11 @@ import tempfile
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, AsyncGenerator
 from uuid import uuid4
 
-from fastapi import APIRouter, BackgroundTasks, File, HTTPException, Query, UploadFile
+from fastapi import APIRouter, BackgroundTasks, File, Form, HTTPException, Query, UploadFile
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from app.core.pipeline import WorkflowExtractionPipeline
@@ -302,6 +304,263 @@ async def execute_uci_booking(request: SeleniumExecutionRequest) -> SeleniumExec
     finally:
         if params_temp_file:
             params_temp_file.unlink(missing_ok=True)
+
+
+async def stream_workflow_logs(
+    cmd: List[str],
+    cwd: str,
+    run_id: str,
+    timeout: int = 300
+) -> AsyncGenerator[str, None]:
+    """
+    Stream logs from test_workflow.py in real-time.
+
+    Captures both stdout and stderr and streams them as they arrive.
+    Each line is sent as a JSON object containing the log content.
+    """
+    start_time = time.time()
+
+    # Send initial status
+    yield f"data: {json.dumps({'type': 'status', 'run_id': run_id, 'status': 'starting', 'message': 'Starting workflow extraction...', 'timestamp': time.time()})}\n\n"
+
+    try:
+        # Start the subprocess
+        process = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+            cwd=cwd
+        )
+
+        yield f"data: {json.dumps({'type': 'status', 'run_id': run_id, 'status': 'running', 'message': 'Process started, streaming logs...', 'timestamp': time.time()})}\n\n"
+
+        # Create tasks to read both stdout and stderr
+        async def read_stdout():
+            if process.stdout:
+                async for line in process.stdout:
+                    try:
+                        decoded_line = line.decode('utf-8', errors='replace').strip()
+                        if decoded_line:  # Only send non-empty lines
+                            yield f"data: {json.dumps({'type': 'stdout', 'run_id': run_id, 'content': decoded_line, 'timestamp': time.time()})}\n\n"
+                    except Exception as e:
+                        yield f"data: {json.dumps({'type': 'error', 'run_id': run_id, 'message': f'Error reading stdout: {e}', 'timestamp': time.time()})}\n\n"
+
+        async def read_stderr():
+            if process.stderr:
+                async for line in process.stderr:
+                    try:
+                        decoded_line = line.decode('utf-8', errors='replace').strip()
+                        if decoded_line:  # Only send non-empty lines
+                            yield f"data: {json.dumps({'type': 'stderr', 'run_id': run_id, 'content': decoded_line, 'timestamp': time.time()})}\n\n"
+                    except Exception as e:
+                        yield f"data: {json.dumps({'type': 'error', 'run_id': run_id, 'message': f'Error reading stderr: {e}', 'timestamp': time.time()})}\n\n"
+
+        # Stream both stdout and stderr concurrently
+        stdout_gen = read_stdout()
+        stderr_gen = read_stderr()
+
+        async def merge_streams():
+            tasks = []
+            if process.stdout:
+                tasks.append(asyncio.create_task(collect_lines(stdout_gen)))
+            if process.stderr:
+                tasks.append(asyncio.create_task(collect_lines(stderr_gen)))
+
+            async def collect_lines(stream):
+                lines = []
+                async for line in stream:
+                    lines.append(line)
+                return lines
+
+            # Wait for both streams and the process to complete
+            try:
+                results = await asyncio.wait_for(asyncio.gather(*tasks, return_exceptions=True), timeout=timeout)
+                return_code = await process.wait()
+
+                # Yield all collected lines
+                for result in results:
+                    if isinstance(result, list):
+                        for line in result:
+                            yield line
+
+                execution_time_ms = int((time.time() - start_time) * 1000)
+
+                if return_code == 0:
+                    yield f"data: {json.dumps({'type': 'status', 'run_id': run_id, 'status': 'completed', 'message': 'Workflow extraction completed successfully', 'return_code': return_code, 'execution_time_ms': execution_time_ms, 'timestamp': time.time()})}\n\n"
+                else:
+                    yield f"data: {json.dumps({'type': 'status', 'run_id': run_id, 'status': 'failed', 'message': f'Process failed with return code {return_code}', 'return_code': return_code, 'execution_time_ms': execution_time_ms, 'timestamp': time.time()})}\n\n"
+
+            except asyncio.TimeoutError:
+                process.kill()
+                await process.wait()
+                yield f"data: {json.dumps({'type': 'status', 'run_id': run_id, 'status': 'timeout', 'message': f'Process timed out after {timeout} seconds', 'execution_time_ms': int((time.time() - start_time) * 1000), 'timestamp': time.time()})}\n\n"
+
+        async for line_data in merge_streams():
+            yield line_data
+
+    except Exception as e:
+        yield f"data: {json.dumps({'type': 'error', 'run_id': run_id, 'message': f'Unexpected error: {str(e)}', 'execution_time_ms': int((time.time() - start_time) * 1000), 'timestamp': time.time()})}\n\n"
+
+
+# Simpler approach - directly stream lines as they come
+async def simple_stream_workflow_logs(cmd: List[str], cwd: str, run_id: str, timeout: int = 300) -> AsyncGenerator[str, None]:
+    """Simple streaming of workflow logs without complex merging."""
+    try:
+        process = await asyncio.create_subprocess_exec(
+            *cmd,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.STDOUT,  # Merge stderr into stdout for simplicity
+            cwd=cwd,
+            env=None
+        )
+
+        if process.stdout:
+            async for line in process.stdout:
+                decoded_line = line.decode('utf-8', errors='replace').rstrip()
+                if decoded_line:  # Only send non-empty lines
+                    yield f"data: {json.dumps({'type': 'log', 'run_id': run_id, 'content': decoded_line, 'timestamp': time.time()})}\n\n"
+
+        return_code = await process.wait()
+        yield f"data: {json.dumps({'type': 'status', 'run_id': run_id, 'status': 'completed' if return_code == 0 else 'failed', 'return_code': return_code, 'timestamp': time.time()})}\n\n"
+
+    except Exception as e:
+        yield f"data: {json.dumps({'type': 'error', 'run_id': run_id, 'message': str(e), 'timestamp': time.time()})}\n\n"
+
+
+@router.post("/extract-workflow-stream")
+async def extract_workflow_stream(
+    background_tasks: BackgroundTasks,
+    workflow_type: str = Form(..., description="'greenhouse' or 'langson_library'"),
+    video: UploadFile = File(..., description="Video file for workflow extraction"),
+) -> StreamingResponse:
+    """
+    Stream workflow extraction logs from uploaded video in real-time.
+
+    This endpoint accepts a video file upload and streams the workflow extraction process
+    including progress updates, INFO messages, and keyframe extraction logs as Server-Sent Events.
+
+    Response format: Server-Sent Events (SSE)
+    Each event contains JSON data with:
+    - type: 'log', 'status', or 'error'
+    - run_id: Unique identifier for this execution
+    - content: The actual log line (for 'log' type)
+    - timestamp: Unix timestamp
+
+    Usage example with curl:
+    curl -N -H "Accept: text/event-stream" \\
+         -F "video=@/path/to/video.mov" \\
+         -F "workflow_type=langson_library" \\
+         http://localhost:8000/api/v1/extract-workflow-stream
+    """
+    run_id = f"extract_{uuid4().hex[:8]}"
+
+    # Validate workflow type
+    if workflow_type not in ("greenhouse", "langson_library"):
+        async def error_generator():
+            yield f"data: {json.dumps({'type': 'error', 'run_id': run_id, 'message': 'workflow_type must be greenhouse or langson_library', 'timestamp': time.time()})}\n\n"
+
+        return StreamingResponse(
+            error_generator(),
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
+                "Access-Control-Allow-Origin": "*"
+            }
+        )
+
+    # Validate video file
+    if not video.filename:
+        async def error_generator():
+            yield f"data: {json.dumps({'type': 'error', 'run_id': run_id, 'message': 'No video file provided', 'timestamp': time.time()})}\n\n"
+
+        return StreamingResponse(
+            error_generator(),
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
+                "Access-Control-Allow-Origin": "*"
+            }
+        )
+
+    file_ext = Path(video.filename).suffix.lower()
+    if file_ext not in ALLOWED_VIDEO_EXTENSIONS:
+        async def error_generator():
+            yield f"data: {json.dumps({'type': 'error', 'run_id': run_id, 'message': f'Unsupported file type: {file_ext}. Allowed: {ALLOWED_VIDEO_EXTENSIONS}', 'timestamp': time.time()})}\n\n"
+
+        return StreamingResponse(
+            error_generator(),
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
+                "Access-Control-Allow-Origin": "*"
+            }
+        )
+
+    # Save uploaded video to temp file first (outside the generator)
+    temp_video: Optional[Path] = None
+
+    try:
+        # Save uploaded video to temp file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_ext) as tmp:
+            content = await video.read()
+            tmp.write(content)
+            temp_video = Path(tmp.name)
+
+    except Exception as e:
+        # Return error if file upload fails
+        async def error_generator():
+            yield f"data: {json.dumps({'type': 'error', 'run_id': run_id, 'message': f'File upload error: {str(e)}', 'timestamp': time.time()})}\n\n"
+
+        return StreamingResponse(
+            error_generator(),
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
+                "Access-Control-Allow-Origin": "*"
+            }
+        )
+
+    # Stream the workflow extraction process
+    async def stream_extraction():
+        try:
+            yield f"data: {json.dumps({'type': 'status', 'run_id': run_id, 'message': f'Video uploaded: {video.filename} ({len(content)} bytes)', 'timestamp': time.time()})}\n\n"
+
+            yield f"data: {json.dumps({'type': 'status', 'run_id': run_id, 'message': 'Starting workflow extraction...', 'timestamp': time.time()})}\n\n"
+
+            # Prepare command to run test_workflow.py with the uploaded video
+            cmd = [
+                "python",
+                str(_BACKEND_ROOT / "test_workflow.py"),
+                str(temp_video)  # Pass video path as argument
+            ]
+
+            logger.info(f"[EXTRACT-STREAM] run_id={run_id} workflow_type={workflow_type} file={video.filename}")
+
+            # Stream the extraction process logs
+            async for log_data in simple_stream_workflow_logs(cmd, str(_BACKEND_ROOT), run_id, timeout=600):
+                yield log_data
+
+        except Exception as e:
+            yield f"data: {json.dumps({'type': 'error', 'run_id': run_id, 'message': f'Extraction error: {str(e)}', 'timestamp': time.time()})}\n\n"
+
+    # Schedule cleanup of temp video file
+    if temp_video and temp_video.exists():
+        background_tasks.add_task(_cleanup_temp_file, temp_video)
+
+    return StreamingResponse(
+        stream_extraction(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "Access-Control-Allow-Origin": "*",
+            "X-Run-ID": run_id
+        }
+    )
 
 
 @router.get("/booking-params-example", response_model=BookingParams)

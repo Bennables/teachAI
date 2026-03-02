@@ -61,10 +61,10 @@ class BookingParams(BaseModel):
     room_keyword: str = Field(..., example="394", description="Room identifier")
     booking_time: str = Field(..., example="3:00pm", description="Time slot")
     duration_minutes: int = Field(..., example=30, description="Duration in minutes (30, 60, 90, 120)")
-    full_name: str = Field(..., example="Alex Anteater")
-    email: str = Field(..., example="alex@uci.edu")
+    full_name: str = Field(default="", example="Alex Anteater")
+    email: str = Field(default="", example="alex@uci.edu")
     affiliation: str = Field(..., example="Graduate", description="Undergraduate, Graduate, Faculty, or Staff")
-    purpose_for_reservation_covid_19: str = Field(..., example="Need a place to study")
+    purpose_for_reservation_covid_19: str = Field(default="", example="Need a place to study")
 
 
 class SeleniumExecutionRequest(BaseModel):
@@ -98,10 +98,7 @@ def _validate_booking_params(params: BookingParams) -> None:
     for field_name, value in [
         ("room_keyword", params.room_keyword),
         ("booking_time", params.booking_time),
-        ("full_name", params.full_name),
-        ("email", params.email),
         ("affiliation", params.affiliation),
-        ("purpose_for_reservation_covid_19", params.purpose_for_reservation_covid_19),
     ]:
         if not str(value).strip():
             raise ValueError(f"{field_name} cannot be empty")
@@ -209,11 +206,10 @@ async def execute_uci_booking(request: SeleniumExecutionRequest) -> SeleniumExec
     """Execute UCI library room booking via Selenium with the provided parameters."""
     start_time = time.time()
     run_id = f"run_uci_{uuid4().hex[:8]}"
-    effective_params = BookingParams.model_validate(FORCED_BOOKING_PARAMS)
+    effective_params = request.params
     params_for_logs = _booking_params_log_view(effective_params)
 
-    logger.info(f"[BOOKING][RECEIVED] run_id={run_id} incoming={_booking_params_log_view(request.params)}")
-    logger.info(f"[BOOKING][FORCED] run_id={run_id} using_hardcoded_params={params_for_logs}")
+    logger.info(f"[BOOKING][RECEIVED] run_id={run_id} params={params_for_logs}")
 
     try:
         _validate_booking_params(effective_params)
@@ -252,7 +248,6 @@ async def execute_uci_booking(request: SeleniumExecutionRequest) -> SeleniumExec
         stderr_lines = [l for l in result.stderr.splitlines() if l] if result.stderr else []
         execution_log = (
             [f"[BOOKING][RECEIVED] run_id={run_id} params={params_for_logs}"]
-            + [f"[BOOKING][FORCED] run_id={run_id} params={params_for_logs}"]
             + [f"[BOOKING][VALIDATED] run_id={run_id} params={params_for_logs}"]
             + [f"[STDOUT] {l}" for l in stdout_lines]
             + [f"[STDERR] {l}" for l in stderr_lines]

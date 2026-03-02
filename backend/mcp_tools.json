@@ -9,7 +9,7 @@
           "application_url": {
             "type": "string",
             "format": "uri",
-            "description": "Full URL of the Greenhouse job application page (must be from boards.greenhouse.io)"
+            "description": "Full URL of the Greenhouse job application page (e.g. boards.greenhouse.io or job-boards.eu.greenhouse.io)"
           },
           "first_name": {
             "type": "string",

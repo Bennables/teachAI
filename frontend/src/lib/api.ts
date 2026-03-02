@@ -264,11 +264,6 @@ export async function postParsePrompt(text: string): Promise<ParsePromptResponse
 
 export interface GreenhouseApplyParams {
   application_url: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone: string;
-  address?: string;
   submit?: boolean;
 }
 
@@ -284,11 +279,6 @@ export async function postGreenhouseApply(
 ): Promise<GreenhouseApplyResponse> {
   const form = new FormData();
   form.append("application_url", params.application_url);
-  form.append("first_name", params.first_name);
-  form.append("last_name", params.last_name);
-  form.append("email", params.email);
-  form.append("phone", params.phone);
-  form.append("address", params.address ?? "");
   form.append("submit", String(params.submit ?? false));
   form.append("resume", resumeFile);
 

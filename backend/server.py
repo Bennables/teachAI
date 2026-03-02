@@ -81,10 +81,10 @@ class BookingParams(BaseModel):
     room_keyword: str = Field(..., example="394", description="Room identifier")
     booking_time: str = Field(..., example="3:00pm", description="Time slot")
     duration_minutes: int = Field(..., example=30, description="Duration in minutes (30, 60, 90, 120)")
-    full_name: str = Field(..., example="Alex Anteater", description="Full name for reservation")
-    email: str = Field(..., example="alex@uci.edu", description="Email address")
+    full_name: str = Field(default="", example="Alex Anteater", description="Full name for reservation")
+    email: str = Field(default="", example="alex@uci.edu", description="Email address")
     affiliation: str = Field(..., example="Graduate", description="Affiliation (Undergraduate, Graduate, Faculty, Staff)")
-    purpose_for_reservation_covid_19: str = Field(..., example="Need a place to study", description="Purpose for reservation")
+    purpose_for_reservation_covid_19: str = Field(default="", example="Need a place to study", description="Purpose for reservation")
 
 class SeleniumExecutionRequest(BaseModel):
     """Request for Selenium execution."""
@@ -377,10 +377,7 @@ def validate_booking_params(params: BookingParams) -> None:
     required_fields = [
         ('room_keyword', params.room_keyword),
         ('booking_time', params.booking_time),
-        ('full_name', params.full_name),
-        ('email', params.email),
         ('affiliation', params.affiliation),
-        ('purpose_for_reservation_covid_19', params.purpose_for_reservation_covid_19)
     ]
 
     for field_name, value in required_fields:

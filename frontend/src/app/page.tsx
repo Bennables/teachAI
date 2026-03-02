@@ -109,13 +109,7 @@ export default function HomePage() {
           const qs = new URLSearchParams();
           const draft = parsed.greenhouse_draft;
           if (draft.application_url) qs.set("application_url", draft.application_url);
-          if (draft.first_name) qs.set("first_name", draft.first_name);
-          if (draft.last_name) qs.set("last_name", draft.last_name);
-          if (draft.email) qs.set("email", draft.email);
-          if (draft.phone) qs.set("phone", draft.phone);
-          if (draft.address) qs.set("address", draft.address);
-          qs.set("submit", String(Boolean(draft.submit)));
-          router.push(`/greenhouse-run?${qs.toString()}`);
+          router.push(`/greenhouse${qs.toString() ? `?${qs.toString()}` : ""}`);
           return;
         }
       }
@@ -300,7 +294,7 @@ export default function HomePage() {
               )}
             </label>
 
-            <div className="mt-4">
+            {/* <div className="mt-4">
               <div className="mb-2 flex items-center justify-between">
                 <label className="block text-sm font-medium text-slate-300">
                   Describe Your Use Case
@@ -318,7 +312,7 @@ export default function HomePage() {
                 className="w-full rounded-lg border border-cyan-400/30 bg-slate-900 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-fuchsia-400"
                 placeholder="Example: Log into UCI library portal, choose Science Library, select 2:00 PM to 3:00 PM, then confirm reservation."
               />
-            </div>
+            </div> */}
 
             {distilling || distillLog ? (
               <div className="mt-5 space-y-3">

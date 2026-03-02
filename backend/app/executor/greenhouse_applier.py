@@ -32,7 +32,7 @@ from app.core.config import settings
 _FORM_READY_TIMEOUT = 15
 _FIELD_TIMEOUT = 3
 # Delays to avoid rate limiting (seconds)
-_DELAY_AFTER_PAGE = 2
+_DELAY_AFTER_PAGE = 8
 _DELAY_BETWEEN_FIELDS = 0.5
 _DELAY_SELECT_OPEN = 0.5
 _DELAY_SELECT_BEFORE_CHOOSE = .5  # Wait for dropdown options to render before typing answer
@@ -566,6 +566,8 @@ def _ask_grok_for_fields(
         print("[greenhouse] Grok API key not set, skipping AI field detection")
         return {}
     try:
+        from openai import OpenAI
+
         fields = _extract_form_fields_from_dom(driver)
         unfilled = [
             f for f in fields
@@ -874,7 +876,7 @@ def _ask_grok_for_select_answers(
 
         client = OpenAI(api_key=settings.grok_api_key, base_url="https://api.x.ai/v1")
         response = client.chat.completions.create(
-            model="grok-beta",
+            model="grok-3-fast",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=600,
             temperature=0.1,

@@ -1334,5 +1334,2991 @@
       }
     ],
     "disambiguation": null
+  },
+  "run_43deb8ec": {
+    "run_id": "run_43deb8ec",
+    "workflow_id": "wf_af24110b",
+    "status": "failed",
+    "current_step": 14,
+    "total_steps": 19,
+    "logs": [
+      {
+        "ts": "2026-03-01T16:53:36.734779+00:00",
+        "level": "info",
+        "message": "Workflow run started",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T16:53:36.737374+00:00",
+        "level": "info",
+        "message": "Starting step 0: Open UCI Libraries spaces page",
+        "step_index": 0,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T16:53:38.301348+00:00",
+        "level": "info",
+        "message": "Completed step 0: navigated to https://spaces.lib.uci.edu/spaces",
+        "step_index": 0,
+        "screenshot_path": "artifacts/run_43deb8ec/step_0.png"
+      },
+      {
+        "ts": "2026-03-01T16:53:38.304651+00:00",
+        "level": "info",
+        "message": "Starting step 1: Wait for page content to appear",
+        "step_index": 1,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T16:53:39.037471+00:00",
+        "level": "info",
+        "message": "Completed step 1: wait condition satisfied",
+        "step_index": 1,
+        "screenshot_path": "artifacts/run_43deb8ec/step_1.png"
+      },
+      {
+        "ts": "2026-03-01T16:53:39.040755+00:00",
+        "level": "info",
+        "message": "Starting step 2: Allow room grid and scripts to fully initialize",
+        "step_index": 2,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T16:53:39.578686+00:00",
+        "level": "info",
+        "message": "Completed step 2: wait condition satisfied",
+        "step_index": 2,
+        "screenshot_path": "artifacts/run_43deb8ec/step_2.png"
+      },
+      {
+        "ts": "2026-03-01T16:53:39.582532+00:00",
+        "level": "info",
+        "message": "Starting step 3: Select library from Location dropdown",
+        "step_index": 3,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T16:53:40.031358+00:00",
+        "level": "info",
+        "message": "Completed step 3: selected option 'Gateway Study Center'",
+        "step_index": 3,
+        "screenshot_path": "artifacts/run_43deb8ec/step_3.png"
+      },
+      {
+        "ts": "2026-03-01T16:53:40.035423+00:00",
+        "level": "info",
+        "message": "Starting step 4: Wait for room list to refresh for selected library",
+        "step_index": 4,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T16:53:41.148021+00:00",
+        "level": "info",
+        "message": "Completed step 4: wait condition satisfied",
+        "step_index": 4,
+        "screenshot_path": "artifacts/run_43deb8ec/step_4.png"
+      },
+      {
+        "ts": "2026-03-01T16:53:41.151236+00:00",
+        "level": "info",
+        "message": "Starting step 5: Open room details page directly",
+        "step_index": 5,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T16:53:42.643336+00:00",
+        "level": "info",
+        "message": "Completed step 5: navigated to https://spaces.lib.uci.edu/space/44709",
+        "step_index": 5,
+        "screenshot_path": "artifacts/run_43deb8ec/step_5.png"
+      },
+      {
+        "ts": "2026-03-01T16:53:42.646680+00:00",
+        "level": "info",
+        "message": "Starting step 6: Wait for room page booking grid to load",
+        "step_index": 6,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T16:53:42.848617+00:00",
+        "level": "info",
+        "message": "Completed step 6: wait condition satisfied",
+        "step_index": 6,
+        "screenshot_path": "artifacts/run_43deb8ec/step_6.png"
+      },
+      {
+        "ts": "2026-03-01T16:53:42.852098+00:00",
+        "level": "info",
+        "message": "Starting step 7: Select room start slot on room page",
+        "step_index": 7,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T16:53:52.469518+00:00",
+        "level": "info",
+        "message": "Start slot not visible on current date range. Navigating schedule to 2026-03-02.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T16:53:52.906277+00:00",
+        "level": "info",
+        "message": "Schedule navigation to 2026-03-02 succeeded.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T16:53:53.184038+00:00",
+        "level": "info",
+        "message": "Completed step 7: click action succeeded",
+        "step_index": 7,
+        "screenshot_path": "artifacts/run_43deb8ec/step_7.png"
+      },
+      {
+        "ts": "2026-03-01T16:53:53.187768+00:00",
+        "level": "info",
+        "message": "Starting step 8: Wait briefly for end-time controls to appear",
+        "step_index": 8,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T16:53:53.526976+00:00",
+        "level": "info",
+        "message": "Completed step 8: wait condition satisfied",
+        "step_index": 8,
+        "screenshot_path": "artifacts/run_43deb8ec/step_8.png"
+      },
+      {
+        "ts": "2026-03-01T16:53:53.530729+00:00",
+        "level": "info",
+        "message": "Starting step 9: Select end time from dropdown based on computed duration",
+        "step_index": 9,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T16:53:59.726454+00:00",
+        "level": "warn",
+        "message": "Requested end time '3:00pm' was unavailable. Using closest available option '2:00pm Monday, March 2, 2026'.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T16:53:59.912240+00:00",
+        "level": "info",
+        "message": "Completed step 9: selected option '3:00pm'",
+        "step_index": 9,
+        "screenshot_path": "artifacts/run_43deb8ec/step_9.png"
+      },
+      {
+        "ts": "2026-03-01T16:53:59.915859+00:00",
+        "level": "info",
+        "message": "Starting step 10: Wait for selected slot state to apply",
+        "step_index": 10,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T16:54:00.876398+00:00",
+        "level": "info",
+        "message": "Completed step 10: wait condition satisfied",
+        "step_index": 10,
+        "screenshot_path": "artifacts/run_43deb8ec/step_10.png"
+      },
+      {
+        "ts": "2026-03-01T16:54:00.880362+00:00",
+        "level": "info",
+        "message": "Starting step 11: Click Submit Times to proceed to booking form",
+        "step_index": 11,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T16:54:04.194991+00:00",
+        "level": "info",
+        "message": "Completed step 11: click action succeeded",
+        "step_index": 11,
+        "screenshot_path": "artifacts/run_43deb8ec/step_11.png"
+      },
+      {
+        "ts": "2026-03-01T16:54:04.198401+00:00",
+        "level": "info",
+        "message": "Starting step 12: Wait for checkout form after Submit Times",
+        "step_index": 12,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T16:54:11.745522+00:00",
+        "level": "info",
+        "message": "WAIT step encountered auth flow; extending timeout to 600s.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T16:54:23.965692+00:00",
+        "level": "info",
+        "message": "Completed step 12: wait condition satisfied",
+        "step_index": 12,
+        "screenshot_path": "artifacts/run_43deb8ec/step_12.png"
+      },
+      {
+        "ts": "2026-03-01T16:54:23.969942+00:00",
+        "level": "info",
+        "message": "Starting step 13: Select Affiliation option",
+        "step_index": 13,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T16:54:24.252735+00:00",
+        "level": "info",
+        "message": "Completed step 13: click action succeeded via checked choice input",
+        "step_index": 13,
+        "screenshot_path": "artifacts/run_43deb8ec/step_13.png"
+      },
+      {
+        "ts": "2026-03-01T16:54:24.255941+00:00",
+        "level": "info",
+        "message": "Starting step 14: Select Purpose for Reservation COVID-19 option",
+        "step_index": 14,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T16:55:17.383412+00:00",
+        "level": "error",
+        "message": "Workflow failed: Message: No element found for step: Select Purpose for Reservation COVID-19 option; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception\n. Context: url=https://spaces.lib.uci.edu/spaces/auth?returnUrl=%2Fspace%2F44709&token=4ee53RuUJ441x3ZjUldFmEMkQqsOKosHUR4uHzwuszIpOX2LVGnwPxU3qR5pHyjEQ; title=Booking Details - Library Reservations - University of California Irvine; auth=False; markers=space_checkout,booking_form_text,submit_my_booking_text; counts=input:13,select:1,textarea:1,button:3; body='LOCATIONS CONNECT FROM OFF-CAMPUS HOURS ACCESSIBILITY ACCOUNTS GIVING University of California Irvine Library Reservations Gateway Study Center Space Checkout Ben Sirivallop - Logo'",
+        "step_index": null,
+        "screenshot_path": "artifacts/run_43deb8ec/error.png"
+      }
+    ],
+    "disambiguation": null
+  },
+  "run_adee8e49": {
+    "run_id": "run_adee8e49",
+    "workflow_id": "wf_a329470a",
+    "status": "failed",
+    "current_step": 12,
+    "total_steps": 19,
+    "logs": [
+      {
+        "ts": "2026-03-01T18:10:58.117018+00:00",
+        "level": "info",
+        "message": "Workflow run started",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:10:58.124388+00:00",
+        "level": "info",
+        "message": "Starting step 0: Open UCI Libraries spaces page",
+        "step_index": 0,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:11:00.717395+00:00",
+        "level": "info",
+        "message": "Completed step 0: navigated to https://spaces.lib.uci.edu/spaces",
+        "step_index": 0,
+        "screenshot_path": "artifacts/run_adee8e49/step_0.png"
+      },
+      {
+        "ts": "2026-03-01T18:11:00.723758+00:00",
+        "level": "info",
+        "message": "Starting step 1: Wait for page content to appear",
+        "step_index": 1,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:11:01.532970+00:00",
+        "level": "info",
+        "message": "Completed step 1: wait condition satisfied",
+        "step_index": 1,
+        "screenshot_path": "artifacts/run_adee8e49/step_1.png"
+      },
+      {
+        "ts": "2026-03-01T18:11:01.537710+00:00",
+        "level": "info",
+        "message": "Starting step 2: Allow room grid and scripts to fully initialize",
+        "step_index": 2,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:11:02.045275+00:00",
+        "level": "info",
+        "message": "Completed step 2: wait condition satisfied",
+        "step_index": 2,
+        "screenshot_path": "artifacts/run_adee8e49/step_2.png"
+      },
+      {
+        "ts": "2026-03-01T18:11:02.048977+00:00",
+        "level": "info",
+        "message": "Starting step 3: Select library from Location dropdown",
+        "step_index": 3,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:11:02.521943+00:00",
+        "level": "info",
+        "message": "Completed step 3: selected option 'Gateway Study Center'",
+        "step_index": 3,
+        "screenshot_path": "artifacts/run_adee8e49/step_3.png"
+      },
+      {
+        "ts": "2026-03-01T18:11:02.527146+00:00",
+        "level": "info",
+        "message": "Starting step 4: Wait for room list to refresh for selected library",
+        "step_index": 4,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:11:03.635227+00:00",
+        "level": "info",
+        "message": "Completed step 4: wait condition satisfied",
+        "step_index": 4,
+        "screenshot_path": "artifacts/run_adee8e49/step_4.png"
+      },
+      {
+        "ts": "2026-03-01T18:11:03.638957+00:00",
+        "level": "info",
+        "message": "Starting step 5: Open room details page directly",
+        "step_index": 5,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:11:05.000782+00:00",
+        "level": "info",
+        "message": "Completed step 5: navigated to https://spaces.lib.uci.edu/space/44709",
+        "step_index": 5,
+        "screenshot_path": "artifacts/run_adee8e49/step_5.png"
+      },
+      {
+        "ts": "2026-03-01T18:11:05.004721+00:00",
+        "level": "info",
+        "message": "Starting step 6: Wait for room page booking grid to load",
+        "step_index": 6,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:11:05.203649+00:00",
+        "level": "info",
+        "message": "Completed step 6: wait condition satisfied",
+        "step_index": 6,
+        "screenshot_path": "artifacts/run_adee8e49/step_6.png"
+      },
+      {
+        "ts": "2026-03-01T18:11:05.206769+00:00",
+        "level": "info",
+        "message": "Starting step 7: Select room start slot on room page",
+        "step_index": 7,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:11:14.804339+00:00",
+        "level": "info",
+        "message": "Start slot not visible on current date range. Navigating schedule to 2026-03-02.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:11:15.245552+00:00",
+        "level": "info",
+        "message": "Schedule navigation to 2026-03-02 succeeded.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:11:15.541790+00:00",
+        "level": "info",
+        "message": "Completed step 7: click action succeeded",
+        "step_index": 7,
+        "screenshot_path": "artifacts/run_adee8e49/step_7.png"
+      },
+      {
+        "ts": "2026-03-01T18:11:15.545652+00:00",
+        "level": "info",
+        "message": "Starting step 8: Wait briefly for end-time controls to appear",
+        "step_index": 8,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:11:15.889548+00:00",
+        "level": "info",
+        "message": "Completed step 8: wait condition satisfied",
+        "step_index": 8,
+        "screenshot_path": "artifacts/run_adee8e49/step_8.png"
+      },
+      {
+        "ts": "2026-03-01T18:11:15.893448+00:00",
+        "level": "info",
+        "message": "Starting step 9: Select end time from dropdown based on computed duration",
+        "step_index": 9,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:11:22.073719+00:00",
+        "level": "warn",
+        "message": "Requested end time '3:00pm' was unavailable. Using closest available option '2:00pm Monday, March 2, 2026'.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:11:22.240054+00:00",
+        "level": "info",
+        "message": "Completed step 9: selected option '3:00pm'",
+        "step_index": 9,
+        "screenshot_path": "artifacts/run_adee8e49/step_9.png"
+      },
+      {
+        "ts": "2026-03-01T18:11:22.243748+00:00",
+        "level": "info",
+        "message": "Starting step 10: Wait for selected slot state to apply",
+        "step_index": 10,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:11:23.207492+00:00",
+        "level": "info",
+        "message": "Completed step 10: wait condition satisfied",
+        "step_index": 10,
+        "screenshot_path": "artifacts/run_adee8e49/step_10.png"
+      },
+      {
+        "ts": "2026-03-01T18:11:23.210998+00:00",
+        "level": "info",
+        "message": "Starting step 11: Click Submit Times to proceed to booking form",
+        "step_index": 11,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:11:26.550112+00:00",
+        "level": "info",
+        "message": "Completed step 11: click action succeeded",
+        "step_index": 11,
+        "screenshot_path": "artifacts/run_adee8e49/step_11.png"
+      },
+      {
+        "ts": "2026-03-01T18:11:26.553992+00:00",
+        "level": "info",
+        "message": "Starting step 12: Wait for checkout form after Submit Times",
+        "step_index": 12,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:12:09.230136+00:00",
+        "level": "error",
+        "message": "Workflow failed: WAIT step timed out for text 'Space Checkout': Wait for checkout form after Submit Times. Context: url=https://shib.service.uci.edu/idp/profile/SAML2/Redirect/SSO?execution=e1s2; title=UCInetID Secure Web Login; auth=False; markers=-; counts=input:9,select:0,textarea:0,button:1; body='Required: Update your Duo app by March 31 Login with your UCInetID Please enter a UCInetID and password. Forgot your password? Activate my UCInetID \u2022 Need help logging in? View rec'",
+        "step_index": null,
+        "screenshot_path": "artifacts/run_adee8e49/error.png"
+      }
+    ],
+    "disambiguation": null
+  },
+  "run_80ff8071": {
+    "run_id": "run_80ff8071",
+    "workflow_id": "wf_df2769bc",
+    "status": "failed",
+    "current_step": 12,
+    "total_steps": 19,
+    "logs": [
+      {
+        "ts": "2026-03-01T18:27:56.510731+00:00",
+        "level": "info",
+        "message": "Workflow run started",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:27:56.513105+00:00",
+        "level": "info",
+        "message": "Starting step 0: Open UCI Libraries spaces page",
+        "step_index": 0,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:27:58.352582+00:00",
+        "level": "info",
+        "message": "Completed step 0: navigated to https://spaces.lib.uci.edu/spaces",
+        "step_index": 0,
+        "screenshot_path": "artifacts/run_80ff8071/step_0.png"
+      },
+      {
+        "ts": "2026-03-01T18:27:58.357277+00:00",
+        "level": "info",
+        "message": "Starting step 1: Wait for page content to appear",
+        "step_index": 1,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:27:59.141801+00:00",
+        "level": "info",
+        "message": "Completed step 1: wait condition satisfied",
+        "step_index": 1,
+        "screenshot_path": "artifacts/run_80ff8071/step_1.png"
+      },
+      {
+        "ts": "2026-03-01T18:27:59.145385+00:00",
+        "level": "info",
+        "message": "Starting step 2: Allow room grid and scripts to fully initialize",
+        "step_index": 2,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:27:59.671280+00:00",
+        "level": "info",
+        "message": "Completed step 2: wait condition satisfied",
+        "step_index": 2,
+        "screenshot_path": "artifacts/run_80ff8071/step_2.png"
+      },
+      {
+        "ts": "2026-03-01T18:27:59.674685+00:00",
+        "level": "info",
+        "message": "Starting step 3: Select library from Location dropdown",
+        "step_index": 3,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:28:00.095711+00:00",
+        "level": "info",
+        "message": "Completed step 3: selected option 'Gateway Study Center'",
+        "step_index": 3,
+        "screenshot_path": "artifacts/run_80ff8071/step_3.png"
+      },
+      {
+        "ts": "2026-03-01T18:28:00.099212+00:00",
+        "level": "info",
+        "message": "Starting step 4: Wait for room list to refresh for selected library",
+        "step_index": 4,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:28:01.229251+00:00",
+        "level": "info",
+        "message": "Completed step 4: wait condition satisfied",
+        "step_index": 4,
+        "screenshot_path": "artifacts/run_80ff8071/step_4.png"
+      },
+      {
+        "ts": "2026-03-01T18:28:01.233623+00:00",
+        "level": "info",
+        "message": "Starting step 5: Open room details page directly",
+        "step_index": 5,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:28:02.689769+00:00",
+        "level": "info",
+        "message": "Completed step 5: navigated to https://spaces.lib.uci.edu/space/44709",
+        "step_index": 5,
+        "screenshot_path": "artifacts/run_80ff8071/step_5.png"
+      },
+      {
+        "ts": "2026-03-01T18:28:02.693564+00:00",
+        "level": "info",
+        "message": "Starting step 6: Wait for room page booking grid to load",
+        "step_index": 6,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:28:02.866373+00:00",
+        "level": "info",
+        "message": "Completed step 6: wait condition satisfied",
+        "step_index": 6,
+        "screenshot_path": "artifacts/run_80ff8071/step_6.png"
+      },
+      {
+        "ts": "2026-03-01T18:28:02.870098+00:00",
+        "level": "info",
+        "message": "Starting step 7: Select room start slot on room page",
+        "step_index": 7,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:28:12.537451+00:00",
+        "level": "info",
+        "message": "Start slot not visible on current date range. Navigating schedule to 2026-03-02.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:28:12.966257+00:00",
+        "level": "info",
+        "message": "Schedule navigation to 2026-03-02 succeeded.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:28:13.238607+00:00",
+        "level": "info",
+        "message": "Completed step 7: click action succeeded",
+        "step_index": 7,
+        "screenshot_path": "artifacts/run_80ff8071/step_7.png"
+      },
+      {
+        "ts": "2026-03-01T18:28:13.244865+00:00",
+        "level": "info",
+        "message": "Starting step 8: Wait briefly for end-time controls to appear",
+        "step_index": 8,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:28:13.685122+00:00",
+        "level": "info",
+        "message": "Completed step 8: wait condition satisfied",
+        "step_index": 8,
+        "screenshot_path": "artifacts/run_80ff8071/step_8.png"
+      },
+      {
+        "ts": "2026-03-01T18:28:13.689600+00:00",
+        "level": "info",
+        "message": "Starting step 9: Select end time from dropdown based on computed duration",
+        "step_index": 9,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:28:19.895794+00:00",
+        "level": "warn",
+        "message": "Requested end time '3:00pm' was unavailable. Using closest available option '2:00pm Monday, March 2, 2026'.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:28:20.077037+00:00",
+        "level": "info",
+        "message": "Completed step 9: selected option '3:00pm'",
+        "step_index": 9,
+        "screenshot_path": "artifacts/run_80ff8071/step_9.png"
+      },
+      {
+        "ts": "2026-03-01T18:28:20.082337+00:00",
+        "level": "info",
+        "message": "Starting step 10: Wait for selected slot state to apply",
+        "step_index": 10,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:28:21.047599+00:00",
+        "level": "info",
+        "message": "Completed step 10: wait condition satisfied",
+        "step_index": 10,
+        "screenshot_path": "artifacts/run_80ff8071/step_10.png"
+      },
+      {
+        "ts": "2026-03-01T18:28:21.051781+00:00",
+        "level": "info",
+        "message": "Starting step 11: Click Submit Times to proceed to booking form",
+        "step_index": 11,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:28:24.995726+00:00",
+        "level": "info",
+        "message": "Completed step 11: click action succeeded",
+        "step_index": 11,
+        "screenshot_path": "artifacts/run_80ff8071/step_11.png"
+      },
+      {
+        "ts": "2026-03-01T18:28:25.005755+00:00",
+        "level": "info",
+        "message": "Starting step 12: Wait for checkout form after Submit Times",
+        "step_index": 12,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:29:07.354889+00:00",
+        "level": "error",
+        "message": "Workflow failed: WAIT step timed out for text 'Space Checkout': Wait for checkout form after Submit Times. Context: url=https://shib.service.uci.edu/idp/profile/SAML2/Redirect/SSO?execution=e1s2; title=UCInetID Secure Web Login; auth=False; markers=-; counts=input:9,select:0,textarea:0,button:1; body='Required: Update your Duo app by March 31 Login with your UCInetID Forgot your password? Activate my UCInetID \u2022 Need help logging in? View recent account activity Privacy Policy \u2022 '",
+        "step_index": null,
+        "screenshot_path": "artifacts/run_80ff8071/error.png"
+      }
+    ],
+    "disambiguation": null
+  },
+  "run_ab2ff15f": {
+    "run_id": "run_ab2ff15f",
+    "workflow_id": "wf_c1c35196",
+    "status": "failed",
+    "current_step": 12,
+    "total_steps": 19,
+    "logs": [
+      {
+        "ts": "2026-03-01T18:34:00.542347+00:00",
+        "level": "info",
+        "message": "Workflow run started",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:34:00.572923+00:00",
+        "level": "info",
+        "message": "Starting step 0: Open UCI Libraries spaces page",
+        "step_index": 0,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:34:03.680218+00:00",
+        "level": "info",
+        "message": "Completed step 0: navigated to https://spaces.lib.uci.edu/spaces",
+        "step_index": 0,
+        "screenshot_path": "artifacts/run_ab2ff15f/step_0.png"
+      },
+      {
+        "ts": "2026-03-01T18:34:03.685989+00:00",
+        "level": "info",
+        "message": "Starting step 1: Wait for page content to appear",
+        "step_index": 1,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:34:04.441472+00:00",
+        "level": "info",
+        "message": "Completed step 1: wait condition satisfied",
+        "step_index": 1,
+        "screenshot_path": "artifacts/run_ab2ff15f/step_1.png"
+      },
+      {
+        "ts": "2026-03-01T18:34:04.445351+00:00",
+        "level": "info",
+        "message": "Starting step 2: Allow room grid and scripts to fully initialize",
+        "step_index": 2,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:34:04.985548+00:00",
+        "level": "info",
+        "message": "Completed step 2: wait condition satisfied",
+        "step_index": 2,
+        "screenshot_path": "artifacts/run_ab2ff15f/step_2.png"
+      },
+      {
+        "ts": "2026-03-01T18:34:04.990490+00:00",
+        "level": "info",
+        "message": "Starting step 3: Select library from Location dropdown",
+        "step_index": 3,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:34:05.519348+00:00",
+        "level": "info",
+        "message": "Completed step 3: selected option 'Gateway Study Center'",
+        "step_index": 3,
+        "screenshot_path": "artifacts/run_ab2ff15f/step_3.png"
+      },
+      {
+        "ts": "2026-03-01T18:34:05.529944+00:00",
+        "level": "info",
+        "message": "Starting step 4: Wait for room list to refresh for selected library",
+        "step_index": 4,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:34:06.663241+00:00",
+        "level": "info",
+        "message": "Completed step 4: wait condition satisfied",
+        "step_index": 4,
+        "screenshot_path": "artifacts/run_ab2ff15f/step_4.png"
+      },
+      {
+        "ts": "2026-03-01T18:34:06.667680+00:00",
+        "level": "info",
+        "message": "Starting step 5: Open room details page directly",
+        "step_index": 5,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:34:08.609394+00:00",
+        "level": "info",
+        "message": "Completed step 5: navigated to https://spaces.lib.uci.edu/space/44709",
+        "step_index": 5,
+        "screenshot_path": "artifacts/run_ab2ff15f/step_5.png"
+      },
+      {
+        "ts": "2026-03-01T18:34:08.616185+00:00",
+        "level": "info",
+        "message": "Starting step 6: Wait for room page booking grid to load",
+        "step_index": 6,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:34:08.928262+00:00",
+        "level": "info",
+        "message": "Completed step 6: wait condition satisfied",
+        "step_index": 6,
+        "screenshot_path": "artifacts/run_ab2ff15f/step_6.png"
+      },
+      {
+        "ts": "2026-03-01T18:34:08.933609+00:00",
+        "level": "info",
+        "message": "Starting step 7: Select room start slot on room page",
+        "step_index": 7,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:34:18.513809+00:00",
+        "level": "info",
+        "message": "Start slot not visible on current date range. Navigating schedule to 2026-03-02.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:34:18.988514+00:00",
+        "level": "info",
+        "message": "Schedule navigation to 2026-03-02 succeeded.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:34:19.584992+00:00",
+        "level": "info",
+        "message": "Completed step 7: click action succeeded",
+        "step_index": 7,
+        "screenshot_path": "artifacts/run_ab2ff15f/step_7.png"
+      },
+      {
+        "ts": "2026-03-01T18:34:19.589101+00:00",
+        "level": "info",
+        "message": "Starting step 8: Wait briefly for end-time controls to appear",
+        "step_index": 8,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:34:19.947341+00:00",
+        "level": "info",
+        "message": "Completed step 8: wait condition satisfied",
+        "step_index": 8,
+        "screenshot_path": "artifacts/run_ab2ff15f/step_8.png"
+      },
+      {
+        "ts": "2026-03-01T18:34:19.952020+00:00",
+        "level": "info",
+        "message": "Starting step 9: Select end time from dropdown based on computed duration",
+        "step_index": 9,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:34:26.184728+00:00",
+        "level": "warn",
+        "message": "Requested end time '3:00pm' was unavailable. Using closest available option '2:00pm Monday, March 2, 2026'.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:34:26.373672+00:00",
+        "level": "info",
+        "message": "Completed step 9: selected option '3:00pm'",
+        "step_index": 9,
+        "screenshot_path": "artifacts/run_ab2ff15f/step_9.png"
+      },
+      {
+        "ts": "2026-03-01T18:34:26.388050+00:00",
+        "level": "info",
+        "message": "Starting step 10: Wait for selected slot state to apply",
+        "step_index": 10,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:34:27.367852+00:00",
+        "level": "info",
+        "message": "Completed step 10: wait condition satisfied",
+        "step_index": 10,
+        "screenshot_path": "artifacts/run_ab2ff15f/step_10.png"
+      },
+      {
+        "ts": "2026-03-01T18:34:27.371724+00:00",
+        "level": "info",
+        "message": "Starting step 11: Click Submit Times to proceed to booking form",
+        "step_index": 11,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:34:30.631969+00:00",
+        "level": "info",
+        "message": "Completed step 11: click action succeeded",
+        "step_index": 11,
+        "screenshot_path": "artifacts/run_ab2ff15f/step_11.png"
+      },
+      {
+        "ts": "2026-03-01T18:34:30.635700+00:00",
+        "level": "info",
+        "message": "Starting step 12: Wait for checkout form after Submit Times",
+        "step_index": 12,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T18:35:13.063696+00:00",
+        "level": "error",
+        "message": "Workflow failed: WAIT step timed out for text 'Space Checkout': Wait for checkout form after Submit Times. Context: url=https://shib.service.uci.edu/idp/profile/SAML2/Redirect/SSO?execution=e1s2; title=UCInetID Secure Web Login; auth=False; markers=-; counts=input:9,select:0,textarea:0,button:1; body='Required: Update your Duo app by March 31 Login with your UCInetID Forgot your password? Activate my UCInetID \u2022 Need help logging in? View recent account activity Privacy Policy \u2022 '",
+        "step_index": null,
+        "screenshot_path": "artifacts/run_ab2ff15f/error.png"
+      }
+    ],
+    "disambiguation": null
+  },
+  "run_e80ec315": {
+    "run_id": "run_e80ec315",
+    "workflow_id": "wf_d0ab846c",
+    "status": "running",
+    "current_step": 14,
+    "total_steps": 19,
+    "logs": [
+      {
+        "ts": "2026-03-01T19:14:43.581938+00:00",
+        "level": "info",
+        "message": "Workflow run started",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:14:43.587655+00:00",
+        "level": "info",
+        "message": "Starting step 0: Open UCI Libraries spaces page",
+        "step_index": 0,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:14:45.541846+00:00",
+        "level": "info",
+        "message": "Completed step 0: navigated to https://spaces.lib.uci.edu/spaces",
+        "step_index": 0,
+        "screenshot_path": "artifacts/run_e80ec315/step_0.png"
+      },
+      {
+        "ts": "2026-03-01T19:14:45.550299+00:00",
+        "level": "info",
+        "message": "Starting step 1: Wait for page content to appear",
+        "step_index": 1,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:14:46.303307+00:00",
+        "level": "info",
+        "message": "Completed step 1: wait condition satisfied",
+        "step_index": 1,
+        "screenshot_path": "artifacts/run_e80ec315/step_1.png"
+      },
+      {
+        "ts": "2026-03-01T19:14:46.307350+00:00",
+        "level": "info",
+        "message": "Starting step 2: Allow room grid and scripts to fully initialize",
+        "step_index": 2,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:14:46.833710+00:00",
+        "level": "info",
+        "message": "Completed step 2: wait condition satisfied",
+        "step_index": 2,
+        "screenshot_path": "artifacts/run_e80ec315/step_2.png"
+      },
+      {
+        "ts": "2026-03-01T19:14:46.837604+00:00",
+        "level": "info",
+        "message": "Starting step 3: Select library from Location dropdown",
+        "step_index": 3,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:14:47.288646+00:00",
+        "level": "info",
+        "message": "Completed step 3: selected option 'Gateway Study Center'",
+        "step_index": 3,
+        "screenshot_path": "artifacts/run_e80ec315/step_3.png"
+      },
+      {
+        "ts": "2026-03-01T19:14:47.292980+00:00",
+        "level": "info",
+        "message": "Starting step 4: Wait for room list to refresh for selected library",
+        "step_index": 4,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:14:48.413146+00:00",
+        "level": "info",
+        "message": "Completed step 4: wait condition satisfied",
+        "step_index": 4,
+        "screenshot_path": "artifacts/run_e80ec315/step_4.png"
+      },
+      {
+        "ts": "2026-03-01T19:14:48.417995+00:00",
+        "level": "info",
+        "message": "Starting step 5: Open room details page directly",
+        "step_index": 5,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:14:49.834529+00:00",
+        "level": "info",
+        "message": "Completed step 5: navigated to https://spaces.lib.uci.edu/space/44709",
+        "step_index": 5,
+        "screenshot_path": "artifacts/run_e80ec315/step_5.png"
+      },
+      {
+        "ts": "2026-03-01T19:14:49.839456+00:00",
+        "level": "info",
+        "message": "Starting step 6: Wait for room page booking grid to load",
+        "step_index": 6,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:14:50.035017+00:00",
+        "level": "info",
+        "message": "Completed step 6: wait condition satisfied",
+        "step_index": 6,
+        "screenshot_path": "artifacts/run_e80ec315/step_6.png"
+      },
+      {
+        "ts": "2026-03-01T19:14:50.039402+00:00",
+        "level": "info",
+        "message": "Starting step 7: Select room start slot on room page",
+        "step_index": 7,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:14:59.580567+00:00",
+        "level": "info",
+        "message": "Start slot not visible on current date range. Navigating schedule to 2026-03-02.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:15:00.093034+00:00",
+        "level": "info",
+        "message": "Schedule navigation to 2026-03-02 succeeded.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:15:00.351763+00:00",
+        "level": "info",
+        "message": "Completed step 7: click action succeeded",
+        "step_index": 7,
+        "screenshot_path": "artifacts/run_e80ec315/step_7.png"
+      },
+      {
+        "ts": "2026-03-01T19:15:00.355677+00:00",
+        "level": "info",
+        "message": "Starting step 8: Wait briefly for end-time controls to appear",
+        "step_index": 8,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:15:00.730598+00:00",
+        "level": "info",
+        "message": "Completed step 8: wait condition satisfied",
+        "step_index": 8,
+        "screenshot_path": "artifacts/run_e80ec315/step_8.png"
+      },
+      {
+        "ts": "2026-03-01T19:15:00.734688+00:00",
+        "level": "info",
+        "message": "Starting step 9: Select end time from dropdown based on computed duration",
+        "step_index": 9,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:15:06.969250+00:00",
+        "level": "warn",
+        "message": "Requested end time '3:00pm' was unavailable. Using closest available option '2:00pm Monday, March 2, 2026'.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:15:07.153000+00:00",
+        "level": "info",
+        "message": "Completed step 9: selected option '3:00pm'",
+        "step_index": 9,
+        "screenshot_path": "artifacts/run_e80ec315/step_9.png"
+      },
+      {
+        "ts": "2026-03-01T19:15:07.156810+00:00",
+        "level": "info",
+        "message": "Starting step 10: Wait for selected slot state to apply",
+        "step_index": 10,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:15:08.105188+00:00",
+        "level": "info",
+        "message": "Completed step 10: wait condition satisfied",
+        "step_index": 10,
+        "screenshot_path": "artifacts/run_e80ec315/step_10.png"
+      },
+      {
+        "ts": "2026-03-01T19:15:08.109265+00:00",
+        "level": "info",
+        "message": "Starting step 11: Click Submit Times to proceed to booking form",
+        "step_index": 11,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:15:11.397299+00:00",
+        "level": "info",
+        "message": "Completed step 11: click action succeeded",
+        "step_index": 11,
+        "screenshot_path": "artifacts/run_e80ec315/step_11.png"
+      },
+      {
+        "ts": "2026-03-01T19:15:11.401103+00:00",
+        "level": "info",
+        "message": "Starting step 12: Wait for checkout form after Submit Times",
+        "step_index": 12,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:15:22.287527+00:00",
+        "level": "info",
+        "message": "WAIT step encountered auth flow; extending timeout to 600s.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:15:53.446529+00:00",
+        "level": "info",
+        "message": "Completed step 12: wait condition satisfied",
+        "step_index": 12,
+        "screenshot_path": "artifacts/run_e80ec315/step_12.png"
+      },
+      {
+        "ts": "2026-03-01T19:15:53.452027+00:00",
+        "level": "info",
+        "message": "Starting step 13: Select Affiliation option",
+        "step_index": 13,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:15:53.749672+00:00",
+        "level": "info",
+        "message": "Completed step 13: click action succeeded via checked choice input",
+        "step_index": 13,
+        "screenshot_path": "artifacts/run_e80ec315/step_13.png"
+      },
+      {
+        "ts": "2026-03-01T19:15:53.753505+00:00",
+        "level": "info",
+        "message": "Starting step 14: Select Purpose for Reservation COVID-19 option",
+        "step_index": 14,
+        "screenshot_path": null
+      }
+    ],
+    "disambiguation": null
+  },
+  "run_dc40d70b": {
+    "run_id": "run_dc40d70b",
+    "workflow_id": "wf_4bf94e11",
+    "status": "failed",
+    "current_step": 12,
+    "total_steps": 19,
+    "logs": [
+      {
+        "ts": "2026-03-01T19:27:38.798206+00:00",
+        "level": "info",
+        "message": "Workflow run started",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:27:38.814870+00:00",
+        "level": "info",
+        "message": "Starting step 0: Open UCI Libraries spaces page",
+        "step_index": 0,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:27:40.260898+00:00",
+        "level": "info",
+        "message": "Completed step 0: navigated to https://spaces.lib.uci.edu/spaces",
+        "step_index": 0,
+        "screenshot_path": "artifacts/run_dc40d70b/step_0.png"
+      },
+      {
+        "ts": "2026-03-01T19:27:40.266608+00:00",
+        "level": "info",
+        "message": "Starting step 1: Wait for page content to appear",
+        "step_index": 1,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:27:41.019567+00:00",
+        "level": "info",
+        "message": "Completed step 1: wait condition satisfied",
+        "step_index": 1,
+        "screenshot_path": "artifacts/run_dc40d70b/step_1.png"
+      },
+      {
+        "ts": "2026-03-01T19:27:41.023875+00:00",
+        "level": "info",
+        "message": "Starting step 2: Allow room grid and scripts to fully initialize",
+        "step_index": 2,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:27:41.554213+00:00",
+        "level": "info",
+        "message": "Completed step 2: wait condition satisfied",
+        "step_index": 2,
+        "screenshot_path": "artifacts/run_dc40d70b/step_2.png"
+      },
+      {
+        "ts": "2026-03-01T19:27:41.558568+00:00",
+        "level": "info",
+        "message": "Starting step 3: Select library from Location dropdown",
+        "step_index": 3,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:27:42.021747+00:00",
+        "level": "info",
+        "message": "Completed step 3: selected option 'Gateway Study Center'",
+        "step_index": 3,
+        "screenshot_path": "artifacts/run_dc40d70b/step_3.png"
+      },
+      {
+        "ts": "2026-03-01T19:27:42.026252+00:00",
+        "level": "info",
+        "message": "Starting step 4: Wait for room list to refresh for selected library",
+        "step_index": 4,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:27:43.139522+00:00",
+        "level": "info",
+        "message": "Completed step 4: wait condition satisfied",
+        "step_index": 4,
+        "screenshot_path": "artifacts/run_dc40d70b/step_4.png"
+      },
+      {
+        "ts": "2026-03-01T19:27:43.143517+00:00",
+        "level": "info",
+        "message": "Starting step 5: Open room details page directly",
+        "step_index": 5,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:27:44.722355+00:00",
+        "level": "info",
+        "message": "Completed step 5: navigated to https://spaces.lib.uci.edu/space/44709",
+        "step_index": 5,
+        "screenshot_path": "artifacts/run_dc40d70b/step_5.png"
+      },
+      {
+        "ts": "2026-03-01T19:27:44.726958+00:00",
+        "level": "info",
+        "message": "Starting step 6: Wait for room page booking grid to load",
+        "step_index": 6,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:27:44.910965+00:00",
+        "level": "info",
+        "message": "Completed step 6: wait condition satisfied",
+        "step_index": 6,
+        "screenshot_path": "artifacts/run_dc40d70b/step_6.png"
+      },
+      {
+        "ts": "2026-03-01T19:27:44.915226+00:00",
+        "level": "info",
+        "message": "Starting step 7: Select room start slot on room page",
+        "step_index": 7,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:27:54.506778+00:00",
+        "level": "info",
+        "message": "Start slot not visible on current date range. Navigating schedule to 2026-03-02.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:27:54.924042+00:00",
+        "level": "info",
+        "message": "Schedule navigation to 2026-03-02 succeeded.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:27:55.144728+00:00",
+        "level": "info",
+        "message": "Completed step 7: click action succeeded",
+        "step_index": 7,
+        "screenshot_path": "artifacts/run_dc40d70b/step_7.png"
+      },
+      {
+        "ts": "2026-03-01T19:27:55.148974+00:00",
+        "level": "info",
+        "message": "Starting step 8: Wait briefly for end-time controls to appear",
+        "step_index": 8,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:27:55.512986+00:00",
+        "level": "info",
+        "message": "Completed step 8: wait condition satisfied",
+        "step_index": 8,
+        "screenshot_path": "artifacts/run_dc40d70b/step_8.png"
+      },
+      {
+        "ts": "2026-03-01T19:27:55.517908+00:00",
+        "level": "info",
+        "message": "Starting step 9: Select end time from dropdown based on computed duration",
+        "step_index": 9,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:28:01.701324+00:00",
+        "level": "warn",
+        "message": "Requested end time '3:00pm' was unavailable. Using closest available option '2:00pm Monday, March 2, 2026'.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:28:02.219613+00:00",
+        "level": "info",
+        "message": "Completed step 9: selected option '3:00pm'",
+        "step_index": 9,
+        "screenshot_path": "artifacts/run_dc40d70b/step_9.png"
+      },
+      {
+        "ts": "2026-03-01T19:28:02.226887+00:00",
+        "level": "info",
+        "message": "Starting step 10: Wait for selected slot state to apply",
+        "step_index": 10,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:28:03.180150+00:00",
+        "level": "info",
+        "message": "Completed step 10: wait condition satisfied",
+        "step_index": 10,
+        "screenshot_path": "artifacts/run_dc40d70b/step_10.png"
+      },
+      {
+        "ts": "2026-03-01T19:28:03.184356+00:00",
+        "level": "info",
+        "message": "Starting step 11: Click Submit Times to proceed to booking form",
+        "step_index": 11,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:28:07.372183+00:00",
+        "level": "info",
+        "message": "Completed step 11: click action succeeded",
+        "step_index": 11,
+        "screenshot_path": "artifacts/run_dc40d70b/step_11.png"
+      },
+      {
+        "ts": "2026-03-01T19:28:07.390738+00:00",
+        "level": "info",
+        "message": "Starting step 12: Wait for checkout form after Submit Times",
+        "step_index": 12,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:28:49.783716+00:00",
+        "level": "error",
+        "message": "Workflow failed: WAIT step timed out for text 'Space Checkout': Wait for checkout form after Submit Times. Context: url=https://shib.service.uci.edu/idp/profile/SAML2/Redirect/SSO?execution=e1s2; title=UCInetID Secure Web Login; auth=False; markers=-; counts=input:9,select:0,textarea:0,button:1; body='Required: Update your Duo app by March 31 Login with your UCInetID Forgot your password? Activate my UCInetID \u2022 Need help logging in? View recent account activity Privacy Policy \u2022 '",
+        "step_index": null,
+        "screenshot_path": "artifacts/run_dc40d70b/error.png"
+      }
+    ],
+    "disambiguation": null
+  },
+  "run_5ce4e152": {
+    "run_id": "run_5ce4e152",
+    "workflow_id": "wf_a907077d",
+    "status": "failed",
+    "current_step": 12,
+    "total_steps": 19,
+    "logs": [
+      {
+        "ts": "2026-03-01T19:39:32.605433+00:00",
+        "level": "info",
+        "message": "Workflow run started",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:39:32.622000+00:00",
+        "level": "info",
+        "message": "Starting step 0: Open UCI Libraries spaces page",
+        "step_index": 0,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:39:35.885881+00:00",
+        "level": "info",
+        "message": "Completed step 0: navigated to https://spaces.lib.uci.edu/spaces",
+        "step_index": 0,
+        "screenshot_path": "artifacts/run_5ce4e152/step_0.png"
+      },
+      {
+        "ts": "2026-03-01T19:39:35.891295+00:00",
+        "level": "info",
+        "message": "Starting step 1: Wait for page content to appear",
+        "step_index": 1,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:39:36.634378+00:00",
+        "level": "info",
+        "message": "Completed step 1: wait condition satisfied",
+        "step_index": 1,
+        "screenshot_path": "artifacts/run_5ce4e152/step_1.png"
+      },
+      {
+        "ts": "2026-03-01T19:39:36.638588+00:00",
+        "level": "info",
+        "message": "Starting step 2: Allow room grid and scripts to fully initialize",
+        "step_index": 2,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:39:37.216814+00:00",
+        "level": "info",
+        "message": "Completed step 2: wait condition satisfied",
+        "step_index": 2,
+        "screenshot_path": "artifacts/run_5ce4e152/step_2.png"
+      },
+      {
+        "ts": "2026-03-01T19:39:37.221880+00:00",
+        "level": "info",
+        "message": "Starting step 3: Select library from Location dropdown",
+        "step_index": 3,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:39:37.869073+00:00",
+        "level": "info",
+        "message": "Completed step 3: selected option 'Gateway Study Center'",
+        "step_index": 3,
+        "screenshot_path": "artifacts/run_5ce4e152/step_3.png"
+      },
+      {
+        "ts": "2026-03-01T19:39:37.873558+00:00",
+        "level": "info",
+        "message": "Starting step 4: Wait for room list to refresh for selected library",
+        "step_index": 4,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:39:39.009188+00:00",
+        "level": "info",
+        "message": "Completed step 4: wait condition satisfied",
+        "step_index": 4,
+        "screenshot_path": "artifacts/run_5ce4e152/step_4.png"
+      },
+      {
+        "ts": "2026-03-01T19:39:39.013345+00:00",
+        "level": "info",
+        "message": "Starting step 5: Open room details page directly",
+        "step_index": 5,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:39:41.203577+00:00",
+        "level": "info",
+        "message": "Completed step 5: navigated to https://spaces.lib.uci.edu/space/44709",
+        "step_index": 5,
+        "screenshot_path": "artifacts/run_5ce4e152/step_5.png"
+      },
+      {
+        "ts": "2026-03-01T19:39:41.208558+00:00",
+        "level": "info",
+        "message": "Starting step 6: Wait for room page booking grid to load",
+        "step_index": 6,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:39:41.396530+00:00",
+        "level": "info",
+        "message": "Completed step 6: wait condition satisfied",
+        "step_index": 6,
+        "screenshot_path": "artifacts/run_5ce4e152/step_6.png"
+      },
+      {
+        "ts": "2026-03-01T19:39:41.402227+00:00",
+        "level": "info",
+        "message": "Starting step 7: Select room start slot on room page",
+        "step_index": 7,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:39:50.992721+00:00",
+        "level": "info",
+        "message": "Start slot not visible on current date range. Navigating schedule to 2026-03-02.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:39:51.420668+00:00",
+        "level": "info",
+        "message": "Schedule navigation to 2026-03-02 succeeded.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:39:51.816656+00:00",
+        "level": "info",
+        "message": "Completed step 7: click action succeeded",
+        "step_index": 7,
+        "screenshot_path": "artifacts/run_5ce4e152/step_7.png"
+      },
+      {
+        "ts": "2026-03-01T19:39:51.821340+00:00",
+        "level": "info",
+        "message": "Starting step 8: Wait briefly for end-time controls to appear",
+        "step_index": 8,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:39:52.195364+00:00",
+        "level": "info",
+        "message": "Completed step 8: wait condition satisfied",
+        "step_index": 8,
+        "screenshot_path": "artifacts/run_5ce4e152/step_8.png"
+      },
+      {
+        "ts": "2026-03-01T19:39:52.200434+00:00",
+        "level": "info",
+        "message": "Starting step 9: Select end time from dropdown based on computed duration",
+        "step_index": 9,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:39:58.412477+00:00",
+        "level": "warn",
+        "message": "Requested end time '3:00pm' was unavailable. Using closest available option '2:00pm Monday, March 2, 2026'.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:39:59.097096+00:00",
+        "level": "info",
+        "message": "Completed step 9: selected option '3:00pm'",
+        "step_index": 9,
+        "screenshot_path": "artifacts/run_5ce4e152/step_9.png"
+      },
+      {
+        "ts": "2026-03-01T19:39:59.101529+00:00",
+        "level": "info",
+        "message": "Starting step 10: Wait for selected slot state to apply",
+        "step_index": 10,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:40:00.088222+00:00",
+        "level": "info",
+        "message": "Completed step 10: wait condition satisfied",
+        "step_index": 10,
+        "screenshot_path": "artifacts/run_5ce4e152/step_10.png"
+      },
+      {
+        "ts": "2026-03-01T19:40:00.093248+00:00",
+        "level": "info",
+        "message": "Starting step 11: Click Submit Times to proceed to booking form",
+        "step_index": 11,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:40:03.363821+00:00",
+        "level": "info",
+        "message": "Completed step 11: click action succeeded",
+        "step_index": 11,
+        "screenshot_path": "artifacts/run_5ce4e152/step_11.png"
+      },
+      {
+        "ts": "2026-03-01T19:40:03.369596+00:00",
+        "level": "info",
+        "message": "Starting step 12: Wait for checkout form after Submit Times",
+        "step_index": 12,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:40:46.101560+00:00",
+        "level": "error",
+        "message": "Workflow failed: WAIT step timed out for text 'Space Checkout': Wait for checkout form after Submit Times. Context: url=https://shib.service.uci.edu/idp/profile/SAML2/Redirect/SSO?execution=e1s2; title=UCInetID Secure Web Login; auth=False; markers=-; counts=input:9,select:0,textarea:0,button:1; body='Required: Update your Duo app by March 31 Login with your UCInetID Forgot your password? Activate my UCInetID \u2022 Need help logging in? View recent account activity Privacy Policy \u2022 '",
+        "step_index": null,
+        "screenshot_path": "artifacts/run_5ce4e152/error.png"
+      }
+    ],
+    "disambiguation": null
+  },
+  "run_2d9a4311": {
+    "run_id": "run_2d9a4311",
+    "workflow_id": "wf_4c529434",
+    "status": "failed",
+    "current_step": 14,
+    "total_steps": 19,
+    "logs": [
+      {
+        "ts": "2026-03-01T19:48:14.146214+00:00",
+        "level": "info",
+        "message": "Workflow run started",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:48:14.192185+00:00",
+        "level": "info",
+        "message": "Starting step 0: Open UCI Libraries spaces page",
+        "step_index": 0,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:48:16.146121+00:00",
+        "level": "info",
+        "message": "Completed step 0: navigated to https://spaces.lib.uci.edu/spaces",
+        "step_index": 0,
+        "screenshot_path": "artifacts/run_2d9a4311/step_0.png"
+      },
+      {
+        "ts": "2026-03-01T19:48:16.153139+00:00",
+        "level": "info",
+        "message": "Starting step 1: Wait for page content to appear",
+        "step_index": 1,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:48:17.015741+00:00",
+        "level": "info",
+        "message": "Completed step 1: wait condition satisfied",
+        "step_index": 1,
+        "screenshot_path": "artifacts/run_2d9a4311/step_1.png"
+      },
+      {
+        "ts": "2026-03-01T19:48:17.020668+00:00",
+        "level": "info",
+        "message": "Starting step 2: Allow room grid and scripts to fully initialize",
+        "step_index": 2,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:48:17.553020+00:00",
+        "level": "info",
+        "message": "Completed step 2: wait condition satisfied",
+        "step_index": 2,
+        "screenshot_path": "artifacts/run_2d9a4311/step_2.png"
+      },
+      {
+        "ts": "2026-03-01T19:48:17.558120+00:00",
+        "level": "info",
+        "message": "Starting step 3: Select library from Location dropdown",
+        "step_index": 3,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:48:18.130247+00:00",
+        "level": "info",
+        "message": "Completed step 3: selected option 'Gateway Study Center'",
+        "step_index": 3,
+        "screenshot_path": "artifacts/run_2d9a4311/step_3.png"
+      },
+      {
+        "ts": "2026-03-01T19:48:18.135465+00:00",
+        "level": "info",
+        "message": "Starting step 4: Wait for room list to refresh for selected library",
+        "step_index": 4,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:48:19.246574+00:00",
+        "level": "info",
+        "message": "Completed step 4: wait condition satisfied",
+        "step_index": 4,
+        "screenshot_path": "artifacts/run_2d9a4311/step_4.png"
+      },
+      {
+        "ts": "2026-03-01T19:48:19.251796+00:00",
+        "level": "info",
+        "message": "Starting step 5: Open room details page directly",
+        "step_index": 5,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:48:20.746530+00:00",
+        "level": "info",
+        "message": "Completed step 5: navigated to https://spaces.lib.uci.edu/space/44709",
+        "step_index": 5,
+        "screenshot_path": "artifacts/run_2d9a4311/step_5.png"
+      },
+      {
+        "ts": "2026-03-01T19:48:20.751316+00:00",
+        "level": "info",
+        "message": "Starting step 6: Wait for room page booking grid to load",
+        "step_index": 6,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:48:20.964067+00:00",
+        "level": "info",
+        "message": "Completed step 6: wait condition satisfied",
+        "step_index": 6,
+        "screenshot_path": "artifacts/run_2d9a4311/step_6.png"
+      },
+      {
+        "ts": "2026-03-01T19:48:20.968912+00:00",
+        "level": "info",
+        "message": "Starting step 7: Select room start slot on room page",
+        "step_index": 7,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:48:30.588445+00:00",
+        "level": "info",
+        "message": "Start slot not visible on current date range. Navigating schedule to 2026-03-02.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:48:30.999869+00:00",
+        "level": "info",
+        "message": "Schedule navigation to 2026-03-02 succeeded.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:48:31.258724+00:00",
+        "level": "info",
+        "message": "Completed step 7: click action succeeded",
+        "step_index": 7,
+        "screenshot_path": "artifacts/run_2d9a4311/step_7.png"
+      },
+      {
+        "ts": "2026-03-01T19:48:31.266031+00:00",
+        "level": "info",
+        "message": "Starting step 8: Wait briefly for end-time controls to appear",
+        "step_index": 8,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:48:31.620877+00:00",
+        "level": "info",
+        "message": "Completed step 8: wait condition satisfied",
+        "step_index": 8,
+        "screenshot_path": "artifacts/run_2d9a4311/step_8.png"
+      },
+      {
+        "ts": "2026-03-01T19:48:31.625839+00:00",
+        "level": "info",
+        "message": "Starting step 9: Select end time from dropdown based on computed duration",
+        "step_index": 9,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:48:37.777221+00:00",
+        "level": "warn",
+        "message": "Requested end time '3:00pm' was unavailable. Using closest available option '2:00pm Monday, March 2, 2026'.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:48:37.974198+00:00",
+        "level": "info",
+        "message": "Completed step 9: selected option '3:00pm'",
+        "step_index": 9,
+        "screenshot_path": "artifacts/run_2d9a4311/step_9.png"
+      },
+      {
+        "ts": "2026-03-01T19:48:37.978775+00:00",
+        "level": "info",
+        "message": "Starting step 10: Wait for selected slot state to apply",
+        "step_index": 10,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:48:38.979202+00:00",
+        "level": "info",
+        "message": "Completed step 10: wait condition satisfied",
+        "step_index": 10,
+        "screenshot_path": "artifacts/run_2d9a4311/step_10.png"
+      },
+      {
+        "ts": "2026-03-01T19:48:38.987573+00:00",
+        "level": "info",
+        "message": "Starting step 11: Click Submit Times to proceed to booking form",
+        "step_index": 11,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:48:43.432486+00:00",
+        "level": "info",
+        "message": "Completed step 11: click action succeeded",
+        "step_index": 11,
+        "screenshot_path": "artifacts/run_2d9a4311/step_11.png"
+      },
+      {
+        "ts": "2026-03-01T19:48:43.621027+00:00",
+        "level": "info",
+        "message": "Starting step 12: Wait for checkout form after Submit Times",
+        "step_index": 12,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:48:58.113624+00:00",
+        "level": "info",
+        "message": "WAIT step encountered auth flow; extending timeout to 600s.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:49:10.142531+00:00",
+        "level": "info",
+        "message": "Completed step 12: wait condition satisfied",
+        "step_index": 12,
+        "screenshot_path": "artifacts/run_2d9a4311/step_12.png"
+      },
+      {
+        "ts": "2026-03-01T19:49:10.147227+00:00",
+        "level": "info",
+        "message": "Starting step 13: Select Affiliation option",
+        "step_index": 13,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:49:10.421923+00:00",
+        "level": "info",
+        "message": "Completed step 13: click action succeeded via checked choice input",
+        "step_index": 13,
+        "screenshot_path": "artifacts/run_2d9a4311/step_13.png"
+      },
+      {
+        "ts": "2026-03-01T19:49:10.427172+00:00",
+        "level": "info",
+        "message": "Starting step 14: Select Purpose for Reservation COVID-19 option",
+        "step_index": 14,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:50:03.805085+00:00",
+        "level": "error",
+        "message": "Workflow failed: Message: No element found for step: Select Purpose for Reservation COVID-19 option; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception\n. Context: url=https://spaces.lib.uci.edu/spaces/auth?returnUrl=%2Fspace%2F44709&token=7CKH8SHy3OnRtHumJTE8RvV1nfpGULPqEx6fntCtz3TI9H0PEgYbCRLfERfFhaU3V; title=Booking Details - Library Reservations - University of California Irvine; auth=False; markers=space_checkout,booking_form_text,submit_my_booking_text; counts=input:10,select:1,textarea:1,button:3; body='LOCATIONS CONNECT FROM OFF-CAMPUS HOURS ACCESSIBILITY ACCOUNTS GIVING University of California Irvine Library Reservations Gateway Study Center Space Checkout Ben Sirivallop - Logo'",
+        "step_index": null,
+        "screenshot_path": "artifacts/run_2d9a4311/error.png"
+      }
+    ],
+    "disambiguation": null
+  },
+  "run_ba3d81e9": {
+    "run_id": "run_ba3d81e9",
+    "workflow_id": "wf_5dc560eb",
+    "status": "failed",
+    "current_step": 14,
+    "total_steps": 19,
+    "logs": [
+      {
+        "ts": "2026-03-01T19:55:31.649503+00:00",
+        "level": "info",
+        "message": "Workflow run started",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:55:31.658198+00:00",
+        "level": "info",
+        "message": "Starting step 0: Open UCI Libraries spaces page",
+        "step_index": 0,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:55:32.878757+00:00",
+        "level": "info",
+        "message": "Completed step 0: navigated to https://spaces.lib.uci.edu/spaces",
+        "step_index": 0,
+        "screenshot_path": "artifacts/run_ba3d81e9/step_0.png"
+      },
+      {
+        "ts": "2026-03-01T19:55:32.884191+00:00",
+        "level": "info",
+        "message": "Starting step 1: Wait for page content to appear",
+        "step_index": 1,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:55:33.657742+00:00",
+        "level": "info",
+        "message": "Completed step 1: wait condition satisfied",
+        "step_index": 1,
+        "screenshot_path": "artifacts/run_ba3d81e9/step_1.png"
+      },
+      {
+        "ts": "2026-03-01T19:55:33.663303+00:00",
+        "level": "info",
+        "message": "Starting step 2: Allow room grid and scripts to fully initialize",
+        "step_index": 2,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:55:34.197396+00:00",
+        "level": "info",
+        "message": "Completed step 2: wait condition satisfied",
+        "step_index": 2,
+        "screenshot_path": "artifacts/run_ba3d81e9/step_2.png"
+      },
+      {
+        "ts": "2026-03-01T19:55:34.202198+00:00",
+        "level": "info",
+        "message": "Starting step 3: Select library from Location dropdown",
+        "step_index": 3,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:55:34.753973+00:00",
+        "level": "info",
+        "message": "Completed step 3: selected option 'Gateway Study Center'",
+        "step_index": 3,
+        "screenshot_path": "artifacts/run_ba3d81e9/step_3.png"
+      },
+      {
+        "ts": "2026-03-01T19:55:34.759345+00:00",
+        "level": "info",
+        "message": "Starting step 4: Wait for room list to refresh for selected library",
+        "step_index": 4,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:55:35.893484+00:00",
+        "level": "info",
+        "message": "Completed step 4: wait condition satisfied",
+        "step_index": 4,
+        "screenshot_path": "artifacts/run_ba3d81e9/step_4.png"
+      },
+      {
+        "ts": "2026-03-01T19:55:35.898303+00:00",
+        "level": "info",
+        "message": "Starting step 5: Open room details page directly",
+        "step_index": 5,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:55:37.221625+00:00",
+        "level": "info",
+        "message": "Completed step 5: navigated to https://spaces.lib.uci.edu/space/44709",
+        "step_index": 5,
+        "screenshot_path": "artifacts/run_ba3d81e9/step_5.png"
+      },
+      {
+        "ts": "2026-03-01T19:55:37.226609+00:00",
+        "level": "info",
+        "message": "Starting step 6: Wait for room page booking grid to load",
+        "step_index": 6,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:55:37.422163+00:00",
+        "level": "info",
+        "message": "Completed step 6: wait condition satisfied",
+        "step_index": 6,
+        "screenshot_path": "artifacts/run_ba3d81e9/step_6.png"
+      },
+      {
+        "ts": "2026-03-01T19:55:37.427434+00:00",
+        "level": "info",
+        "message": "Starting step 7: Select room start slot on room page",
+        "step_index": 7,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:55:47.065965+00:00",
+        "level": "info",
+        "message": "Start slot not visible on current date range. Navigating schedule to 2026-03-02.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:55:47.465191+00:00",
+        "level": "info",
+        "message": "Schedule navigation to 2026-03-02 succeeded.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:55:47.764524+00:00",
+        "level": "info",
+        "message": "Completed step 7: click action succeeded",
+        "step_index": 7,
+        "screenshot_path": "artifacts/run_ba3d81e9/step_7.png"
+      },
+      {
+        "ts": "2026-03-01T19:55:47.769434+00:00",
+        "level": "info",
+        "message": "Starting step 8: Wait briefly for end-time controls to appear",
+        "step_index": 8,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:55:48.131355+00:00",
+        "level": "info",
+        "message": "Completed step 8: wait condition satisfied",
+        "step_index": 8,
+        "screenshot_path": "artifacts/run_ba3d81e9/step_8.png"
+      },
+      {
+        "ts": "2026-03-01T19:55:48.136391+00:00",
+        "level": "info",
+        "message": "Starting step 9: Select end time from dropdown based on computed duration",
+        "step_index": 9,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:55:54.344683+00:00",
+        "level": "warn",
+        "message": "Requested end time '3:00pm' was unavailable. Using closest available option '2:00pm Monday, March 2, 2026'.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:55:54.536411+00:00",
+        "level": "info",
+        "message": "Completed step 9: selected option '3:00pm'",
+        "step_index": 9,
+        "screenshot_path": "artifacts/run_ba3d81e9/step_9.png"
+      },
+      {
+        "ts": "2026-03-01T19:55:54.550383+00:00",
+        "level": "info",
+        "message": "Starting step 10: Wait for selected slot state to apply",
+        "step_index": 10,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:55:55.539194+00:00",
+        "level": "info",
+        "message": "Completed step 10: wait condition satisfied",
+        "step_index": 10,
+        "screenshot_path": "artifacts/run_ba3d81e9/step_10.png"
+      },
+      {
+        "ts": "2026-03-01T19:55:55.545388+00:00",
+        "level": "info",
+        "message": "Starting step 11: Click Submit Times to proceed to booking form",
+        "step_index": 11,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:55:58.857594+00:00",
+        "level": "info",
+        "message": "Completed step 11: click action succeeded",
+        "step_index": 11,
+        "screenshot_path": "artifacts/run_ba3d81e9/step_11.png"
+      },
+      {
+        "ts": "2026-03-01T19:55:58.863374+00:00",
+        "level": "info",
+        "message": "Starting step 12: Wait for checkout form after Submit Times",
+        "step_index": 12,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:56:16.531857+00:00",
+        "level": "info",
+        "message": "WAIT step encountered auth flow; extending timeout to 600s.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:56:29.066086+00:00",
+        "level": "info",
+        "message": "Completed step 12: wait condition satisfied",
+        "step_index": 12,
+        "screenshot_path": "artifacts/run_ba3d81e9/step_12.png"
+      },
+      {
+        "ts": "2026-03-01T19:56:29.071733+00:00",
+        "level": "info",
+        "message": "Starting step 13: Select Affiliation option",
+        "step_index": 13,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:56:29.344484+00:00",
+        "level": "info",
+        "message": "Completed step 13: click action succeeded via checked choice input",
+        "step_index": 13,
+        "screenshot_path": "artifacts/run_ba3d81e9/step_13.png"
+      },
+      {
+        "ts": "2026-03-01T19:56:29.348937+00:00",
+        "level": "info",
+        "message": "Starting step 14: Select Purpose for Reservation COVID-19 option",
+        "step_index": 14,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T19:57:21.303714+00:00",
+        "level": "error",
+        "message": "Workflow failed: Message: No element found for step: Select Purpose for Reservation COVID-19 option; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#no-such-element-exception\n. Context: url=https://spaces.lib.uci.edu/spaces/auth?returnUrl=%2Fspace%2F44709&token=2u1L4VAl9BpFF9hKH8lKuqGabcrl10IiaNeWTvU963ogZmIQcEzRaxVcT6GDtDjeA; title=Booking Details - Library Reservations - University of California Irvine; auth=False; markers=space_checkout,booking_form_text,submit_my_booking_text; counts=input:13,select:1,textarea:1,button:3; body='LOCATIONS CONNECT FROM OFF-CAMPUS HOURS ACCESSIBILITY ACCOUNTS GIVING University of California Irvine Library Reservations Gateway Study Center Space Checkout Ben Sirivallop - Logo'",
+        "step_index": null,
+        "screenshot_path": "artifacts/run_ba3d81e9/error.png"
+      }
+    ],
+    "disambiguation": null
+  },
+  "run_6cb26833": {
+    "run_id": "run_6cb26833",
+    "workflow_id": "wf_425106cc",
+    "status": "failed",
+    "current_step": 12,
+    "total_steps": 19,
+    "logs": [
+      {
+        "ts": "2026-03-01T20:07:45.438912+00:00",
+        "level": "info",
+        "message": "Workflow run started",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:07:45.470526+00:00",
+        "level": "info",
+        "message": "Starting step 0: Open UCI Libraries spaces page",
+        "step_index": 0,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:07:46.695211+00:00",
+        "level": "info",
+        "message": "Completed step 0: navigated to https://spaces.lib.uci.edu/spaces",
+        "step_index": 0,
+        "screenshot_path": "artifacts/run_6cb26833/step_0.png"
+      },
+      {
+        "ts": "2026-03-01T20:07:46.700766+00:00",
+        "level": "info",
+        "message": "Starting step 1: Wait for page content to appear",
+        "step_index": 1,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:07:47.436941+00:00",
+        "level": "info",
+        "message": "Completed step 1: wait condition satisfied",
+        "step_index": 1,
+        "screenshot_path": "artifacts/run_6cb26833/step_1.png"
+      },
+      {
+        "ts": "2026-03-01T20:07:47.447170+00:00",
+        "level": "info",
+        "message": "Starting step 2: Allow room grid and scripts to fully initialize",
+        "step_index": 2,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:07:47.972208+00:00",
+        "level": "info",
+        "message": "Completed step 2: wait condition satisfied",
+        "step_index": 2,
+        "screenshot_path": "artifacts/run_6cb26833/step_2.png"
+      },
+      {
+        "ts": "2026-03-01T20:07:47.977066+00:00",
+        "level": "info",
+        "message": "Starting step 3: Select library from Location dropdown",
+        "step_index": 3,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:07:48.481806+00:00",
+        "level": "info",
+        "message": "Completed step 3: selected option 'Gateway Study Center'",
+        "step_index": 3,
+        "screenshot_path": "artifacts/run_6cb26833/step_3.png"
+      },
+      {
+        "ts": "2026-03-01T20:07:48.573531+00:00",
+        "level": "info",
+        "message": "Starting step 4: Wait for room list to refresh for selected library",
+        "step_index": 4,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:07:49.701801+00:00",
+        "level": "info",
+        "message": "Completed step 4: wait condition satisfied",
+        "step_index": 4,
+        "screenshot_path": "artifacts/run_6cb26833/step_4.png"
+      },
+      {
+        "ts": "2026-03-01T20:07:49.707226+00:00",
+        "level": "info",
+        "message": "Starting step 5: Open room details page directly",
+        "step_index": 5,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:07:51.130110+00:00",
+        "level": "info",
+        "message": "Completed step 5: navigated to https://spaces.lib.uci.edu/space/44709",
+        "step_index": 5,
+        "screenshot_path": "artifacts/run_6cb26833/step_5.png"
+      },
+      {
+        "ts": "2026-03-01T20:07:51.135234+00:00",
+        "level": "info",
+        "message": "Starting step 6: Wait for room page booking grid to load",
+        "step_index": 6,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:07:51.332624+00:00",
+        "level": "info",
+        "message": "Completed step 6: wait condition satisfied",
+        "step_index": 6,
+        "screenshot_path": "artifacts/run_6cb26833/step_6.png"
+      },
+      {
+        "ts": "2026-03-01T20:07:51.337502+00:00",
+        "level": "info",
+        "message": "Starting step 7: Select room start slot on room page",
+        "step_index": 7,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:08:00.930012+00:00",
+        "level": "info",
+        "message": "Start slot not visible on current date range. Navigating schedule to 2026-03-02.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:08:01.358352+00:00",
+        "level": "info",
+        "message": "Schedule navigation to 2026-03-02 succeeded.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:08:01.605986+00:00",
+        "level": "info",
+        "message": "Completed step 7: click action succeeded",
+        "step_index": 7,
+        "screenshot_path": "artifacts/run_6cb26833/step_7.png"
+      },
+      {
+        "ts": "2026-03-01T20:08:01.611160+00:00",
+        "level": "info",
+        "message": "Starting step 8: Wait briefly for end-time controls to appear",
+        "step_index": 8,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:08:01.944777+00:00",
+        "level": "info",
+        "message": "Completed step 8: wait condition satisfied",
+        "step_index": 8,
+        "screenshot_path": "artifacts/run_6cb26833/step_8.png"
+      },
+      {
+        "ts": "2026-03-01T20:08:01.949867+00:00",
+        "level": "info",
+        "message": "Starting step 9: Select end time from dropdown based on computed duration",
+        "step_index": 9,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:08:08.182438+00:00",
+        "level": "warn",
+        "message": "Requested end time '3:00pm' was unavailable. Using closest available option '2:00pm Monday, March 2, 2026'.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:08:08.367845+00:00",
+        "level": "info",
+        "message": "Completed step 9: selected option '3:00pm'",
+        "step_index": 9,
+        "screenshot_path": "artifacts/run_6cb26833/step_9.png"
+      },
+      {
+        "ts": "2026-03-01T20:08:08.375421+00:00",
+        "level": "info",
+        "message": "Starting step 10: Wait for selected slot state to apply",
+        "step_index": 10,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:08:09.332583+00:00",
+        "level": "info",
+        "message": "Completed step 10: wait condition satisfied",
+        "step_index": 10,
+        "screenshot_path": "artifacts/run_6cb26833/step_10.png"
+      },
+      {
+        "ts": "2026-03-01T20:08:09.344023+00:00",
+        "level": "info",
+        "message": "Starting step 11: Click Submit Times to proceed to booking form",
+        "step_index": 11,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:08:13.319104+00:00",
+        "level": "info",
+        "message": "Completed step 11: click action succeeded",
+        "step_index": 11,
+        "screenshot_path": "artifacts/run_6cb26833/step_11.png"
+      },
+      {
+        "ts": "2026-03-01T20:08:13.334777+00:00",
+        "level": "info",
+        "message": "Starting step 12: Wait for checkout form after Submit Times",
+        "step_index": 12,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:08:55.646007+00:00",
+        "level": "error",
+        "message": "Workflow failed: WAIT step timed out for text 'Space Checkout': Wait for checkout form after Submit Times. Context: url=https://shib.service.uci.edu/idp/profile/SAML2/Redirect/SSO?execution=e1s2; title=UCInetID Secure Web Login; auth=False; markers=-; counts=input:9,select:0,textarea:0,button:1; body='Required: Update your Duo app by March 31 Login with your UCInetID Forgot your password? Activate my UCInetID \u2022 Need help logging in? View recent account activity Privacy Policy \u2022 '",
+        "step_index": null,
+        "screenshot_path": "artifacts/run_6cb26833/error.png"
+      }
+    ],
+    "disambiguation": null
+  },
+  "run_724fe9a0": {
+    "run_id": "run_724fe9a0",
+    "workflow_id": "wf_214b7c6b",
+    "status": "running",
+    "current_step": 12,
+    "total_steps": 19,
+    "logs": [
+      {
+        "ts": "2026-03-01T20:30:55.824688+00:00",
+        "level": "info",
+        "message": "Workflow run started",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:30:55.830099+00:00",
+        "level": "info",
+        "message": "Starting step 0: Open UCI Libraries spaces page",
+        "step_index": 0,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:30:57.313860+00:00",
+        "level": "info",
+        "message": "Completed step 0: navigated to https://spaces.lib.uci.edu/spaces",
+        "step_index": 0,
+        "screenshot_path": "artifacts/run_724fe9a0/step_0.png"
+      },
+      {
+        "ts": "2026-03-01T20:30:57.319110+00:00",
+        "level": "info",
+        "message": "Starting step 1: Wait for page content to appear",
+        "step_index": 1,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:30:58.073594+00:00",
+        "level": "info",
+        "message": "Completed step 1: wait condition satisfied",
+        "step_index": 1,
+        "screenshot_path": "artifacts/run_724fe9a0/step_1.png"
+      },
+      {
+        "ts": "2026-03-01T20:30:58.079038+00:00",
+        "level": "info",
+        "message": "Starting step 2: Allow room grid and scripts to fully initialize",
+        "step_index": 2,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:30:58.603201+00:00",
+        "level": "info",
+        "message": "Completed step 2: wait condition satisfied",
+        "step_index": 2,
+        "screenshot_path": "artifacts/run_724fe9a0/step_2.png"
+      },
+      {
+        "ts": "2026-03-01T20:30:58.608613+00:00",
+        "level": "info",
+        "message": "Starting step 3: Select library from Location dropdown",
+        "step_index": 3,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:30:59.238320+00:00",
+        "level": "info",
+        "message": "Completed step 3: selected option 'Gateway Study Center'",
+        "step_index": 3,
+        "screenshot_path": "artifacts/run_724fe9a0/step_3.png"
+      },
+      {
+        "ts": "2026-03-01T20:30:59.243792+00:00",
+        "level": "info",
+        "message": "Starting step 4: Wait for room list to refresh for selected library",
+        "step_index": 4,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:31:00.360722+00:00",
+        "level": "info",
+        "message": "Completed step 4: wait condition satisfied",
+        "step_index": 4,
+        "screenshot_path": "artifacts/run_724fe9a0/step_4.png"
+      },
+      {
+        "ts": "2026-03-01T20:31:00.365977+00:00",
+        "level": "info",
+        "message": "Starting step 5: Open room details page directly",
+        "step_index": 5,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:31:02.086334+00:00",
+        "level": "info",
+        "message": "Completed step 5: navigated to https://spaces.lib.uci.edu/space/44709",
+        "step_index": 5,
+        "screenshot_path": "artifacts/run_724fe9a0/step_5.png"
+      },
+      {
+        "ts": "2026-03-01T20:31:02.092375+00:00",
+        "level": "info",
+        "message": "Starting step 6: Wait for room page booking grid to load",
+        "step_index": 6,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:31:02.279322+00:00",
+        "level": "info",
+        "message": "Completed step 6: wait condition satisfied",
+        "step_index": 6,
+        "screenshot_path": "artifacts/run_724fe9a0/step_6.png"
+      },
+      {
+        "ts": "2026-03-01T20:31:02.284666+00:00",
+        "level": "info",
+        "message": "Starting step 7: Select room start slot on room page",
+        "step_index": 7,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:31:11.843137+00:00",
+        "level": "info",
+        "message": "Start slot not visible on current date range. Navigating schedule to 2026-03-03.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:31:12.653023+00:00",
+        "level": "info",
+        "message": "Schedule navigation to 2026-03-03 succeeded.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:31:12.993125+00:00",
+        "level": "info",
+        "message": "Completed step 7: click action succeeded",
+        "step_index": 7,
+        "screenshot_path": "artifacts/run_724fe9a0/step_7.png"
+      },
+      {
+        "ts": "2026-03-01T20:31:12.999654+00:00",
+        "level": "info",
+        "message": "Starting step 8: Wait briefly for end-time controls to appear",
+        "step_index": 8,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:31:13.354086+00:00",
+        "level": "info",
+        "message": "Completed step 8: wait condition satisfied",
+        "step_index": 8,
+        "screenshot_path": "artifacts/run_724fe9a0/step_8.png"
+      },
+      {
+        "ts": "2026-03-01T20:31:13.360346+00:00",
+        "level": "info",
+        "message": "Starting step 9: Select end time from dropdown based on computed duration",
+        "step_index": 9,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:31:19.567017+00:00",
+        "level": "warn",
+        "message": "Requested end time '3:00pm' was unavailable. Using closest available option '2:00pm Tuesday, March 3, 2026'.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:31:19.734654+00:00",
+        "level": "info",
+        "message": "Completed step 9: selected option '3:00pm'",
+        "step_index": 9,
+        "screenshot_path": "artifacts/run_724fe9a0/step_9.png"
+      },
+      {
+        "ts": "2026-03-01T20:31:19.741859+00:00",
+        "level": "info",
+        "message": "Starting step 10: Wait for selected slot state to apply",
+        "step_index": 10,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:31:20.694840+00:00",
+        "level": "info",
+        "message": "Completed step 10: wait condition satisfied",
+        "step_index": 10,
+        "screenshot_path": "artifacts/run_724fe9a0/step_10.png"
+      },
+      {
+        "ts": "2026-03-01T20:31:20.700313+00:00",
+        "level": "info",
+        "message": "Starting step 11: Click Submit Times to proceed to booking form",
+        "step_index": 11,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T20:31:24.613497+00:00",
+        "level": "info",
+        "message": "Completed step 11: click action succeeded",
+        "step_index": 11,
+        "screenshot_path": "artifacts/run_724fe9a0/step_11.png"
+      },
+      {
+        "ts": "2026-03-01T20:31:24.629011+00:00",
+        "level": "info",
+        "message": "Starting step 12: Wait for checkout form after Submit Times",
+        "step_index": 12,
+        "screenshot_path": null
+      }
+    ],
+    "disambiguation": null
+  },
+  "run_9c776358": {
+    "run_id": "run_9c776358",
+    "workflow_id": "wf_05ae2af4",
+    "status": "failed",
+    "current_step": 12,
+    "total_steps": 19,
+    "logs": [
+      {
+        "ts": "2026-03-01T21:22:52.337844+00:00",
+        "level": "info",
+        "message": "Workflow run started",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T21:22:52.356736+00:00",
+        "level": "info",
+        "message": "Starting step 0: Open UCI Libraries spaces page",
+        "step_index": 0,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T21:22:53.596360+00:00",
+        "level": "info",
+        "message": "Completed step 0: navigated to https://spaces.lib.uci.edu/spaces",
+        "step_index": 0,
+        "screenshot_path": "artifacts/run_9c776358/step_0.png"
+      },
+      {
+        "ts": "2026-03-01T21:22:53.602084+00:00",
+        "level": "info",
+        "message": "Starting step 1: Wait for page content to appear",
+        "step_index": 1,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T21:22:54.412557+00:00",
+        "level": "info",
+        "message": "Completed step 1: wait condition satisfied",
+        "step_index": 1,
+        "screenshot_path": "artifacts/run_9c776358/step_1.png"
+      },
+      {
+        "ts": "2026-03-01T21:22:54.418144+00:00",
+        "level": "info",
+        "message": "Starting step 2: Allow room grid and scripts to fully initialize",
+        "step_index": 2,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T21:22:54.917594+00:00",
+        "level": "info",
+        "message": "Completed step 2: wait condition satisfied",
+        "step_index": 2,
+        "screenshot_path": "artifacts/run_9c776358/step_2.png"
+      },
+      {
+        "ts": "2026-03-01T21:22:54.922954+00:00",
+        "level": "info",
+        "message": "Starting step 3: Select library from Location dropdown",
+        "step_index": 3,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T21:22:55.516954+00:00",
+        "level": "info",
+        "message": "Completed step 3: selected option 'Gateway Study Center'",
+        "step_index": 3,
+        "screenshot_path": "artifacts/run_9c776358/step_3.png"
+      },
+      {
+        "ts": "2026-03-01T21:22:55.522821+00:00",
+        "level": "info",
+        "message": "Starting step 4: Wait for room list to refresh for selected library",
+        "step_index": 4,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T21:22:56.635851+00:00",
+        "level": "info",
+        "message": "Completed step 4: wait condition satisfied",
+        "step_index": 4,
+        "screenshot_path": "artifacts/run_9c776358/step_4.png"
+      },
+      {
+        "ts": "2026-03-01T21:22:56.641777+00:00",
+        "level": "info",
+        "message": "Starting step 5: Open room details page directly",
+        "step_index": 5,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T21:22:58.868321+00:00",
+        "level": "info",
+        "message": "Completed step 5: navigated to https://spaces.lib.uci.edu/space/44709",
+        "step_index": 5,
+        "screenshot_path": "artifacts/run_9c776358/step_5.png"
+      },
+      {
+        "ts": "2026-03-01T21:22:58.874072+00:00",
+        "level": "info",
+        "message": "Starting step 6: Wait for room page booking grid to load",
+        "step_index": 6,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T21:22:59.078906+00:00",
+        "level": "info",
+        "message": "Completed step 6: wait condition satisfied",
+        "step_index": 6,
+        "screenshot_path": "artifacts/run_9c776358/step_6.png"
+      },
+      {
+        "ts": "2026-03-01T21:22:59.084385+00:00",
+        "level": "info",
+        "message": "Starting step 7: Select room start slot on room page",
+        "step_index": 7,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T21:23:08.649290+00:00",
+        "level": "info",
+        "message": "Start slot not visible on current date range. Navigating schedule to 2026-03-02.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T21:23:09.058177+00:00",
+        "level": "info",
+        "message": "Schedule navigation to 2026-03-02 succeeded.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T21:23:09.298018+00:00",
+        "level": "info",
+        "message": "Completed step 7: click action succeeded",
+        "step_index": 7,
+        "screenshot_path": "artifacts/run_9c776358/step_7.png"
+      },
+      {
+        "ts": "2026-03-01T21:23:09.310181+00:00",
+        "level": "info",
+        "message": "Starting step 8: Wait briefly for end-time controls to appear",
+        "step_index": 8,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T21:23:09.652589+00:00",
+        "level": "info",
+        "message": "Completed step 8: wait condition satisfied",
+        "step_index": 8,
+        "screenshot_path": "artifacts/run_9c776358/step_8.png"
+      },
+      {
+        "ts": "2026-03-01T21:23:09.658308+00:00",
+        "level": "info",
+        "message": "Starting step 9: Select end time from dropdown based on computed duration",
+        "step_index": 9,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T21:23:15.859066+00:00",
+        "level": "warn",
+        "message": "Requested end time '3:00pm' was unavailable. Using closest available option '2:00pm Monday, March 2, 2026'.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T21:23:16.058792+00:00",
+        "level": "info",
+        "message": "Completed step 9: selected option '3:00pm'",
+        "step_index": 9,
+        "screenshot_path": "artifacts/run_9c776358/step_9.png"
+      },
+      {
+        "ts": "2026-03-01T21:23:16.063874+00:00",
+        "level": "info",
+        "message": "Starting step 10: Wait for selected slot state to apply",
+        "step_index": 10,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T21:23:17.024116+00:00",
+        "level": "info",
+        "message": "Completed step 10: wait condition satisfied",
+        "step_index": 10,
+        "screenshot_path": "artifacts/run_9c776358/step_10.png"
+      },
+      {
+        "ts": "2026-03-01T21:23:17.030508+00:00",
+        "level": "info",
+        "message": "Starting step 11: Click Submit Times to proceed to booking form",
+        "step_index": 11,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T21:23:20.297394+00:00",
+        "level": "info",
+        "message": "Completed step 11: click action succeeded",
+        "step_index": 11,
+        "screenshot_path": "artifacts/run_9c776358/step_11.png"
+      },
+      {
+        "ts": "2026-03-01T21:23:20.302389+00:00",
+        "level": "info",
+        "message": "Starting step 12: Wait for checkout form after Submit Times",
+        "step_index": 12,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T21:24:03.007666+00:00",
+        "level": "error",
+        "message": "Workflow failed: WAIT step timed out for text 'Space Checkout': Wait for checkout form after Submit Times. Context: url=https://shib.service.uci.edu/idp/profile/SAML2/Redirect/SSO?execution=e1s2; title=UCInetID Secure Web Login; auth=False; markers=-; counts=input:9,select:0,textarea:0,button:1; body='Required: Update your Duo app by March 31 Login with your UCInetID Forgot your password? Activate my UCInetID \u2022 Need help logging in? View recent account activity Privacy Policy \u2022 '",
+        "step_index": null,
+        "screenshot_path": "artifacts/run_9c776358/error.png"
+      }
+    ],
+    "disambiguation": null
+  },
+  "run_522e9c7b": {
+    "run_id": "run_522e9c7b",
+    "workflow_id": "wf_a07e1176",
+    "status": "failed",
+    "current_step": 12,
+    "total_steps": 19,
+    "logs": [
+      {
+        "ts": "2026-03-01T22:00:35.289223+00:00",
+        "level": "info",
+        "message": "Workflow run started",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T22:00:35.294024+00:00",
+        "level": "info",
+        "message": "Starting step 0: Open UCI Libraries spaces page",
+        "step_index": 0,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T22:00:36.609447+00:00",
+        "level": "info",
+        "message": "Completed step 0: navigated to https://spaces.lib.uci.edu/spaces",
+        "step_index": 0,
+        "screenshot_path": "artifacts/run_522e9c7b/step_0.png"
+      },
+      {
+        "ts": "2026-03-01T22:00:36.615734+00:00",
+        "level": "info",
+        "message": "Starting step 1: Wait for page content to appear",
+        "step_index": 1,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T22:00:37.341027+00:00",
+        "level": "info",
+        "message": "Completed step 1: wait condition satisfied",
+        "step_index": 1,
+        "screenshot_path": "artifacts/run_522e9c7b/step_1.png"
+      },
+      {
+        "ts": "2026-03-01T22:00:37.346640+00:00",
+        "level": "info",
+        "message": "Starting step 2: Allow room grid and scripts to fully initialize",
+        "step_index": 2,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T22:00:37.877567+00:00",
+        "level": "info",
+        "message": "Completed step 2: wait condition satisfied",
+        "step_index": 2,
+        "screenshot_path": "artifacts/run_522e9c7b/step_2.png"
+      },
+      {
+        "ts": "2026-03-01T22:00:37.883706+00:00",
+        "level": "info",
+        "message": "Starting step 3: Select library from Location dropdown",
+        "step_index": 3,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T22:00:38.333268+00:00",
+        "level": "info",
+        "message": "Completed step 3: selected option 'Gateway Study Center'",
+        "step_index": 3,
+        "screenshot_path": "artifacts/run_522e9c7b/step_3.png"
+      },
+      {
+        "ts": "2026-03-01T22:00:38.443181+00:00",
+        "level": "info",
+        "message": "Starting step 4: Wait for room list to refresh for selected library",
+        "step_index": 4,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T22:00:39.540611+00:00",
+        "level": "info",
+        "message": "Completed step 4: wait condition satisfied",
+        "step_index": 4,
+        "screenshot_path": "artifacts/run_522e9c7b/step_4.png"
+      },
+      {
+        "ts": "2026-03-01T22:00:39.546280+00:00",
+        "level": "info",
+        "message": "Starting step 5: Open room details page directly",
+        "step_index": 5,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T22:00:40.872339+00:00",
+        "level": "info",
+        "message": "Completed step 5: navigated to https://spaces.lib.uci.edu/space/44709",
+        "step_index": 5,
+        "screenshot_path": "artifacts/run_522e9c7b/step_5.png"
+      },
+      {
+        "ts": "2026-03-01T22:00:40.877867+00:00",
+        "level": "info",
+        "message": "Starting step 6: Wait for room page booking grid to load",
+        "step_index": 6,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T22:00:41.065917+00:00",
+        "level": "info",
+        "message": "Completed step 6: wait condition satisfied",
+        "step_index": 6,
+        "screenshot_path": "artifacts/run_522e9c7b/step_6.png"
+      },
+      {
+        "ts": "2026-03-01T22:00:41.071971+00:00",
+        "level": "info",
+        "message": "Starting step 7: Select room start slot on room page",
+        "step_index": 7,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T22:00:50.682384+00:00",
+        "level": "info",
+        "message": "Start slot not visible on current date range. Navigating schedule to 2026-03-02.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T22:00:51.090875+00:00",
+        "level": "info",
+        "message": "Schedule navigation to 2026-03-02 succeeded.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T22:00:51.400773+00:00",
+        "level": "info",
+        "message": "Completed step 7: click action succeeded",
+        "step_index": 7,
+        "screenshot_path": "artifacts/run_522e9c7b/step_7.png"
+      },
+      {
+        "ts": "2026-03-01T22:00:51.407064+00:00",
+        "level": "info",
+        "message": "Starting step 8: Wait briefly for end-time controls to appear",
+        "step_index": 8,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T22:00:51.758828+00:00",
+        "level": "info",
+        "message": "Completed step 8: wait condition satisfied",
+        "step_index": 8,
+        "screenshot_path": "artifacts/run_522e9c7b/step_8.png"
+      },
+      {
+        "ts": "2026-03-01T22:00:51.765470+00:00",
+        "level": "info",
+        "message": "Starting step 9: Select end time from dropdown based on computed duration",
+        "step_index": 9,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T22:00:57.949246+00:00",
+        "level": "warn",
+        "message": "Requested end time '3:00pm' was unavailable. Using closest available option '2:00pm Monday, March 2, 2026'.",
+        "step_index": null,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T22:00:58.133778+00:00",
+        "level": "info",
+        "message": "Completed step 9: selected option '3:00pm'",
+        "step_index": 9,
+        "screenshot_path": "artifacts/run_522e9c7b/step_9.png"
+      },
+      {
+        "ts": "2026-03-01T22:00:58.139049+00:00",
+        "level": "info",
+        "message": "Starting step 10: Wait for selected slot state to apply",
+        "step_index": 10,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T22:00:59.093641+00:00",
+        "level": "info",
+        "message": "Completed step 10: wait condition satisfied",
+        "step_index": 10,
+        "screenshot_path": "artifacts/run_522e9c7b/step_10.png"
+      },
+      {
+        "ts": "2026-03-01T22:00:59.100298+00:00",
+        "level": "info",
+        "message": "Starting step 11: Click Submit Times to proceed to booking form",
+        "step_index": 11,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T22:01:03.083482+00:00",
+        "level": "info",
+        "message": "Completed step 11: click action succeeded",
+        "step_index": 11,
+        "screenshot_path": "artifacts/run_522e9c7b/step_11.png"
+      },
+      {
+        "ts": "2026-03-01T22:01:03.105768+00:00",
+        "level": "info",
+        "message": "Starting step 12: Wait for checkout form after Submit Times",
+        "step_index": 12,
+        "screenshot_path": null
+      },
+      {
+        "ts": "2026-03-01T22:01:45.778510+00:00",
+        "level": "error",
+        "message": "Workflow failed: WAIT step timed out for text 'Space Checkout': Wait for checkout form after Submit Times. Context: url=https://shib.service.uci.edu/idp/profile/SAML2/Redirect/SSO?execution=e1s2; title=UCInetID Secure Web Login; auth=False; markers=-; counts=input:9,select:0,textarea:0,button:1; body='Required: Update your Duo app by March 31 Login with your UCInetID Forgot your password? Activate my UCInetID \u2022 Need help logging in? View recent account activity Privacy Policy \u2022 '",
+        "step_index": null,
+        "screenshot_path": "artifacts/run_522e9c7b/error.png"
+      }
+    ],
+    "disambiguation": null
   }
 }

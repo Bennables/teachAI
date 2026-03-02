@@ -52,7 +52,7 @@ def route(request: str, tools: list[Tool] | None = None) -> dict:
     )
 
     response = client.chat.completions.create(
-        model="grok-beta",
+        model="grok-3-fast",
         messages=[{"role": "user", "content": _build_prompt(request, tools)}],
         temperature=0,
     )

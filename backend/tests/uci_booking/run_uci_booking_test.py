@@ -122,8 +122,8 @@ def validate_and_augment_params(params: dict[str, Any]) -> dict[str, Any]:
         if legacy_first or legacy_last:
             raw_full_name = " ".join(part for part in [legacy_first, legacy_last] if part)
         else:
-            raise ValueError("Missing required parameter: full_name")
-    full_name_first, full_name_last = split_full_name(str(raw_full_name))
+            raw_full_name = ""
+    full_name_first, full_name_last = split_full_name(str(raw_full_name)) if raw_full_name else ("", "")
 
     raw_room_keyword = params.get("room_keyword")
     if not raw_room_keyword:

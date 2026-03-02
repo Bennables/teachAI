@@ -4,7 +4,6 @@ import os
 from typing import Any, Literal, Optional
 from uuid import uuid4
 
-import httpx
 from fastapi import APIRouter, BackgroundTasks, HTTPException, status
 from pydantic import BaseModel, Field, ValidationError
 
@@ -131,7 +130,7 @@ def _call_grok(system_prompt: str, user_text: str) -> str:
         raise RuntimeError("GROK_API_KEY is not set; cannot parse prompt")
 
     payload = {
-        "model": os.getenv("GROK_MODEL", "grok-beta"),
+        "model": os.getenv("GROK_MODEL", "grok-3-fast"),
         "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_text},
@@ -206,12 +205,14 @@ def _call_llm_for_route(raw_text: str) -> ParsePromptRouteResponse:
             "email": str(booking_raw.get("email", "") or "").strip(),
             "affiliation": str(booking_raw.get("affiliation", "") or "").strip(),
             "purpose_for_reservation_covid_19": str(
-                booking_raw.get("purpose_for_reservation_covid_19", "") or ""
+                "other"
             ).strip(),
         }
 
+        optional_booking_fields = {"duration_minutes", "full_name", "email", "purpose_for_reservation_covid_19"}
         missing_fields = [
-            key for key, value in booking_dict.items() if key != "duration_minutes" and not str(value).strip()
+            key for key, value in booking_dict.items()
+            if key not in optional_booking_fields and not str(value).strip()
         ]
         try:
             booking_params = BookingParams.model_validate(booking_dict)
